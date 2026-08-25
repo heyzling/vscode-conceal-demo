@@ -1,0 +1,346 @@
+{
+  "conceal-demo.exampleRules": [
+    {
+      "id": "g1-md-bold",
+      "files": [
+        "**/01-syntax-elision/*.md"
+      ],
+      "pattern": "\\*\\*"
+    },
+    {
+      "id": "g1-md-italic",
+      "files": [
+        "**/01-syntax-elision/*.md"
+      ],
+      "pattern": "(?<=[\\s(])_(?=\\S)|(?<=\\S)_(?=[\\s.,!?)]|$)"
+    },
+    {
+      "id": "g1-md-code-tick",
+      "files": [
+        "**/01-syntax-elision/*.md"
+      ],
+      "pattern": "`"
+    },
+    {
+      "id": "g1-md-link-open",
+      "files": [
+        "**/01-syntax-elision/*.md"
+      ],
+      "pattern": "\\[(?=[^\\]]*\\]\\([^)]*\\))"
+    },
+    {
+      "id": "g1-md-link-target",
+      "files": [
+        "**/01-syntax-elision/*.md"
+      ],
+      "pattern": "\\]\\([^)]*\\)"
+    },
+    {
+      "id": "g1-json-key-quotes",
+      "files": [
+        "**/01-syntax-elision/*.json"
+      ],
+      "pattern": "\"(?=[A-Za-z_][\\w-]*\"\\s*:)|(?<=[\\w-])\"(?=\\s*:)"
+    },
+    {
+      "id": "g2-tex-forall",
+      "files": [
+        "**/02-symbol-substitution/*.tex"
+      ],
+      "pattern": "\\\\forall",
+      "replaceWith": "∀",
+      "style": {
+        "color": "theme:editorInfo.foreground"
+      }
+    },
+    {
+      "id": "g2-tex-in",
+      "files": [
+        "**/02-symbol-substitution/*.tex"
+      ],
+      "pattern": "\\\\in\\b",
+      "replaceWith": "∈",
+      "style": {
+        "color": "theme:editorInfo.foreground"
+      }
+    },
+    {
+      "id": "g2-tex-alpha",
+      "files": [
+        "**/02-symbol-substitution/*.tex"
+      ],
+      "pattern": "\\\\alpha",
+      "replaceWith": "α",
+      "style": {
+        "color": "theme:editorInfo.foreground"
+      }
+    },
+    {
+      "id": "g2-tex-beta",
+      "files": [
+        "**/02-symbol-substitution/*.tex"
+      ],
+      "pattern": "\\\\beta",
+      "replaceWith": "β",
+      "style": {
+        "color": "theme:editorInfo.foreground"
+      }
+    },
+    {
+      "id": "g2-tex-gamma",
+      "files": [
+        "**/02-symbol-substitution/*.tex"
+      ],
+      "pattern": "\\\\gamma",
+      "replaceWith": "γ",
+      "style": {
+        "color": "theme:editorInfo.foreground"
+      }
+    },
+    {
+      "id": "g2-tex-rightarrow",
+      "files": [
+        "**/02-symbol-substitution/*.tex"
+      ],
+      "pattern": "\\\\rightarrow",
+      "replaceWith": "→",
+      "style": {
+        "color": "theme:editorInfo.foreground"
+      }
+    },
+    {
+      "id": "g2-ts-fat-arrow",
+      "files": [
+        "**/02-symbol-substitution/*.ts"
+      ],
+      "pattern": "=>",
+      "replaceWith": "⇒",
+      "style": {
+        "color": "theme:editorInfo.foreground"
+      }
+    },
+    {
+      "id": "g3-record-id",
+      "files": [
+        "**/03-machine-metadata/notes.md"
+      ],
+      "pattern": "\\{![A-Za-z0-9]{6}\\} ",
+      "cursorStop": "before"
+    },
+    {
+      "id": "g3-record-id-badge",
+      "files": [
+        "**/03-machine-metadata/notes-badge.md"
+      ],
+      "pattern": "\\{![A-Za-z0-9]{6}\\} ",
+      "replaceWith": "°",
+      "cursorStop": "before",
+      "style": {
+        "color": "theme:editorCodeLens.foreground",
+        "margin": "0 0.2em 0 0"
+      }
+    },
+    {
+      "id": "g3-obsidian-block-id",
+      "files": [
+        "**/03-machine-metadata/properties.md"
+      ],
+      "pattern": " \\^[a-z0-9]{6}$"
+    },
+    {
+      "id": "g3-logseq-property",
+      "files": [
+        "**/03-machine-metadata/properties.md"
+      ],
+      "pattern": "id:: [0-9a-f-]{36}"
+    },
+    {
+      "id": "g3-nix-store-hash",
+      "files": [
+        "**/03-machine-metadata/store-paths.md"
+      ],
+      "pattern": "(?<=/nix/store/)[a-z0-9]{32}(?=-)",
+      "replaceWith": "…",
+      "style": {
+        "color": "theme:editorCodeLens.foreground"
+      },
+      "hover": true
+    },
+    {
+      "id": "g4-scene-round",
+      "files": [
+        "**/04-semantic-projection/scenes.md"
+      ],
+      "pattern": "\\br(\\d+)\\b",
+      "replaceWith": "⟲$1",
+      "style": {
+        "color": "theme:editorCodeLens.foreground"
+      }
+    },
+    {
+      "id": "g4-scene-level",
+      "files": [
+        "**/04-semantic-projection/scenes.md"
+      ],
+      "pattern": "\\bl(\\d+)\\b",
+      "replaceWith": "▲$1",
+      "style": {
+        "color": "theme:editorCodeLens.foreground"
+      }
+    },
+    {
+      "id": "g4-scene-version",
+      "files": [
+        "**/04-semantic-projection/scenes.md"
+      ],
+      "pattern": "\\bv(\\d+)\\b",
+      "replaceWith": "⌁$1",
+      "style": {
+        "color": "theme:editorCodeLens.foreground"
+      }
+    },
+    {
+      "id": "g4-i18n-key",
+      "files": [
+        "**/04-semantic-projection/i18n.ts"
+      ],
+      "pattern": "t\\(\"[\\w.]*?\\.(\\w+)\"\\)",
+      "replaceWith": "“$1”",
+      "hover": true,
+      "style": {
+        "color": "theme:editorInfo.foreground"
+      }
+    },
+    {
+      "id": "g5-class-list",
+      "files": [
+        "**/05-bulk-collapse/*.html"
+      ],
+      "pattern": "(?<=class=\")([\\w-]+) ([^\"]{20,})(?=\")",
+      "group": 2,
+      "replaceWith": "…",
+      "reveal": "adjacent",
+      "hover": true,
+      "style": {
+        "color": "theme:editorCodeLens.foreground",
+        "backgroundColor": "theme:editor.wordHighlightBackground",
+        "borderRadius": "3px",
+        "margin": "0 0.15em"
+      }
+    },
+    {
+      "id": "g6-env-value",
+      "files": [
+        "**/06-redaction/*.env"
+      ],
+      "pattern": "(?<==)\\S+$",
+      "replaceWith": "•",
+      "padToWidth": true,
+      "style": {
+        "color": "theme:editorWarning.foreground"
+      },
+      "padWith": "•"
+    },
+    {
+      "id": "g7-view-open-chip",
+      "files": [
+        "**/07-line-elision/fences.md"
+      ],
+      "pattern": "^<!-- kms:view query=\"([^\"]*)\" limit=(\\d+) -->$",
+      "replaceWith": "▸ $1 · $2",
+      "style": {
+        "color": "theme:editorCodeLens.foreground",
+        "backgroundColor": "theme:editor.wordHighlightBackground",
+        "borderRadius": "3px"
+      }
+    },
+    {
+      "id": "g7-view-close-chip",
+      "files": [
+        "**/07-line-elision/fences.md"
+      ],
+      "pattern": "^<!-- /kms:view -->$",
+      "replaceWith": "▪",
+      "style": {
+        "color": "theme:editorCodeLens.foreground"
+      }
+    },
+    {
+      "id": "g7-frontmatter-line",
+      "files": [
+        "**/07-line-elision/frontmatter.md"
+      ],
+      "pattern": "^(?:title|date|tags|id): .*$"
+    },
+    {
+      "id": "g8-hidden-marker",
+      "files": [
+        "**/08-interaction/caret-playground.md",
+        "**/08-interaction/fixture.md"
+      ],
+      "pattern": "\\{![A-Za-z0-9]{6}\\} ",
+      "cursorStop": "before"
+    },
+    {
+      "id": "g8-hidden-marker-after",
+      "files": [
+        "**/08-interaction/fixture-after.md"
+      ],
+      "pattern": "\\{![A-Za-z0-9]{6}\\} ",
+      "cursorStop": "after"
+    },
+    {
+      "id": "g8-drawn-done",
+      "files": [
+        "**/08-interaction/*.md"
+      ],
+      "pattern": "#done\\b",
+      "replaceWith": "✅"
+    },
+    {
+      "id": "g8-drawn-todo",
+      "files": [
+        "**/08-interaction/*.md"
+      ],
+      "pattern": "#todo\\b",
+      "replaceWith": "⬜"
+    },
+    {
+      "id": "g8-reveal-adjacent",
+      "files": [
+        "**/08-interaction/*.md"
+      ],
+      "pattern": "\\(fold:[^)]*\\)",
+      "replaceWith": "…",
+      "reveal": "adjacent",
+      "hover": true,
+      "style": {
+        "color": "theme:editorCodeLens.foreground"
+      }
+    },
+    {
+      "id": "g8-reveal-line",
+      "files": [
+        "**/08-interaction/*.md"
+      ],
+      "pattern": "\\(line:[^)]*\\)",
+      "replaceWith": "…",
+      "reveal": "line",
+      "style": {
+        "color": "theme:editorCodeLens.foreground"
+      }
+    },
+    {
+      "id": "g8-reveal-selection",
+      "files": [
+        "**/08-interaction/*.md"
+      ],
+      "pattern": "\\(sel:[^)]*\\)",
+      "replaceWith": "…",
+      "reveal": "selection",
+      "style": {
+        "color": "theme:editorCodeLens.foreground"
+      }
+    }
+  ]
+}

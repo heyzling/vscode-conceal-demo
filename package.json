@@ -1,0 +1,621 @@
+{
+  "name": "conceal-demo",
+  "displayName": "Conceal Demo",
+  "description": "A playground for the VS Code conceal API (proposal: concealedText): hide text in the editor with regex rules from settings, while the file on disk keeps every character.",
+  "version": "0.1.0",
+  "publisher": "heyzling",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heyzling/vscode-conceal-demo.git"
+  },
+  "engines": {
+    "vscode": "^1.104.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "conceal",
+    "concealedText",
+    "decorations",
+    "prettify-symbols",
+    "inline fold"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "enabledApiProposals": [
+    "concealedText"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Conceal rules are regular expressions taken from workspace settings and run over open files."
+    },
+    "virtualWorkspaces": true
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "conceal-demo.toggle",
+        "title": "Toggle Concealment",
+        "category": "Conceal Demo"
+      },
+      {
+        "command": "conceal-demo.showStats",
+        "title": "Show Statistics",
+        "category": "Conceal Demo"
+      },
+      {
+        "command": "conceal-demo.showLog",
+        "title": "Show Log",
+        "category": "Conceal Demo"
+      }
+    ],
+    "configuration": {
+      "title": "Conceal Demo",
+      "properties": {
+        "conceal-demo.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Master switch. When off, nothing is concealed and no decorations are created.",
+          "order": 0
+        },
+        "conceal-demo.include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/examples/**"
+          ],
+          "markdownDescription": "Glob patterns a file's path must match before **any** rule is applied to it. This is the blast-radius guard: the shipped example rules would otherwise fire in every file you open. `[\"**\"]` means everywhere; `[]` means nowhere.",
+          "order": 1
+        },
+        "conceal-demo.disableExamples": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Ignore `#conceal-demo.exampleRules#` entirely, so only your own `#conceal-demo.rules#` run.",
+          "order": 2
+        },
+        "conceal-demo.rules": {
+          "type": "array",
+          "default": [],
+          "markdownDescription": "Your own conceal rules. Kept separate from `#conceal-demo.exampleRules#` so the shipped demo never mixes into what you are working on.",
+          "order": 3,
+          "items": {
+            "$ref": "#/definitions/concealRule"
+          }
+        },
+        "conceal-demo.exampleRules": {
+          "type": "array",
+          "markdownDescription": "The demo rules shipped with the extension, one per case group in the survey. Same shape as `#conceal-demo.rules#`; a copy lives in `examples/default-rules.jsonc` in the repository. Turn the whole set off with `#conceal-demo.disableExamples#`.",
+          "order": 4,
+          "items": {
+            "$ref": "#/definitions/concealRule"
+          },
+          "default": [
+            {
+              "id": "g1-md-bold",
+              "files": [
+                "**/01-syntax-elision/*.md"
+              ],
+              "pattern": "\\*\\*"
+            },
+            {
+              "id": "g1-md-italic",
+              "files": [
+                "**/01-syntax-elision/*.md"
+              ],
+              "pattern": "(?<=[\\s(])_(?=\\S)|(?<=\\S)_(?=[\\s.,!?)]|$)"
+            },
+            {
+              "id": "g1-md-code-tick",
+              "files": [
+                "**/01-syntax-elision/*.md"
+              ],
+              "pattern": "`"
+            },
+            {
+              "id": "g1-md-link-open",
+              "files": [
+                "**/01-syntax-elision/*.md"
+              ],
+              "pattern": "\\[(?=[^\\]]*\\]\\([^)]*\\))"
+            },
+            {
+              "id": "g1-md-link-target",
+              "files": [
+                "**/01-syntax-elision/*.md"
+              ],
+              "pattern": "\\]\\([^)]*\\)"
+            },
+            {
+              "id": "g1-json-key-quotes",
+              "files": [
+                "**/01-syntax-elision/*.json"
+              ],
+              "pattern": "\"(?=[A-Za-z_][\\w-]*\"\\s*:)|(?<=[\\w-])\"(?=\\s*:)"
+            },
+            {
+              "id": "g2-tex-forall",
+              "files": [
+                "**/02-symbol-substitution/*.tex"
+              ],
+              "pattern": "\\\\forall",
+              "replaceWith": "∀",
+              "style": {
+                "color": "theme:editorInfo.foreground"
+              }
+            },
+            {
+              "id": "g2-tex-in",
+              "files": [
+                "**/02-symbol-substitution/*.tex"
+              ],
+              "pattern": "\\\\in\\b",
+              "replaceWith": "∈",
+              "style": {
+                "color": "theme:editorInfo.foreground"
+              }
+            },
+            {
+              "id": "g2-tex-alpha",
+              "files": [
+                "**/02-symbol-substitution/*.tex"
+              ],
+              "pattern": "\\\\alpha",
+              "replaceWith": "α",
+              "style": {
+                "color": "theme:editorInfo.foreground"
+              }
+            },
+            {
+              "id": "g2-tex-beta",
+              "files": [
+                "**/02-symbol-substitution/*.tex"
+              ],
+              "pattern": "\\\\beta",
+              "replaceWith": "β",
+              "style": {
+                "color": "theme:editorInfo.foreground"
+              }
+            },
+            {
+              "id": "g2-tex-gamma",
+              "files": [
+                "**/02-symbol-substitution/*.tex"
+              ],
+              "pattern": "\\\\gamma",
+              "replaceWith": "γ",
+              "style": {
+                "color": "theme:editorInfo.foreground"
+              }
+            },
+            {
+              "id": "g2-tex-rightarrow",
+              "files": [
+                "**/02-symbol-substitution/*.tex"
+              ],
+              "pattern": "\\\\rightarrow",
+              "replaceWith": "→",
+              "style": {
+                "color": "theme:editorInfo.foreground"
+              }
+            },
+            {
+              "id": "g2-ts-fat-arrow",
+              "files": [
+                "**/02-symbol-substitution/*.ts"
+              ],
+              "pattern": "=>",
+              "replaceWith": "⇒",
+              "style": {
+                "color": "theme:editorInfo.foreground"
+              }
+            },
+            {
+              "id": "g3-record-id",
+              "files": [
+                "**/03-machine-metadata/notes.md"
+              ],
+              "pattern": "\\{![A-Za-z0-9]{6}\\} ",
+              "cursorStop": "before"
+            },
+            {
+              "id": "g3-record-id-badge",
+              "files": [
+                "**/03-machine-metadata/notes-badge.md"
+              ],
+              "pattern": "\\{![A-Za-z0-9]{6}\\} ",
+              "replaceWith": "°",
+              "cursorStop": "before",
+              "style": {
+                "color": "theme:editorCodeLens.foreground",
+                "margin": "0 0.2em 0 0"
+              }
+            },
+            {
+              "id": "g3-obsidian-block-id",
+              "files": [
+                "**/03-machine-metadata/properties.md"
+              ],
+              "pattern": " \\^[a-z0-9]{6}$"
+            },
+            {
+              "id": "g3-logseq-property",
+              "files": [
+                "**/03-machine-metadata/properties.md"
+              ],
+              "pattern": "id:: [0-9a-f-]{36}"
+            },
+            {
+              "id": "g3-nix-store-hash",
+              "files": [
+                "**/03-machine-metadata/store-paths.md"
+              ],
+              "pattern": "(?<=/nix/store/)[a-z0-9]{32}(?=-)",
+              "replaceWith": "…",
+              "style": {
+                "color": "theme:editorCodeLens.foreground"
+              },
+              "hover": true
+            },
+            {
+              "id": "g4-scene-round",
+              "files": [
+                "**/04-semantic-projection/scenes.md"
+              ],
+              "pattern": "\\br(\\d+)\\b",
+              "replaceWith": "⟲$1",
+              "style": {
+                "color": "theme:editorCodeLens.foreground"
+              }
+            },
+            {
+              "id": "g4-scene-level",
+              "files": [
+                "**/04-semantic-projection/scenes.md"
+              ],
+              "pattern": "\\bl(\\d+)\\b",
+              "replaceWith": "▲$1",
+              "style": {
+                "color": "theme:editorCodeLens.foreground"
+              }
+            },
+            {
+              "id": "g4-scene-version",
+              "files": [
+                "**/04-semantic-projection/scenes.md"
+              ],
+              "pattern": "\\bv(\\d+)\\b",
+              "replaceWith": "⌁$1",
+              "style": {
+                "color": "theme:editorCodeLens.foreground"
+              }
+            },
+            {
+              "id": "g4-i18n-key",
+              "files": [
+                "**/04-semantic-projection/i18n.ts"
+              ],
+              "pattern": "t\\(\"[\\w.]*?\\.(\\w+)\"\\)",
+              "replaceWith": "“$1”",
+              "hover": true,
+              "style": {
+                "color": "theme:editorInfo.foreground"
+              }
+            },
+            {
+              "id": "g5-class-list",
+              "files": [
+                "**/05-bulk-collapse/*.html"
+              ],
+              "pattern": "(?<=class=\")([\\w-]+) ([^\"]{20,})(?=\")",
+              "group": 2,
+              "replaceWith": "…",
+              "reveal": "adjacent",
+              "hover": true,
+              "style": {
+                "color": "theme:editorCodeLens.foreground",
+                "backgroundColor": "theme:editor.wordHighlightBackground",
+                "borderRadius": "3px",
+                "margin": "0 0.15em"
+              }
+            },
+            {
+              "id": "g6-env-value",
+              "files": [
+                "**/06-redaction/*.env"
+              ],
+              "pattern": "(?<==)\\S+$",
+              "replaceWith": "•",
+              "padToWidth": true,
+              "style": {
+                "color": "theme:editorWarning.foreground"
+              },
+              "padWith": "•"
+            },
+            {
+              "id": "g7-view-open-chip",
+              "files": [
+                "**/07-line-elision/fences.md"
+              ],
+              "pattern": "^<!-- kms:view query=\"([^\"]*)\" limit=(\\d+) -->$",
+              "replaceWith": "▸ $1 · $2",
+              "style": {
+                "color": "theme:editorCodeLens.foreground",
+                "backgroundColor": "theme:editor.wordHighlightBackground",
+                "borderRadius": "3px"
+              }
+            },
+            {
+              "id": "g7-view-close-chip",
+              "files": [
+                "**/07-line-elision/fences.md"
+              ],
+              "pattern": "^<!-- /kms:view -->$",
+              "replaceWith": "▪",
+              "style": {
+                "color": "theme:editorCodeLens.foreground"
+              }
+            },
+            {
+              "id": "g7-frontmatter-line",
+              "files": [
+                "**/07-line-elision/frontmatter.md"
+              ],
+              "pattern": "^(?:title|date|tags|id): .*$"
+            },
+            {
+              "id": "g8-hidden-marker",
+              "files": [
+                "**/08-interaction/caret-playground.md",
+                "**/08-interaction/fixture.md"
+              ],
+              "pattern": "\\{![A-Za-z0-9]{6}\\} ",
+              "cursorStop": "before"
+            },
+            {
+              "id": "g8-hidden-marker-after",
+              "files": [
+                "**/08-interaction/fixture-after.md"
+              ],
+              "pattern": "\\{![A-Za-z0-9]{6}\\} ",
+              "cursorStop": "after"
+            },
+            {
+              "id": "g8-drawn-done",
+              "files": [
+                "**/08-interaction/*.md"
+              ],
+              "pattern": "#done\\b",
+              "replaceWith": "✅"
+            },
+            {
+              "id": "g8-drawn-todo",
+              "files": [
+                "**/08-interaction/*.md"
+              ],
+              "pattern": "#todo\\b",
+              "replaceWith": "⬜"
+            },
+            {
+              "id": "g8-reveal-adjacent",
+              "files": [
+                "**/08-interaction/*.md"
+              ],
+              "pattern": "\\(fold:[^)]*\\)",
+              "replaceWith": "…",
+              "reveal": "adjacent",
+              "hover": true,
+              "style": {
+                "color": "theme:editorCodeLens.foreground"
+              }
+            },
+            {
+              "id": "g8-reveal-line",
+              "files": [
+                "**/08-interaction/*.md"
+              ],
+              "pattern": "\\(line:[^)]*\\)",
+              "replaceWith": "…",
+              "reveal": "line",
+              "style": {
+                "color": "theme:editorCodeLens.foreground"
+              }
+            },
+            {
+              "id": "g8-reveal-selection",
+              "files": [
+                "**/08-interaction/*.md"
+              ],
+              "pattern": "\\(sel:[^)]*\\)",
+              "replaceWith": "…",
+              "reveal": "selection",
+              "style": {
+                "color": "theme:editorCodeLens.foreground"
+              }
+            }
+          ]
+        },
+        "conceal-demo.maxMatchesPerFile": {
+          "type": "number",
+          "default": 2000,
+          "minimum": 0,
+          "markdownDescription": "Stop concealing a file after this many matches. Guards against a rule such as `.` on a large file.",
+          "order": 5
+        },
+        "conceal-demo.trace": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Log every recomputation to the Conceal Demo output channel.",
+          "order": 6
+        }
+      },
+      "definitions": {
+        "concealRule": {
+          "type": "object",
+          "required": [
+            "pattern"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "A name for this rule, used in the log and in Show Statistics."
+            },
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Set to false to keep the rule around without running it."
+            },
+            "pattern": {
+              "type": "string",
+              "description": "A JavaScript regular expression, matched line by line. A match that spans no characters is ignored."
+            },
+            "flags": {
+              "type": "string",
+              "default": "",
+              "description": "Extra regular-expression flags. 'g' is always added; 'm', 's' and 'y' are rejected because matching is per line."
+            },
+            "group": {
+              "type": "number",
+              "default": 0,
+              "description": "Which capture group to conceal. 0 is the whole match."
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Glob patterns the file path must match, on top of conceal-demo.include."
+            },
+            "languages": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Language ids this rule applies to."
+            },
+            "replaceWith": {
+              "type": "string",
+              "default": "",
+              "markdownDescription": "Drawn in place of the concealed text. Empty (the default) hides it outright. `$&` is the whole match and `$1`..`$9` are capture groups — note that every distinct result costs one decoration type, because the editor carries the replacement on the type and not on the range."
+            },
+            "cursorStop": {
+              "type": "string",
+              "enum": [
+                "before",
+                "after"
+              ],
+              "default": "after",
+              "markdownDescription": "Which end of the range the single caret stop stands for. Read **only** when `replaceWith` is empty: anything drawn has two sides of its own."
+            },
+            "padToWidth": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Pad `replaceWith` with spaces to the width of the text it hides, so nothing after it moves. Silently capped — the editor cuts a replacement to 16 characters."
+            },
+            "padWith": {
+              "type": "string",
+              "default": " ",
+              "markdownDescription": "What `padToWidth` pads with. A space keeps the columns after the range where they were; repeating the replacement's own character is what a mask (`••••••`) wants."
+            },
+            "hover": {
+              "type": "boolean",
+              "default": false,
+              "description": "Show the concealed text in a hover over the range."
+            },
+            "reveal": {
+              "type": "string",
+              "enum": [
+                "never",
+                "adjacent",
+                "line",
+                "selection"
+              ],
+              "default": "never",
+              "markdownDescription": "When to stop concealing a range: `never`, when a caret rests against it (`adjacent`), anywhere on its line (`line`), or when a selection covers it (`selection`). Anything but `never` reflows the line as the caret arrives."
+            },
+            "style": {
+              "type": "object",
+              "description": "How the replacement is drawn. Ignored when replaceWith is empty.",
+              "additionalProperties": false,
+              "properties": {
+                "color": {
+                  "type": "string"
+                },
+                "backgroundColor": {
+                  "type": "string"
+                },
+                "border": {
+                  "type": "string"
+                },
+                "borderRadius": {
+                  "type": "string"
+                },
+                "fontStyle": {
+                  "type": "string"
+                },
+                "fontWeight": {
+                  "type": "string"
+                },
+                "textDecoration": {
+                  "type": "string"
+                },
+                "margin": {
+                  "type": "string"
+                },
+                "width": {
+                  "type": "string"
+                },
+                "height": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && npm run check-example-rules && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "sync-example-rules": "node scripts/sync-example-rules.js",
+    "check-example-rules": "node scripts/sync-example-rules.js --check",
+    "test": "vscode-test",
+    "test:fork": "./scripts/test-fork.sh",
+    "test:unit": "npm run compile-tests && mocha \"out/test/unit/**/*.test.js\"",
+    "vsix": "vsce package --pre-release --skip-license -o ./builds/"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.20.1",
+    "@types/vscode": "^1.104.0",
+    "@typescript-eslint/eslint-plugin": "^8.68.0",
+    "@typescript-eslint/parser": "^8.68.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.39.5",
+    "mocha": "^10.8.2",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.3",
+    "glob": "^11.0.3"
+  }
+}
