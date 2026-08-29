@@ -5,15 +5,15 @@
 # run from sources is neither, so the host is launched the way that checkout launches itself and
 # handed the same `--extensionTestsPath` the CLI would have used.
 #
-#   CONCEAL_DEMO_FORK=~/sources/3rd/vscode ./scripts/test-fork.sh
+#   CONCEAL_DEMO_FORK=/path/to/vscode-fork ./scripts/test-fork.sh
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-FORK="${CONCEAL_DEMO_FORK:-$HOME/sources/3rd/vscode}"
+FORK="${CONCEAL_DEMO_FORK:-}"
 PROFILE="${CONCEAL_DEMO_PROFILE:-$REPO/.vscode-test/fork-profile}"
 
-if [[ ! -x "$FORK/scripts/code.sh" ]]; then
-	echo "No VS Code checkout at $FORK — set CONCEAL_DEMO_FORK." >&2
+if [[ -z "$FORK" || ! -x "$FORK/scripts/code.sh" ]]; then
+	echo "${FORK:+No VS Code checkout at $FORK. }Set CONCEAL_DEMO_FORK to a VS Code checkout that carries the concealedText proposal." >&2
 	exit 1
 fi
 

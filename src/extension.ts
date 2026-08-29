@@ -3,6 +3,7 @@ import { ConcealAvailability, describe, detectConcealApi, isAvailable } from "./
 import { SECTION, affectsSettings } from "./config";
 import { ConcealEngine, EngineStats } from "./engine";
 import { createLog, log } from "./log";
+import { startRecordingIfAsked } from "./recorder";
 import { renderStats } from "./report";
 
 const SUPPRESS_WARNING_KEY = "conceal-demo.suppressUnavailableWarning";
@@ -95,6 +96,9 @@ export function activate(context: vscode.ExtensionContext): ConcealDemoApi {
   if (!isAvailable(availability)) {
     void warnUnavailable(context, availability);
   }
+
+  // Dev tooling: plays the scenes behind the README's GIFs, and does nothing at all otherwise.
+  startRecordingIfAsked();
 
   return {
     availability,

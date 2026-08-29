@@ -2,9 +2,9 @@
  *  Vendored copy of the `concealedText` API proposal.
  *
  *  `npx @vscode/dts dev` pulls proposal declarations from microsoft/vscode, and this one is not
- *  there: it lives in a fork (branch `jin/conceal-api`, upstream issue #171074). The file below is
- *  a verbatim copy of `src/vscode-dts/vscode.proposed.concealedText.d.ts` from that fork — keep it
- *  in step by copying, not by editing.
+ *  there: it lives in a fork (branch `heyzling/concealed-text`, upstream issue #171074). The file
+ *  below is a verbatim copy of `src/vscode-dts/vscode.proposed.concealedText.d.ts` from that fork
+ *  — keep it in step by copying, not by editing.
  *--------------------------------------------------------------------------------------------*/
 
 declare module 'vscode' {

@@ -81,9 +81,9 @@ suite("shipped example rules", () => {
   test("every example folder has at least one rule", () => {
     const folders = fs
       .readdirSync(path.join(ROOT, "examples"), { withFileTypes: true })
-      .filter((entry) => entry.isDirectory() && /^\d\d-/.test(entry.name))
+      .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
       .map((entry) => entry.name);
-    assert.strictEqual(folders.length, 8);
+    assert.deepStrictEqual(folders.sort(), ["1-hide", "2-replace", "6-not-implemented", "fixtures"]);
     for (const folder of folders) {
       const matching = rules.filter((rule) =>
         (rule.files ?? []).some((glob) => glob.includes(folder)),
@@ -92,61 +92,96 @@ suite("shipped example rules", () => {
     }
   });
 
-  test("G1 removes markdown syntax and leaves the words", () => {
-    const lines = render(rules, "examples/01-syntax-elision/emphasis.md");
-    assert.strictEqual(
-      lineContaining(lines, "takes a run of text"),
-      "The conceal API takes a run of text out of the view, never out of the file.",
-    );
+  test("every scene names an example file that exists", () => {
+    const scenes = readJson("examples", "scenes.json") as { scenes: { example: string }[] };
+    for (const scene of scenes.scenes) {
+      assert.ok(
+        fs.existsSync(path.join(ROOT, "examples", scene.example)),
+        `no example file at ${scene.example}`,
+      );
+    }
   });
 
-  test("G1 leaves a link's description and hides its target", () => {
-    const lines = render(rules, "examples/01-syntax-elision/links.md");
-    assert.strictEqual(
-      lineContaining(lines, "Q4 report"),
-      "See the Q4 report for the numbers, and",
-    );
+  test("11 removes markdown syntax and leaves the words", () => {
+    const lines = render(rules, "examples/1-hide/11-md-markup.md");
+    assert.strictEqual(lineContaining(lines, "Bold"), "Bold, italic, code.");
   });
 
-  test("G1 unquotes JSON keys and leaves string values alone", () => {
-    const lines = render(rules, "examples/01-syntax-elision/config.json");
-    assert.strictEqual(lineContaining(lines, "conceal-demo"), '  name: "conceal-demo",');
-    assert.strictEqual(lineContaining(lines, '"a"'), '  list: ["a", "b"]');
+  test("12 hides an identity marker outright", () => {
+    const lines = render(rules, "examples/1-hide/12-example-id-md.md");
+    assert.strictEqual(lineContaining(lines, "Buy milk"), "- Buy milk");
+    assert.strictEqual(lineContaining(lines, "Go home"), "- Go home");
   });
 
-  test("G2 draws one glyph per token", () => {
-    const lines = render(rules, "examples/02-symbol-substitution/math.tex");
-    assert.strictEqual(lineContaining(lines, "∀"), "∀ x ∈ \\mathbb{R}: α x^2 + β x + γ = 0");
+  test("13 hides a block anchor and leaves the sentence", () => {
+    const lines = render(rules, "examples/1-hide/13-obsidian-block-id.md");
+    assert.strictEqual(lineContaining(lines, "anchored"), "An anchored line.");
   });
 
-  test("G3 hides an identity marker outright", () => {
-    const lines = render(rules, "examples/03-machine-metadata/notes.md");
-    assert.strictEqual(lineContaining(lines, "Buy milk"), "## #todo Buy milk");
+  test("21 draws a glyph per tag", () => {
+    const lines = render(rules, "examples/2-replace/21-tag-to-icon.md");
+    assert.strictEqual(lineContaining(lines, "Ship"), "- ✅ Ship the fork");
+    assert.strictEqual(lineContaining(lines, "gutter"), "- 🐞 Fix the gutter");
   });
 
-  test("G3 draws a badge in the variant that asks for one", () => {
-    const lines = render(rules, "examples/03-machine-metadata/notes-badge.md");
-    assert.strictEqual(lineContaining(lines, "Buy milk"), "## °#todo Buy milk");
+  test("22 draws a glyph per TeX command and leaves the rest", () => {
+    const lines = render(rules, "examples/2-replace/22-latex-formula.tex");
+    assert.strictEqual(lines[0], "∀ x ∈ \\mathbb{R}");
+    assert.strictEqual(lines[1], "α + β = γ");
   });
 
-  test("G3 shortens a long opaque id", () => {
-    const lines = render(rules, "examples/03-machine-metadata/store-paths.md");
-    assert.strictEqual(
-      lineContaining(lines, "hello").trim(),
-      "/nix/store/…-hello-2.12.1/bin/hello",
-    );
+  test("23 draws what prettify-symbols-mode draws", () => {
+    const lines = render(rules, "examples/2-replace/23-lisp-lambda.el");
+    assert.strictEqual(lines[0], "(λ (x) (≥ x 0))");
+    assert.strictEqual(lines[1], "(λ (y) (√ y))");
   });
 
-  test("G4 draws a different string per occurrence", () => {
-    const lines = render(rules, "examples/04-semantic-projection/scenes.md");
+  test("24 builds a different string per occurrence", () => {
+    const lines = render(rules, "examples/2-replace/24-writer-scene-syntax.md");
+    assert.strictEqual(lineContaining(lines, "icons"), "# ▲2 ⌁3 Writer scene icons");
     assert.strictEqual(lineContaining(lines, "lighthouse"), "## ⟲1 ▲3 ⌁10 The lighthouse");
-    assert.strictEqual(lineContaining(lines, "harbour"), "## ⟲1 ▲2 ⌁137 The harbour");
+    assert.strictEqual(lineContaining(lines, "ferry"), "## ⟲2 ▲1 ⌁7 The ferry");
   });
 
-  test("G4 costs one decoration type per distinct string drawn", () => {
-    const applicable = rulesFor(rules, "examples/04-semantic-projection/scenes.md");
+  test("24 costs one decoration type per distinct string drawn", () => {
+    const applicable = rulesFor(rules, "examples/2-replace/24-writer-scene-syntax.md");
     const lines = fs
-      .readFileSync(path.join(ROOT, "examples/04-semantic-projection/scenes.md"), "utf8")
+      .readFileSync(path.join(ROOT, "examples/2-replace/24-writer-scene-syntax.md"), "utf8")
+      .split("\n");
+    const spans = spansForLines(applicable, lines, { remaining: 10_000, exhausted: false });
+    const keys = new Set(
+      spans.map((span) =>
+        decorationKey({
+          replacement: span.replacement,
+          cursorStop: span.rule.cursorStop,
+          style: span.rule.style,
+        }),
+      ),
+    );
+    assert.strictEqual(applicable.length, 3, "three rules");
+    assert.ok(keys.size > applicable.length, `expected more types than rules, got ${keys.size}`);
+  });
+
+  test("25 masks a value at its own width, right up to the cap", () => {
+    const lines = render(rules, "examples/2-replace/25-password-mask.env");
+    assert.strictEqual(lines[0], `API_TOKEN=${"•".repeat(16)}`, "sixteen is the cap exactly");
+    assert.strictEqual(lines[1], "LOG_LEVEL=•••••");
+  });
+
+  test("hiding a property line's text leaves the line", () => {
+    const logseq = render(rules, "examples/6-not-implemented/61-logseq-properties.md");
+    assert.strictEqual(logseq[3], "", "id:: leaves an empty row");
+    assert.strictEqual(logseq[4], "", "collapsed:: leaves an empty row");
+    assert.strictEqual(logseq[5], "- Ship the fork");
+
+    const org = render(rules, "examples/6-not-implemented/62-org-properties.org");
+    assert.deepStrictEqual(org.slice(0, 6), ["* Buy milk", "", "", "", "", "Milk, and nothing else."]);
+  });
+
+  test("a per-occurrence replacement costs one decoration type per distinct string", () => {
+    const applicable = rulesFor(rules, "examples/fixtures/types.md");
+    const lines = fs
+      .readFileSync(path.join(ROOT, "examples/fixtures/types.md"), "utf8")
       .split("\n");
     const spans = spansForLines(applicable, lines, { remaining: 10_000, exhausted: false });
     const keys = new Set(
@@ -165,33 +200,16 @@ suite("shipped example rules", () => {
     );
   });
 
-  test("G5 keeps the first class and folds the rest", () => {
-    const lines = render(rules, "examples/05-bulk-collapse/tailwind.html");
-    assert.strictEqual(lineContaining(lines, "card").trim(), '<div class="card …">');
+  test("a chip wider than the editor's cap is cut at 16 characters", () => {
+    const lines = render(rules, "examples/fixtures/cap.md");
+    const chip = lineContaining(lines, "▸");
+    assert.strictEqual(chip, "▸ #todo !#done ·", "`▸ #todo !#done · 20` is 19 characters");
+    assert.strictEqual(Array.from(chip).length, 16);
   });
 
-  test("G6 masks a value to the editor's cap, not to the value's width", () => {
-    const lines = render(rules, "examples/06-redaction/secrets.env");
-    assert.strictEqual(lineContaining(lines, "API_TOKEN"), `API_TOKEN=${"•".repeat(16)}`);
+  test("masking pads to the hidden value's width, up to the same cap", () => {
+    const lines = render(rules, "examples/fixtures/mask.env");
     assert.strictEqual(lineContaining(lines, "LOG_LEVEL"), "LOG_LEVEL=•••••");
-  });
-
-  test("G7 draws a fence chip, and the editor's cap cuts it", () => {
-    const lines = render(rules, "examples/07-line-elision/fences.md");
-    assert.strictEqual(lineContaining(lines, "▸"), "▸ #todo !#done ·");
-    assert.strictEqual(Array.from(lineContaining(lines, "▸")).length, 16);
-  });
-
-  test("G7 hiding a whole line's text leaves the line", () => {
-    const lines = render(rules, "examples/07-line-elision/frontmatter.md");
-    assert.strictEqual(lines[1], "");
-    assert.strictEqual(lines[2], "");
-    assert.strictEqual(lines[5], "---");
-  });
-
-  test("G8 hides markers and draws tag glyphs", () => {
-    const lines = render(rules, "examples/08-interaction/caret-playground.md");
-    assert.strictEqual(lineContaining(lines, "Crossing"), "## Crossing");
-    assert.ok(lineContaining(lines, "✅").includes("✅"));
+    assert.strictEqual(lineContaining(lines, "API_TOKEN"), `API_TOKEN=${"•".repeat(16)}`);
   });
 });

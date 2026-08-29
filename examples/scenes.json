@@ -1,0 +1,595 @@
+{
+  "settleMs": 450,
+  "scenes": [
+    {
+      "id": "11-md-markup",
+      "title": "Hide — markdown emphasis markers",
+      "example": "1-hide/11-md-markup.md",
+      "window": [
+        1280,
+        380
+      ],
+      "steps": [
+        {
+          "caption": "Concealment OFF: visible Markdown markers",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "Concealment ON: the markers are gone",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "Copy preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "select": [
+                3,
+                1,
+                3,
+                28
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "12-example-id-md",
+      "title": "Hide — a record id on every item",
+      "example": "1-hide/12-example-id-md.md",
+      "window": [
+        1280,
+        380
+      ],
+      "steps": [
+        {
+          "caption": "Concealment OFF: visible IDs",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "Concealment ON: the IDs are not visible",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "Copy preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "select": [
+                3,
+                1,
+                4,
+                20
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "13-obsidian-block-id",
+      "title": "Hide — an Obsidian block anchor",
+      "example": "1-hide/13-obsidian-block-id.md",
+      "window": [
+        1280,
+        380
+      ],
+      "steps": [
+        {
+          "caption": "Concealment OFF: the anchor Obsidian at the end",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "Concealment ON: the line ends where the sentence does",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "Copy preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "select": [
+                3,
+                1,
+                3,
+                26
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "21-tag-to-icon",
+      "title": "Replace — a tag drawn as its icon",
+      "example": "2-replace/21-tag-to-icon.md",
+      "window": [
+        1280,
+        400
+      ],
+      "steps": [
+        {
+          "caption": "Concealment OFF: origian text",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "Concealment ON: each tag drawn as one glyph",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "Find still matches #bug: the text is drawn over, not gone",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "editor.actions.findWithArgs",
+              "args": [
+                {
+                  "searchString": "#bug"
+                }
+              ]
+            },
+            {
+              "command": "editor.action.nextMatchFindAction"
+            }
+          ]
+        },
+        {
+          "caption": "Copy preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "closeFindWidget"
+            },
+            {
+              "select": [
+                3,
+                1,
+                4,
+                22
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "22-latex-formula",
+      "title": "Replace — TeX commands as their glyphs",
+      "example": "2-replace/22-latex-formula.tex",
+      "window": [
+        1280,
+        380
+      ],
+      "steps": [
+        {
+          "caption": "Concealment OFF: five commands, seven characters each",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "Concealment ON: one glyph per command, from a fixed table",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "Copy preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "select": [
+                1,
+                1,
+                2,
+                24
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "23-lisp-lambda",
+      "title": "Replace — prettify-symbols, in a settings file",
+      "example": "2-replace/23-lisp-lambda.el",
+      "window": [
+        1280,
+        380
+      ],
+      "steps": [
+        {
+          "caption": "Concealment OFF: lambda, >= and sqrt, spelled out",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "Concealment ON: what prettify-symbols-mode draws",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "Copy preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "select": [
+                1,
+                1,
+                2,
+                22
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "24-writer-scene-syntax",
+      "title": "Replace — a glyph built per occurrence",
+      "example": "2-replace/24-writer-scene-syntax.md",
+      "window": [
+        1280,
+        440
+      ],
+      "steps": [
+        {
+          "caption": "Concealment OFF: r, l and v — round, level, version",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "Concealment ON: the letter is drawn, the number kept",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "Copy preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "select": [
+                1,
+                1,
+                9,
+                16
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "25-password-mask",
+      "title": "Replace — a value masked at its own width",
+      "example": "2-replace/25-password-mask.env",
+      "window": [
+        1280,
+        380
+      ],
+      "steps": [
+        {
+          "caption": "Concealment OFF: a token anyone behind you can read",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "Concealment ON: masked, and at the value's own width",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "Find still matches sk-live: a rendering feature, not a boundary",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "editor.actions.findWithArgs",
+              "args": [
+                {
+                  "searchString": "sk-live"
+                }
+              ]
+            },
+            {
+              "command": "editor.action.nextMatchFindAction"
+            }
+          ]
+        },
+        {
+          "caption": "Copy preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "closeFindWidget"
+            },
+            {
+              "select": [
+                1,
+                1,
+                1,
+                27
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "61-logseq-properties",
+      "title": "Not implemented — property lines own a whole row",
+      "example": "6-not-implemented/61-logseq-properties.md",
+      "window": [
+        1280,
+        420
+      ],
+      "steps": [
+        {
+          "caption": "The property lines are hidden — and two blank rows are left",
+          "hold": 2.2
+        },
+        {
+          "caption": "Concealment OFF: id:: and collapsed:: own a line each",
+          "hold": 2.2,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "On again. Hiding a line's text cannot hide the line",
+          "hold": 2.0,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "And the gutter stops numbering them: 1, 2, 3, then 6",
+          "hold": 2.4,
+          "do": [
+            {
+              "caret": [
+                6,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "cursorStop \"before\" gives the numbers back — the rows stay",
+          "hold": 2.6,
+          "do": [
+            {
+              "rule": "wall-logseq-property-line",
+              "patch": {
+                "cursorStop": "before"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "62-org-properties",
+      "title": "Not implemented — an org property drawer",
+      "example": "6-not-implemented/62-org-properties.org",
+      "window": [
+        1280,
+        420
+      ],
+      "steps": [
+        {
+          "caption": "The drawer is hidden, and four blank rows are what is left",
+          "hold": 2.2
+        },
+        {
+          "caption": "Concealment OFF: :PROPERTIES: to :END:, four lines of it",
+          "hold": 2.2,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "On again. The heading and its one sentence stay four rows apart",
+          "hold": 2.0,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "The gutter runs 1, then 6 — the hidden rows lose their numbers",
+          "hold": 2.4,
+          "do": [
+            {
+              "caret": [
+                6,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "cursorStop \"before\" fixes the gutter, not the gap",
+          "hold": 2.6,
+          "do": [
+            {
+              "rule": "wall-org-property-drawer",
+              "patch": {
+                "cursorStop": "before"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

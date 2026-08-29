@@ -1,5 +1,6 @@
 .vscode/**
 .vscode-test/**
+tmp/**
 .vscode-test.mjs
 out/**
 src/**

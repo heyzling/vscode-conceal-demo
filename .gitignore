@@ -4,3 +4,5 @@ dist/
 builds/
 .vscode-test/
 *.vsix
+tmp/
+*env.sh

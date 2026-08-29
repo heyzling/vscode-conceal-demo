@@ -33,7 +33,7 @@ suite("interaction", () => {
   async function openFixture(name: string): Promise<vscode.TextEditor> {
     const folder = vscode.workspace.workspaceFolders?.[0];
     assert.ok(folder);
-    const uri = vscode.Uri.file(path.join(folder.uri.fsPath, `08-interaction/${name}`));
+    const uri = vscode.Uri.file(path.join(folder.uri.fsPath, `fixtures/${name}`));
     const editor = await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(uri));
     api.refresh();
     return editor;

@@ -47,7 +47,7 @@ suite("conceal demo", () => {
   test("every shipped rule is runnable", () => {
     const stats = api.stats();
     assert.deepStrictEqual(stats.problems, []);
-    assert.ok(stats.exampleRules > 20, `only ${stats.exampleRules} example rules loaded`);
+    assert.ok(stats.exampleRules >= 16, `only ${stats.exampleRules} example rules loaded`);
   });
 
   test("the commands are registered whether or not the API is there", async () => {
@@ -75,11 +75,11 @@ suite("conceal demo", () => {
   });
 
   test("an example file is concealed exactly when the API is available", async () => {
-    const editor = await open("03-machine-metadata/notes.md");
+    const editor = await open("1-hide/12-example-id-md.md");
     const stats = statsFor(editor);
     assert.strictEqual(stats.included, true);
     if (api.availability.kind === "available") {
-      assert.ok(stats.spans >= 4, `expected the identity markers, got ${stats.spans} span(s)`);
+      assert.ok(stats.spans >= 2, `expected the identity markers, got ${stats.spans} span(s)`);
       assert.ok(stats.decorationTypes >= 1);
     } else {
       assert.strictEqual(stats.spans, 0, "nothing may be concealed without the API");
@@ -88,7 +88,7 @@ suite("conceal demo", () => {
   });
 
   test("the document is never modified", async () => {
-    const editor = await open("06-redaction/secrets.env");
+    const editor = await open("fixtures/mask.env");
     assert.strictEqual(editor.document.isDirty, false);
     assert.ok(editor.document.getText().includes("sk-live-2f9c8a7b6d5e4f3a2b1c0d9e8f7a6b5c"));
   });
@@ -97,7 +97,7 @@ suite("conceal demo", () => {
     if (api.availability.kind !== "available") {
       this.skip();
     }
-    const editor = await open("04-semantic-projection/scenes.md");
+    const editor = await open("fixtures/types.md");
     const stats = statsFor(editor);
     assert.ok(
       stats.decorationTypes > stats.rulesApplied.length,
@@ -109,7 +109,7 @@ suite("conceal demo", () => {
     if (api.availability.kind !== "available") {
       this.skip();
     }
-    const editor = await open("07-line-elision/fences.md");
+    const editor = await open("fixtures/cap.md");
     assert.ok(statsFor(editor).truncated > 0, `nothing was cut to ${MAX_REPLACEMENT_CHARACTERS}`);
   });
 
@@ -117,7 +117,7 @@ suite("conceal demo", () => {
     if (api.availability.kind !== "available") {
       this.skip();
     }
-    const editor = await open("06-redaction/secrets.env");
+    const editor = await open("fixtures/mask.env");
     assert.ok(statsFor(editor).padFailed > 0);
   });
 });

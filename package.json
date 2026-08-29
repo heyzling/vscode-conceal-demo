@@ -99,51 +99,88 @@
           },
           "default": [
             {
-              "id": "g1-md-bold",
+              "id": "hide-md-bold-open",
               "files": [
-                "**/01-syntax-elision/*.md"
+                "**/1-hide/11-md-markup.md"
               ],
-              "pattern": "\\*\\*"
+              "pattern": "\\*\\*(?=[^*]+\\*\\*)",
+              "cursorStop": "before"
             },
             {
-              "id": "g1-md-italic",
+              "id": "hide-md-bold-close",
               "files": [
-                "**/01-syntax-elision/*.md"
+                "**/1-hide/11-md-markup.md"
               ],
-              "pattern": "(?<=[\\s(])_(?=\\S)|(?<=\\S)_(?=[\\s.,!?)]|$)"
+              "pattern": "(?<=\\*\\*[^*]+)\\*\\*",
+              "cursorStop": "before"
             },
             {
-              "id": "g1-md-code-tick",
+              "id": "hide-md-italic-open",
               "files": [
-                "**/01-syntax-elision/*.md"
+                "**/1-hide/11-md-markup.md"
               ],
-              "pattern": "`"
+              "pattern": "(?<=^|[\\s(])_(?=[^_\\s][^_]*_)",
+              "cursorStop": "before"
             },
             {
-              "id": "g1-md-link-open",
+              "id": "hide-md-italic-close",
               "files": [
-                "**/01-syntax-elision/*.md"
+                "**/1-hide/11-md-markup.md"
               ],
-              "pattern": "\\[(?=[^\\]]*\\]\\([^)]*\\))"
+              "pattern": "(?<=(?:^|[\\s(])_[^_\\s][^_]*)_(?=$|[\\s.,!?)])",
+              "cursorStop": "before"
             },
             {
-              "id": "g1-md-link-target",
+              "id": "hide-md-tick-open",
               "files": [
-                "**/01-syntax-elision/*.md"
+                "**/1-hide/11-md-markup.md"
               ],
-              "pattern": "\\]\\([^)]*\\)"
+              "pattern": "`(?=[^`]+`)",
+              "cursorStop": "before"
             },
             {
-              "id": "g1-json-key-quotes",
+              "id": "hide-md-tick-close",
               "files": [
-                "**/01-syntax-elision/*.json"
+                "**/1-hide/11-md-markup.md"
               ],
-              "pattern": "\"(?=[A-Za-z_][\\w-]*\"\\s*:)|(?<=[\\w-])\"(?=\\s*:)"
+              "pattern": "(?<=`[^`]+)`",
+              "cursorStop": "before"
             },
             {
-              "id": "g2-tex-forall",
+              "id": "hide-example-id",
               "files": [
-                "**/02-symbol-substitution/*.tex"
+                "**/1-hide/12-example-id-md.md"
+              ],
+              "pattern": "\\{![A-Za-z0-9]{6}\\} ",
+              "cursorStop": "before"
+            },
+            {
+              "id": "hide-obsidian-block-id",
+              "files": [
+                "**/1-hide/13-obsidian-block-id.md"
+              ],
+              "pattern": " \\^[a-z0-9]{6}$"
+            },
+            {
+              "id": "replace-tag-done",
+              "files": [
+                "**/2-replace/21-tag-to-icon.md"
+              ],
+              "pattern": "#done\\b",
+              "replaceWith": "✅"
+            },
+            {
+              "id": "replace-tag-bug",
+              "files": [
+                "**/2-replace/21-tag-to-icon.md"
+              ],
+              "pattern": "#bug\\b",
+              "replaceWith": "🐞"
+            },
+            {
+              "id": "replace-tex-forall",
+              "files": [
+                "**/2-replace/22-latex-formula.tex"
               ],
               "pattern": "\\\\forall",
               "replaceWith": "∀",
@@ -152,9 +189,9 @@
               }
             },
             {
-              "id": "g2-tex-in",
+              "id": "replace-tex-in",
               "files": [
-                "**/02-symbol-substitution/*.tex"
+                "**/2-replace/22-latex-formula.tex"
               ],
               "pattern": "\\\\in\\b",
               "replaceWith": "∈",
@@ -163,9 +200,9 @@
               }
             },
             {
-              "id": "g2-tex-alpha",
+              "id": "replace-tex-alpha",
               "files": [
-                "**/02-symbol-substitution/*.tex"
+                "**/2-replace/22-latex-formula.tex"
               ],
               "pattern": "\\\\alpha",
               "replaceWith": "α",
@@ -174,9 +211,9 @@
               }
             },
             {
-              "id": "g2-tex-beta",
+              "id": "replace-tex-beta",
               "files": [
-                "**/02-symbol-substitution/*.tex"
+                "**/2-replace/22-latex-formula.tex"
               ],
               "pattern": "\\\\beta",
               "replaceWith": "β",
@@ -185,9 +222,9 @@
               }
             },
             {
-              "id": "g2-tex-gamma",
+              "id": "replace-tex-gamma",
               "files": [
-                "**/02-symbol-substitution/*.tex"
+                "**/2-replace/22-latex-formula.tex"
               ],
               "pattern": "\\\\gamma",
               "replaceWith": "γ",
@@ -196,78 +233,42 @@
               }
             },
             {
-              "id": "g2-tex-rightarrow",
+              "id": "replace-lisp-lambda",
               "files": [
-                "**/02-symbol-substitution/*.tex"
+                "**/2-replace/23-lisp-lambda.el"
               ],
-              "pattern": "\\\\rightarrow",
-              "replaceWith": "→",
+              "pattern": "\\blambda\\b",
+              "replaceWith": "λ",
               "style": {
                 "color": "theme:editorInfo.foreground"
               }
             },
             {
-              "id": "g2-ts-fat-arrow",
+              "id": "replace-lisp-ge",
               "files": [
-                "**/02-symbol-substitution/*.ts"
+                "**/2-replace/23-lisp-lambda.el"
               ],
-              "pattern": "=>",
-              "replaceWith": "⇒",
+              "pattern": ">=",
+              "replaceWith": "≥",
               "style": {
                 "color": "theme:editorInfo.foreground"
               }
             },
             {
-              "id": "g3-record-id",
+              "id": "replace-lisp-sqrt",
               "files": [
-                "**/03-machine-metadata/notes.md"
+                "**/2-replace/23-lisp-lambda.el"
               ],
-              "pattern": "\\{![A-Za-z0-9]{6}\\} ",
-              "cursorStop": "before"
-            },
-            {
-              "id": "g3-record-id-badge",
-              "files": [
-                "**/03-machine-metadata/notes-badge.md"
-              ],
-              "pattern": "\\{![A-Za-z0-9]{6}\\} ",
-              "replaceWith": "°",
-              "cursorStop": "before",
+              "pattern": "\\bsqrt\\b",
+              "replaceWith": "√",
               "style": {
-                "color": "theme:editorCodeLens.foreground",
-                "margin": "0 0.2em 0 0"
+                "color": "theme:editorInfo.foreground"
               }
             },
             {
-              "id": "g3-obsidian-block-id",
+              "id": "replace-scene-round",
               "files": [
-                "**/03-machine-metadata/properties.md"
-              ],
-              "pattern": " \\^[a-z0-9]{6}$"
-            },
-            {
-              "id": "g3-logseq-property",
-              "files": [
-                "**/03-machine-metadata/properties.md"
-              ],
-              "pattern": "id:: [0-9a-f-]{36}"
-            },
-            {
-              "id": "g3-nix-store-hash",
-              "files": [
-                "**/03-machine-metadata/store-paths.md"
-              ],
-              "pattern": "(?<=/nix/store/)[a-z0-9]{32}(?=-)",
-              "replaceWith": "…",
-              "style": {
-                "color": "theme:editorCodeLens.foreground"
-              },
-              "hover": true
-            },
-            {
-              "id": "g4-scene-round",
-              "files": [
-                "**/04-semantic-projection/scenes.md"
+                "**/2-replace/24-writer-scene-syntax.md"
               ],
               "pattern": "\\br(\\d+)\\b",
               "replaceWith": "⟲$1",
@@ -276,9 +277,9 @@
               }
             },
             {
-              "id": "g4-scene-level",
+              "id": "replace-scene-level",
               "files": [
-                "**/04-semantic-projection/scenes.md"
+                "**/2-replace/24-writer-scene-syntax.md"
               ],
               "pattern": "\\bl(\\d+)\\b",
               "replaceWith": "▲$1",
@@ -287,9 +288,9 @@
               }
             },
             {
-              "id": "g4-scene-version",
+              "id": "replace-scene-version",
               "files": [
-                "**/04-semantic-projection/scenes.md"
+                "**/2-replace/24-writer-scene-syntax.md"
               ],
               "pattern": "\\bv(\\d+)\\b",
               "replaceWith": "⌁$1",
@@ -298,115 +299,60 @@
               }
             },
             {
-              "id": "g4-i18n-key",
+              "id": "replace-env-value",
               "files": [
-                "**/04-semantic-projection/i18n.ts"
-              ],
-              "pattern": "t\\(\"[\\w.]*?\\.(\\w+)\"\\)",
-              "replaceWith": "“$1”",
-              "hover": true,
-              "style": {
-                "color": "theme:editorInfo.foreground"
-              }
-            },
-            {
-              "id": "g5-class-list",
-              "files": [
-                "**/05-bulk-collapse/*.html"
-              ],
-              "pattern": "(?<=class=\")([\\w-]+) ([^\"]{20,})(?=\")",
-              "group": 2,
-              "replaceWith": "…",
-              "reveal": "adjacent",
-              "hover": true,
-              "style": {
-                "color": "theme:editorCodeLens.foreground",
-                "backgroundColor": "theme:editor.wordHighlightBackground",
-                "borderRadius": "3px",
-                "margin": "0 0.15em"
-              }
-            },
-            {
-              "id": "g6-env-value",
-              "files": [
-                "**/06-redaction/*.env"
+                "**/2-replace/25-password-mask.env"
               ],
               "pattern": "(?<==)\\S+$",
               "replaceWith": "•",
               "padToWidth": true,
+              "padWith": "•",
               "style": {
                 "color": "theme:editorWarning.foreground"
-              },
-              "padWith": "•"
-            },
-            {
-              "id": "g7-view-open-chip",
-              "files": [
-                "**/07-line-elision/fences.md"
-              ],
-              "pattern": "^<!-- kms:view query=\"([^\"]*)\" limit=(\\d+) -->$",
-              "replaceWith": "▸ $1 · $2",
-              "style": {
-                "color": "theme:editorCodeLens.foreground",
-                "backgroundColor": "theme:editor.wordHighlightBackground",
-                "borderRadius": "3px"
               }
             },
             {
-              "id": "g7-view-close-chip",
+              "id": "wall-logseq-property-line",
               "files": [
-                "**/07-line-elision/fences.md"
+                "**/6-not-implemented/61-logseq-properties.md"
               ],
-              "pattern": "^<!-- /kms:view -->$",
-              "replaceWith": "▪",
-              "style": {
-                "color": "theme:editorCodeLens.foreground"
-              }
+              "pattern": "^\\s*(?:id|collapsed|hl-[a-z-]+):: .*$"
             },
             {
-              "id": "g7-frontmatter-line",
+              "id": "wall-org-property-drawer",
               "files": [
-                "**/07-line-elision/frontmatter.md"
+                "**/6-not-implemented/62-org-properties.org"
               ],
-              "pattern": "^(?:title|date|tags|id): .*$"
+              "pattern": "^:[A-Z][A-Z_]*:.*$"
             },
             {
-              "id": "g8-hidden-marker",
+              "id": "fixture-marker-before",
               "files": [
-                "**/08-interaction/caret-playground.md",
-                "**/08-interaction/fixture.md"
+                "**/fixtures/fixture.md"
               ],
               "pattern": "\\{![A-Za-z0-9]{6}\\} ",
               "cursorStop": "before"
             },
             {
-              "id": "g8-hidden-marker-after",
+              "id": "fixture-marker-after",
               "files": [
-                "**/08-interaction/fixture-after.md"
+                "**/fixtures/fixture-after.md"
               ],
               "pattern": "\\{![A-Za-z0-9]{6}\\} ",
               "cursorStop": "after"
             },
             {
-              "id": "g8-drawn-done",
+              "id": "fixture-drawn-done",
               "files": [
-                "**/08-interaction/*.md"
+                "**/fixtures/fixture*.md"
               ],
               "pattern": "#done\\b",
               "replaceWith": "✅"
             },
             {
-              "id": "g8-drawn-todo",
+              "id": "fixture-reveal-adjacent",
               "files": [
-                "**/08-interaction/*.md"
-              ],
-              "pattern": "#todo\\b",
-              "replaceWith": "⬜"
-            },
-            {
-              "id": "g8-reveal-adjacent",
-              "files": [
-                "**/08-interaction/*.md"
+                "**/fixtures/fixture*.md"
               ],
               "pattern": "\\(fold:[^)]*\\)",
               "replaceWith": "…",
@@ -417,28 +363,52 @@
               }
             },
             {
-              "id": "g8-reveal-line",
+              "id": "fixture-view-chip",
               "files": [
-                "**/08-interaction/*.md"
+                "**/fixtures/cap.md"
               ],
-              "pattern": "\\(line:[^)]*\\)",
-              "replaceWith": "…",
-              "reveal": "line",
+              "pattern": "^<!-- kms:view query=\"([^\"]*)\" limit=(\\d+) -->$",
+              "replaceWith": "▸ $1 · $2",
               "style": {
                 "color": "theme:editorCodeLens.foreground"
               }
             },
             {
-              "id": "g8-reveal-selection",
+              "id": "fixture-env-value",
               "files": [
-                "**/08-interaction/*.md"
+                "**/fixtures/*.env"
               ],
-              "pattern": "\\(sel:[^)]*\\)",
-              "replaceWith": "…",
-              "reveal": "selection",
+              "pattern": "(?<==)\\S+$",
+              "replaceWith": "•",
+              "padToWidth": true,
+              "padWith": "•",
               "style": {
-                "color": "theme:editorCodeLens.foreground"
+                "color": "theme:editorWarning.foreground"
               }
+            },
+            {
+              "id": "fixture-scene-round",
+              "files": [
+                "**/fixtures/types.md"
+              ],
+              "pattern": "\\br(\\d+)\\b",
+              "replaceWith": "⟲$1"
+            },
+            {
+              "id": "fixture-scene-level",
+              "files": [
+                "**/fixtures/types.md"
+              ],
+              "pattern": "\\bl(\\d+)\\b",
+              "replaceWith": "▲$1"
+            },
+            {
+              "id": "fixture-scene-version",
+              "files": [
+                "**/fixtures/types.md"
+              ],
+              "pattern": "\\bv(\\d+)\\b",
+              "replaceWith": "⌁$1"
             }
           ]
         },

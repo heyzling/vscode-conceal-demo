@@ -19,7 +19,7 @@ from sources gives every extension every proposal it declares, which is what `sc
 
 ```bash
 npm install
-CONCEAL_DEMO_FORK=~/sources/3rd/vscode ./scripts/dev.sh
+CONCEAL_DEMO_FORK=/path/to/vscode-fork ./scripts/dev.sh
 ```
 
 An **installed** build grants proposals through its own `product.json`:
@@ -38,10 +38,9 @@ On any other build the extension detects that it cannot conceal, warns once, and
 `conceal-demo.include` defaults to `["**/examples/**"]`, so nothing outside that folder is touched
 even though the rules ship enabled.
 
-Then open any file under `examples/` and read the `README.md` next to it — each one says what to
-look at and what to press. Start with
-[examples/08-interaction/caret-playground.md](examples/08-interaction/caret-playground.md), which is
-the part no extension can implement for itself.
+Then open any file under `examples/` and read [examples/README.md](examples/README.md) — one
+section per group, each linking the file, naming the rule that fires on it, and showing a recording
+of the behaviour. Start with group 1, then read group 6 for the case the same idea cannot serve.
 
 ## How it is configured
 
@@ -91,18 +90,18 @@ default of `conceal-demo.exampleRules` in `package.json` — one source of truth
 
 ## What pure configuration reaches
 
-One folder of [examples/](examples) per group of the case survey behind this work.
+One folder of [examples/](examples) per group of the case survey behind this work, each with a
+recording beside every file it demonstrates. The survey is being re-cut one group at a time; what
+is in the repository today is the first group and the wall behind it.
 
 | Group | Case | Reached by a regex rule? |
 | --- | --- | --- |
-| G1 | Hide markup, draw nothing | Yes |
-| G2 | Token → a glyph from a fixed table | Yes, at one rule and one decoration type per glyph |
-| G3 | Machine-written ids and properties | Yes, including the declared caret stop |
-| G4 | A replacement computed per occurrence | Only as far as capture groups go — see below |
-| G5 | A placeholder that opens on demand | Reveal yes, click-to-expand no |
-| G6 | Masking a value on screen | Draws, but is not a security boundary, and the cap limits it |
-| G7 | Hiding a whole line | The chip variant yes; hiding the line itself, no |
-| G8 | Caret, delete, selection, copy | Free — this is what the editor provides |
+| [1 — hide](examples/README.md#1--hide-symbols) | Hide a run of text, draw nothing | Yes |
+| [2 — replace](examples/README.md#2--replace-symbols) | Draw a glyph or a shorter string in its place | Yes, at one decoration type per string drawn |
+| [6 — not implemented](examples/README.md#6--not-implemented) | Hide a line that exists only for its text | No — the row stays, and needs a second primitive |
+
+Still to be re-cut: caret and edit behaviour around a concealed range, the reveal policies, and
+what happens when the syntax a rule matches is broken outside the editor.
 
 ## What pure configuration cannot reach
 
@@ -143,3 +142,24 @@ CONCEAL_DEMO_VSCODE=/path/to/code npm test
 
 `src/vscode.proposed.concealedText.d.ts` is a vendored copy of the fork's declaration —
 `npx @vscode/dts dev` cannot fetch it, because the proposal is not in microsoft/vscode.
+
+## Recording the demos
+
+The recordings in `examples/` are not animations: `src/recorder.ts` drives a real editor from
+inside it, stopping at every frame, and `scripts/record.sh` photographs the window. Each scene
+names the one file it is about, and its GIF is written beside that file under the same name — so
+[examples/README.md](examples/README.md) can link the file and show the picture without a path
+being burnt into the frames.
+
+```bash
+CONCEAL_DEMO_FORK=/path/to/vscode-fork \
+CONCEAL_DEMO_WINSHOT=/path/to/screenshot-helper.ps1 \
+  ./scripts/record.sh              # every scene in examples/scenes.json
+  ./scripts/record.sh 12 13        # only scenes whose id contains 12 or 13
+```
+
+It needs the conceal-capable fork (as `scripts/dev.sh` does), `ffmpeg`, and a screenshot helper
+taking `-Hwnd`/`-Out` — this is a WSLg machine, where the editor window is a Win32 window like any
+other and there is no Linux screenshot tool. Nothing is on a timer: the recorder writes a
+rendezvous file when a state is ready and blocks until the picture has been taken, so no frame can
+catch a half-applied decoration.
