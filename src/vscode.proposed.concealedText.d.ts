@@ -2,7 +2,7 @@
  *  Vendored copy of the `concealedText` API proposal.
  *
  *  `npx @vscode/dts dev` pulls proposal declarations from microsoft/vscode, and this one is not
- *  there: it lives in a fork (branch `heyzling/concealed-text`, upstream issue #171074). The file
+ *  there: it lives in a fork (branch `concealed-text-1.135`, upstream issue #171074). The file
  *  below is a verbatim copy of `src/vscode-dts/vscode.proposed.concealedText.d.ts` from that fork
  *  — keep it in step by copying, not by editing.
  *--------------------------------------------------------------------------------------------*/
@@ -13,12 +13,9 @@ declare module 'vscode' {
 
 	export interface DecorationRenderOptions {
 		/**
-		 * Conceal the decorated ranges: their text is left out of what the editor renders, while
-		 * the document keeps it. Concealed text holds no cursor positions, so a concealed range
-		 * behaves as a single unit for cursor movement, selection and word wrap, and it is still
-		 * saved, searched and copied.
-		 *
-		 * Only ranges within a single line are concealed.
+		 * Conceal the decorated ranges: their text is left out of the rendered view while the
+		 * document keeps it. Concealed text holds no cursor positions and is still saved,
+		 * searched and copied. Only ranges within a single line are concealed.
 		 */
 		conceal?: ConcealRenderOptions;
 	}
@@ -31,26 +28,96 @@ declare module 'vscode' {
 		 * Rendered in place of the concealed text. It is drawn, not inserted: it is part of no
 		 * document position and is never selected or copied. Defaults to rendering nothing.
 		 *
-		 * A replacement is drawn, so it has a left and a right side, and each side is one end
-		 * of the range it stands for: the caret shows which end it is on, and text typed there
-		 * lands on that side of the concealed text.
-		 *
-		 * It stands in for text on one line, so line feeds are dropped from its `contentText`
-		 * and the rest is cut to 16 characters.
+		 * Line feeds are dropped from `contentText`. The drawn length is capped by the
+		 * `editor.conceal.maximumReplacementLength` setting, a cut marked with `…`.
 		 */
 		replacement?: ThemableDecorationAttachmentRenderOptions;
 
 		/**
-		 * Which end of the concealed range the one place it collapses to stands for. Only read
-		 * when nothing is drawn in its place (no `replacement`), because then nothing on screen
-		 * can tell the two ends apart, and the choice decides where text typed there lands and
-		 * which side of the range a selection reaching it takes.
-		 *
-		 * - `after` (default): the place is the end of the concealed text.
-		 * - `before`: the place is its start. This is what hidden text that belongs to what
-		 *   follows it wants — an indent typed there goes in front of it, and selecting up to
-		 *   it stops short of it.
+		 * Draw the replacement at the rendered width of the text it stands for: padded when
+		 * narrower, clipped with `…` when wider. Width is measured in rendered cells; the
+		 * `editor.conceal.maximumReplacementLength` cap does not apply. Defaults to `false`.
 		 */
-		cursorStop?: 'before' | 'after';
+		preserveWidth?: boolean;
+
+		/**
+		 * Which end of the concealed range the one place it collapses to stands for. Only read
+		 * when nothing is drawn in its place.
+		 *
+		 * - `auto` (default): the end the caret is travelling towards. A caret already at either
+		 *   end stays; an arrival with no direction falls back to `after`.
+		 * - `before`: the range's start. A caret at the other end is moved here.
+		 * - `after`: the range's end.
+		 */
+		cursorStop?: 'auto' | 'before' | 'after';
+
+		/**
+		 * What Backspace, Delete and word-delete do at a concealed range.
+		 *
+		 * - `atomic` (default): the whole range is deleted, as one undo step.
+		 * - `passthrough`: the keys act on the hidden characters as if they were visible. Only
+		 *   meaningful with a replacement; with nothing drawn it acts as `atomic`.
+		 * - `protect`: deletion never reaches the concealed text; the keys step over the range.
+		 */
+		deletionPolicy?: 'atomic' | 'passthrough' | 'protect';
+
+		/**
+		 * Whether an edit inside a concealed range stops it being concealed until the
+		 * decoration is applied again. Defaults to `true`.
+		 */
+		revealOnEdit?: boolean;
+
+		/**
+		 * Leave the decorated line out of the rendered view. The range is an anchor that
+		 * identifies the line; its extent is not consulted. Defaults to `false`.
+		 *
+		 * The margin keeps the document's numbering. The caret never rests on a concealed
+		 * line; it moves to the nearest visible line. At least one line always stays visible.
+		 */
+		line?: boolean;
+	}
+
+	export interface DecorationInstanceRenderOptions {
+		/**
+		 * Conceal options for this range alone, overriding the decoration type's.
+		 *
+		 * For performance reasons, keep the number of decoration specific options small, and
+		 * use decoration types wherever possible.
+		 */
+		conceal?: ConcealInstanceRenderOptions;
+	}
+
+	export interface ConcealInstanceRenderOptions {
+		/**
+		 * Rendered in place of *this* range, overriding the decoration type's replacement.
+		 */
+		replacement?: ThemableDecorationAttachmentRenderOptions;
+	}
+
+	export interface ThemableDecorationAttachmentRenderOptions {
+		/**
+		 * CSS styling property that will be applied to text enclosed by a decoration.
+		 */
+		borderRadius?: string;
+		/**
+		 * CSS styling property that will be applied to text enclosed by a decoration.
+		 */
+		fontSize?: string;
+		/**
+		 * CSS styling property that will be applied to text enclosed by a decoration.
+		 */
+		fontFamily?: string;
+		/**
+		 * CSS styling property that will be applied to text enclosed by a decoration.
+		 */
+		opacity?: string;
+		/**
+		 * CSS styling property that will be applied to text enclosed by a decoration.
+		 */
+		padding?: string;
+		/**
+		 * CSS styling property that will be applied to text enclosed by a decoration.
+		 */
+		verticalAlign?: string;
 	}
 }

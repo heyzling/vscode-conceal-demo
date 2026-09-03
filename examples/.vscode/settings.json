@@ -1,7 +1,0 @@
-{
-  "//": "Opening this folder as a workspace is all the demo needs; these are the settings worth knowing about.",
-  "conceal-demo.include": ["**/examples/**"],
-  "conceal-demo.disableExamples": false,
-  "conceal-demo.trace": true,
-  "editor.concealedText": true
-}
