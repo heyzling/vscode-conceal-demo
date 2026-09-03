@@ -1,173 +1,239 @@
 # Examples
 
-One folder per group of the case survey. Open a file and the rules in
-[default-rules.json](default-rules.json) fire on it; the section below links the file, names the
-rule, and shows a recording of the behaviour.
+Example files and recorded GIFs of the proposed conceal-text VS Code API.
+
+One folder per **behaviour**, cut this way on purpose: the same API serves every language, so what
+separates concealment from a decoration is not what it draws but what the editor does around it —
+the caret, the selection, the clipboard and the delete key, none of which an extension can
+implement for itself. A case with something to say about two behaviours has a copy of its file in
+both folders.
+
+| Folder | What it shows | Recordings |
+| --- | --- | --- |
+| [1-replace](1-replace) | A glyph drawn in the text's place, and what the clipboard carries | 4 |
+| [2-caret](2-caret) | Where the caret lands, what one arrow press crosses, what a delete takes | 3 |
+| [3-invisible-markers](3-invisible-markers) | Markers that draw nothing, on list items and paragraphs, beside drawn tags | 3 |
+| [4-hide-markup](4-hide-markup) | Emphasis and quotes hidden — and the bug that comes with them | 2 |
 
 Nothing in these files is rewritten. Every character you cannot see is still on disk — `git diff`
 after a session of reading them is empty, and that is the property the whole approach exists to
 keep.
 
-The recordings are played by the editor itself: every caret move, copy and paste in them is the
-editor's own behaviour, not an animation of it. Each one lives beside the file it demonstrates,
-under the same name. Regenerate them with `../scripts/record.sh`; the scenes are data in
+The recordings are played by the editor itself: every caret move, delete and paste is the editor's
+own behaviour, not an animation of it. Each GIF lives beside the file it demonstrates and is named
+after its section. Regenerate them with `../scripts/record.sh`, which takes a section
+(`./scripts/record.sh 1`) or a single GIF (`./scripts/record.sh 31`); the scenes are data in
 [scenes.json](scenes.json).
 
-## 1 — Hide symbols
+## 1 — Replace and copy-paste
 
-Text taken out of the view with nothing drawn in its place: the line simply closes up over it.
-Markup a reader already understands, and identity markers a tool wrote for itself.
+A rule draws a glyph from a fixed table in the concealed range's place. Every recording here runs
+the same four beats — concealment off, so you can see what is in the file; concealment on; the line
+copied into a clean tab beside it; then the glyph copied on its own. The last two are the point of
+the whole approach: what the clipboard carries is what is on disk, never what was on screen.
 
-Every recording runs the same three beats — concealment off, so you can see what is in the file;
-concealment on; then the line copied into a clean tab beside it. The last frame is the point of the
-whole approach: what the clipboard carries is what is on disk, not what was on screen.
+### 11 — Markdown tags — `#done` as an icon
 
-### 11 — Markdown emphasis markers
+[1-replace/tags.md](1-replace/tags.md) · rules `tag-done`, `tag-bug`
 
-[1-hide/11-md-markup.md](1-hide/11-md-markup.md) · rules `hide-md-bold-open`/`-close`,
-`hide-md-italic-open`/`-close`, `hide-md-tick-open`/`-close`
+![A tag drawn as its icon, then the lines and the glyph pasted into a clean tab](1-replace/11-markdown-tags.gif)
 
-![Bold, italic and code markers hidden, then the line pasted into a clean tab with every asterisk intact](1-hide/11-md-markup.gif)
+One rule and one decoration type per glyph. The table is fixed, so the cost is fixed with it.
 
-The oldest case there is — vim's markdown conceal, `org-hide-emphasis-markers` and the whole
-Obsidian Live Preview family are all this one behaviour.
+### 12 — TypeScript — `=>` as ⇒
 
-Two rules per delimiter, not one, and each carries a lookaround for its partner: `**` is concealed
-only when a closing `**` follows it, and vice versa. A single `\*\*` rule looks equivalent and is
-not — it hides every `**` independently, so deleting one half of a pair leaves the other concealed
-and the line goes on drawing as `Bold, italic, code.` while the file underneath is broken markdown.
-The damage never reaches the screen. With the pair rules the orphan stops matching and appears,
-which is the behaviour a reader can trust.
+[1-replace/arrows.ts](1-replace/arrows.ts) · rule `ts-fat-arrow`
 
-All six set `cursorStop: "before"`, so the caret always rests to the *left* of a concealed
-delimiter. Two things follow. The line keeps its gutter number even though it starts with concealed
-text — view column 1 still maps to model column 1, where with the default `"after"` it would map
-past the hidden `**` and the editor would stop numbering the row. And typing at the end of an
-emphasised word extends it: the caret sits inside the run, before the closing delimiter, so
-`Bold` + `er` is `**Bolder**` rather than `**Bold**er`. The cost is that Backspace never reaches a
-delimiter — the caret is always on its left, so Backspace takes the ordinary character before it
-and Delete is the key that takes the marker. Which key destroys what is decided by `cursorStop`,
-per rule, and there is no setting that makes both directions safe.
+![Fat arrows drawn as a glyph, then the lines and the glyph pasted into a clean tab](1-replace/12-ts-arrows.gif)
 
-### 12 — A record id
+The same shape in a language with a compiler behind it, which is the point of cutting the survey by
+behaviour: the API does not know what a language is, and nothing here is aware that a `=>` means
+anything.
 
-[1-hide/12-example-id-md.md](1-hide/12-example-id-md.md) · rule `hide-example-id`
+### 13 — LaTeX — commands as their glyphs
 
-![Record ids hidden on two list items, then both items pasted into a clean tab with their ids intact](1-hide/12-example-id-md.gif)
+[1-replace/math.tex](1-replace/math.tex) · rules `tex-forall`, `tex-in`, `tex-alpha`, `tex-beta`,
+`tex-gamma`, `tex-rightarrow`
 
-Ten characters a sync daemon wrote and a human never edits. The rule sets `cursorStop: "before"`,
-so typing at the start of an item lands in front of the marker rather than inside it.
-
-### 13 — An Obsidian block anchor
-
-[1-hide/13-obsidian-block-id.md](1-hide/13-obsidian-block-id.md) · rule `hide-obsidian-block-id`
-
-![A ^a1b2c3 anchor hidden at the end of a line, then pasted into a clean tab](1-hide/13-obsidian-block-id.gif)
-
-The anchor sits at the end of a line, so hiding it costs nothing at all: no blank row, no gutter
-gap. That is the whole difference between it and the property lines in
-[6 — not implemented](#6--not-implemented).
-
-## 2 — Replace symbols
-
-The rule draws something in the concealed range's place: a glyph from a fixed table, or a shorter
-string built out of what the pattern captured. The text underneath is untouched, which Find is the
-quickest way to prove — two of the recordings below do exactly that.
-
-Same three beats as group 1, with a fourth where the point is worth making: concealment off,
-concealment on, and the line copied into a clean tab beside it.
-
-### 21 — A tag drawn as its icon
-
-[2-replace/21-tag-to-icon.md](2-replace/21-tag-to-icon.md) · rules `replace-tag-done`,
-`replace-tag-bug`
-
-![#done and #bug drawn as glyphs, Find still matching #bug, then both items pasted into a clean tab](2-replace/21-tag-to-icon.gif)
-
-One rule and one decoration type per glyph. The table is fixed, so the cost is fixed with it — the
-opposite of 24 below.
-
-### 22 — TeX commands as their glyphs
-
-[2-replace/22-latex-formula.tex](2-replace/22-latex-formula.tex) · rules `replace-tex-forall`,
-`replace-tex-in`, `replace-tex-alpha`, `replace-tex-beta`, `replace-tex-gamma`
-
-![\forall, \in, \alpha, \beta and \gamma drawn as glyphs, then both lines pasted into a clean tab](2-replace/22-latex-formula.gif)
+![TeX commands drawn as glyphs, then the lines and the glyph pasted into a clean tab](1-replace/13-latex.gif)
 
 `\mathbb{R}` stays as it is, and that is the honest shape of the case: what is not in the table is
 not drawn. A table big enough for real TeX is a long settings file, not a hard one.
 
-### 23 — prettify-symbols, in a settings file
+### 14 — Lisp — `lambda` as λ
 
-[2-replace/23-lisp-lambda.el](2-replace/23-lisp-lambda.el) · rules `replace-lisp-lambda`,
-`replace-lisp-ge`, `replace-lisp-sqrt`
+[1-replace/lambda.el](1-replace/lambda.el) · rules `lisp-lambda`, `lisp-ge`
 
-![lambda, >= and sqrt drawn as λ, ≥ and √, then both lines pasted into a clean tab](2-replace/23-lisp-lambda.gif)
+![lambda and >= drawn as glyphs, then the line and the glyph pasted into a clean tab](1-replace/14-lisp.gif)
 
-Emacs' `prettify-symbols-mode` is this and nothing more. Three regular expressions reach it.
+Emacs' `prettify-symbols-mode`, reached by two regular expressions.
 
-### 24 — A glyph built per occurrence
+## 2 — Caret behaviour
 
-[2-replace/24-writer-scene-syntax.md](2-replace/24-writer-scene-syntax.md) · rules
-`replace-scene-round`, `replace-scene-level`, `replace-scene-version`
+The same files, and the half no extension can implement. Eight beats each: the caret to the right
+of a drawn glyph, one arrow press left, one back, Backspace, Ctrl+Z, then ← again — a frame of its
+own, so the caret is *seen* arriving on the other side rather than appearing there — Delete, and
+then concealment off, because a delete that takes characters nobody can see leaves nothing on
+screen to say it happened. A drawn glyph has a caret stop on each side and crossing it costs one
+keypress per side; deleting it takes every character it stands for, in one step and one undo, and
+the last frame is the file with the concealment lifted, proving it took the text and not the
+picture.
 
-![r1 l3 v10 drawn as ⟲1 ▲3 ⌁10, then both headings pasted into a clean tab](2-replace/24-writer-scene-syntax.gif)
+### 21 — Crossing and deleting a drawn glyph
 
-`$1` puts the captured number back, so the *letter* comes from the table and the *argument* does
-not. Three rules, but a decoration type per distinct string drawn — and the numbers are unbounded,
-so the type count grows with the manuscript rather than with the configuration. This is the wall
-`replaceWith` runs into: it can only reassemble what the pattern already matched.
+[2-caret/lambda.el](2-caret/lambda.el) · rules `lisp-lambda`, `lisp-ge`
 
-### 25 — A value masked at its own width
+![The caret crossing and deleting lambda drawn as a glyph](2-caret/21-lisp.gif)
 
-[2-replace/25-password-mask.env](2-replace/25-password-mask.env) · rule `replace-env-value`
+### 22 — Crossing and deleting a TeX command
 
-![An .env token masked at its own width, Find still matching sk-live inside it, then the line pasted into a clean tab](2-replace/25-password-mask.gif)
+[2-caret/math.tex](2-caret/math.tex) · rules `tex-forall`, `tex-in`, `tex-alpha`, `tex-beta`,
+`tex-gamma`, `tex-rightarrow`
 
-`padToWidth` repeats `padWith` up to the hidden text's width, so the line does not visibly move.
-The token here is sixteen characters, which is exactly the editor's replacement cap — one character
-longer and the mask could not be drawn at width at all. And the third frame is the caveat that
-matters: Find matches `sk-live` inside a value you cannot read. This draws over a secret; it does
-not protect one.
+![The caret crossing and deleting a TeX command drawn as a glyph](2-caret/22-latex.gif)
 
-## 6 — Not implemented
+Seven characters behind one glyph, in a file where most of what is on screen — `\documentclass`,
+`\mathbb{R}` — is not concealed at all, so the concealed run has to be found by moving the caret
+into it.
 
-Cases the conceal API **cannot** serve today, kept as recordings rather than as prose so the gap is
-visible. Both are the same wall: the API's unit is a range inside a line, and a property line
-exists only for its text — hide the text and the row stays, empty.
+### 23 — Crossing and deleting an icon
 
-Two things go wrong, and only one of them has a workaround:
+[2-caret/tags.md](2-caret/tags.md) · rules `tag-done`, `tag-bug`
 
-- **The row stays.** There is no second primitive for "this line is not drawn at all". Neovim added
-  `conceal_lines` in 0.11 for exactly this.
-- **The row loses its line number.** The editor draws a number only when view column 1 of a row
-  maps back to model column 1, and a line concealed whole with the default `cursorStop: "after"`
-  maps column 1 to the *end* of the hidden run. The row then looks like a wrapped continuation of
-  the line above. Setting `cursorStop: "before"` brings every number back — the last frame of both
-  recordings — so the gutter can be fixed from configuration. The blank rows cannot.
+![The caret crossing and deleting a tag drawn as an icon, painted inside the glyph](2-caret/23-markdown-tags.gif)
 
-### 61 — Logseq property lines
+**⚠️ This gif shows a rendering bug, and it is why the icon comes last.** Watch the caret at the
+right of `✅`: it is painted **through the middle of the glyph**, green on both sides of it. A
+replacement is injected text, and injected text is laid out by its UTF-16 code-unit count rather
+than by how wide it is painted. `✅` (U+2705) is *one* code unit and about two cells wide, so its
+two caret stops sit one column apart while the glyph occupies two. `🐞` on the line below is a
+surrogate pair — two code units, two cells — and renders correctly by accident, which is the whole
+tell.
 
-[6-not-implemented/61-logseq-properties.md](6-not-implemented/61-logseq-properties.md) · rule
-`wall-logseq-property-line`
+The editing is right throughout: Backspace at that stop still takes the whole tag, Delete still
+points away from it. Only the painting is wrong — but it makes a correct delete read as a wrong
+one, and no configuration avoids it except by never drawing a glyph whose code-unit count and cell
+width disagree. See
+[conceal-api-rnd/06 § F8](../../jin/documentation/conceal-api-rnd/06-explore-via-conceal-demo-extension.md).
 
-![id:: and collapsed:: hidden, leaving two blank rows and a gutter running 1, 2, 3, then 6](6-not-implemented/61-logseq-properties.gif)
+## 3 — Invisible markers
 
-### 62 — An org property drawer
+Nothing is drawn, so the range collapses to a single screen position and `cursorStop` decides which
+one. [notes.md](3-invisible-markers/notes.md) holds four records in the two shapes a note takes —
+two list items, a blank line, two paragraphs — and two of them carry a drawn tag as well, so a
+hidden marker and a replacement share a line and neither knows about the other. `{ID:A3BF9Z}`
+rather than jin's own `{!A3BF9Z}`: the syntax is the task's, not jin's, so the demo does not read as
+a jin feature.
 
-[6-not-implemented/62-org-properties.org](6-not-implemented/62-org-properties.org) · rule
-`wall-org-property-drawer`
+Rules: `md-id`, plus `tag-done` and `tag-bug` from section 1.
 
-![A :PROPERTIES: drawer hidden, leaving four blank rows between the heading and its text](6-not-implemented/62-org-properties.gif)
+### 31 — A caret with nothing to cross
+
+[3-invisible-markers/notes.md](3-invisible-markers/notes.md)
+
+![A caret crossing a hidden marker in a list item and in a paragraph](3-invisible-markers/31-caret.gif)
+
+Both shapes, one after the other, and the list item is shown with one press left and two back so
+the two kinds of press can be compared. Every press moves the caret exactly one cell on screen: ←
+steps into the gap after the dash, the first → steps back onto the marker's edge, and the second
+steps past the word's first letter — carrying the caret thirteen characters through the file on the
+way, twelve of them the marker's. Concealment off is what shows where it really went. On a
+paragraph the marker's one stop is column 1, so a single ← leaves the line altogether. Twelve
+characters, and not one caret stop among them — which is also why nothing can be typed inside a
+marker.
+
+### 32 — What a delete takes, and what the clipboard carries
+
+[3-invisible-markers/notes.md](3-invisible-markers/notes.md)
+
+![Word-delete leaving a marker intact, then one Delete taking it whole, then a record copied with its id](3-invisible-markers/32-delete-and-copy.gif)
+
+Ordinary editing does not touch a marker: Ctrl+Backspace erases the record's words and stops at
+text it cannot see, twice over, until the record looks empty and its id is still in it.
+
+**⚠️ Then the gif shows a bug, on purpose.** One Delete at that same place takes all twelve hidden
+characters, and because they were never on screen, nothing on screen says so — turning concealment
+off is the only way to see it happened. Which key does it is decided by `cursorStop`, and there is
+no value that is safe in both directions:
+
+| `cursorStop` | Backspace at the caret's one stop | Delete at the same stop |
+| --- | --- | --- |
+| `"before"` — what `md-id` uses | takes the ordinary character in front; the marker survives | **takes the whole marker** |
+| `"after"` | **takes the whole marker** | takes the ordinary character behind; the marker survives |
+
+Both rows are measured against the fork in
+[interaction.test.ts](../src/test/integration/interaction.test.ts), not reasoned about. The
+editor's rule is deliberate — a deletion reaching into a concealed range takes *all* of it, in one
+step and one undo, so a marker can never be cut in half and left half-matching. What the API has no
+way to say is **"this range is not editable at all"**: that would be a new concept, not a rule
+property, and no configuration reaches it today.
+
+The last frame is the other half of the same fact: copy the record and the id comes with it, having
+never been on screen. What the clipboard carries is what is on disk.
+
+### 33 — A line break in front of one
+
+[3-invisible-markers/notes.md](3-invisible-markers/notes.md)
+
+![Enter pressed in front of a hidden marker, which travels down with its line](3-invisible-markers/33-enter-at-line-start.gif)
+
+`cursorStop: "before"` puts the caret to the *left* of the marker, so Enter at the start of a line
+splits in front of it and the id travels down with the text it belongs to, still starting its
+record and still matching.
+
+## 4 — Hide markup
+
+Markup a reader already understands, taken out of the view with nothing drawn in its place: the
+line simply closes up over it. Two rules per delimiter, each with a lookaround for its partner. A
+single `\*\*` rule looks equivalent and is not: it conceals an orphan, so deleting half a pair
+leaves the file broken and the screen unchanged. See
+[conceal-api-rnd/07](../../jin/documentation/conceal-api-rnd/07-markdown-markup-conceal.md) § M1.
+
+These six rules take the default `cursorStop: "after"`, so the caret rests to the *right* of a
+concealed delimiter and Backspace reaches it. That is what `cursorStop` is for, and it is a choice
+with no safe answer: `"before"` puts the caret on the delimiter's left, where Backspace takes the
+ordinary character in front of it and Delete is the key that takes the markup. Whichever is chosen,
+one of the two directions surprises somebody.
+
+The default costs one more thing, visible in 41: **the bold line loses its number in the gutter.**
+The editor draws a number only where view column 1 maps back to model column 1, and a line that
+starts with a concealed `**` under `"after"` maps column 1 past it — so the row reads as a wrapped
+continuation of the line above. `cursorStop: "before"` brings the number back, which is why
+[3 — invisible markers](#3--invisible-markers) uses it, and it takes Backspace away in exchange.
+
+**⚠️ Both recordings show a bug, on purpose.** Backspace takes the whole delimiter it reaches — but
+only that one. Its partner stays in the file, so one keypress turns valid markdown into invalid
+markdown, and no keystroke removes both halves. What saves the reader is the pair rules: the orphan
+stops matching and appears, so the damage is on screen instead of hidden. Fixing the delete itself
+needs the API to let two ranges declare themselves one unit; see
+[conceal-api-rnd/07 § M4](../../jin/documentation/conceal-api-rnd/07-markdown-markup-conceal.md).
+The frames where it happens are captioned `BUG:`.
+
+### 41 — Markdown emphasis delimiters
+
+[4-hide-markup/emphasis.md](4-hide-markup/emphasis.md) · rules `md-bold-open`/`-close`,
+`md-italic-open`/`-close`, `md-tick-open`/`-close`
+
+![Emphasis markers hidden, then Backspace breaking the pair](4-hide-markup/41-markdown.gif)
+
+### 42 — JSON quotes
+
+[4-hide-markup/config.json](4-hide-markup/config.json) · rules `json-key-open`/`-close`,
+`json-value-open`/`-close`
+
+![JSON quotes hidden, then Backspace breaking the pair](4-hide-markup/42-json.gif)
+
+Traced to `vim-json`, which conceals the quotes around **string values as well as keys** — the
+"CoffeeScript-inspired look (CSON!)" of its README. What it also does and this does not is reveal
+them on the line the cursor is on: that is `reveal: "line"`, a rule property, and it is left out
+here so the delete has nothing standing in front of it.
 
 ## Fixtures
 
 [fixtures/](fixtures) is not demo material and has no recordings. Those files exist so the
 integration suite has something with known line numbers and known offsets to drive real editor
 commands against, and so the two limits the API imposes — the 16-character replacement cap and one
-decoration type per string drawn — are asserted against a file rather than described. They are
-inside `examples/` only because `conceal-demo.include` is scoped to it and the test workspace is
-this folder.
+decoration type per string drawn — are asserted against a file rather than described.
 
 ## Running them
 

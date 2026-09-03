@@ -39,8 +39,8 @@ On any other build the extension detects that it cannot conceal, warns once, and
 even though the rules ship enabled.
 
 Then open any file under `examples/` and read [examples/README.md](examples/README.md) — one
-section per group, each linking the file, naming the rule that fires on it, and showing a recording
-of the behaviour. Start with group 1, then read group 6 for the case the same idea cannot serve.
+section per behaviour, each linking the file, naming the rules that fire on it, and showing a
+recording. Start with section 1, then read section 4 for the bug the same idea comes with.
 
 ## How it is configured
 
@@ -90,18 +90,16 @@ default of `conceal-demo.exampleRules` in `package.json` — one source of truth
 
 ## What pure configuration reaches
 
-One folder of [examples/](examples) per group of the case survey behind this work, each with a
-recording beside every file it demonstrates. The survey is being re-cut one group at a time; what
-is in the repository today is the first group and the wall behind it.
+One folder of [examples/](examples) per behaviour, each with a recording beside every file it
+demonstrates. The cut is by behaviour rather than by language because the same rules serve every
+language: what changes from case to case is what the editor does around the concealed range.
 
-| Group | Case | Reached by a regex rule? |
+| Section | What it shows | Reached by a regex rule? |
 | --- | --- | --- |
-| [1 — hide](examples/README.md#1--hide-symbols) | Hide a run of text, draw nothing | Yes |
-| [2 — replace](examples/README.md#2--replace-symbols) | Draw a glyph or a shorter string in its place | Yes, at one decoration type per string drawn |
-| [6 — not implemented](examples/README.md#6--not-implemented) | Hide a line that exists only for its text | No — the row stays, and needs a second primitive |
-
-Still to be re-cut: caret and edit behaviour around a concealed range, the reveal policies, and
-what happens when the syntax a rule matches is broken outside the editor.
+| [1 — replace and copy-paste](examples/README.md#1--replace-and-copy-paste) | A glyph drawn in the text's place, and a clipboard that still carries the file | Yes, at one decoration type per string drawn |
+| [2 — caret behaviour](examples/README.md#2--caret-behaviour) | Crossing a drawn glyph, and deleting every character it stands for | Yes — this is the editor's own behaviour, and it is free |
+| [3 — invisible markers](examples/README.md#3--invisible-markers) | A marker that draws nothing at all, at the start of every line | Yes, with `cursorStop` choosing the single position it collapses to |
+| [4 — hide markup](examples/README.md#4--hide-markup) | Emphasis and quotes hidden, and the delete that breaks them | Only halfway — a pair conceals, but no keystroke removes both halves |
 
 ## What pure configuration cannot reach
 
@@ -122,6 +120,11 @@ what would fix it, is in the write-up that accompanies this repository.
    empty line — and, with the default caret stop, a row with no line number in the gutter.
 5. **Click-to-expand.** A concealed range has no width, so a click on the placeholder cannot be told
    from a click on the character beside it.
+6. **A glyph two cells wide.** A replacement is laid out by its UTF-16 code-unit count, not by what
+   it paints, so `✅` — one code unit, two cells — gets caret stops one column apart and the caret
+   is drawn through the middle of it. The editing stays correct; only the picture lies. Nothing to
+   configure around except never drawing such a glyph, which is
+   [2 — caret behaviour](examples/README.md#23--crossing-and-deleting-an-icon)'s last recording.
 
 ## Development
 
@@ -147,15 +150,16 @@ CONCEAL_DEMO_VSCODE=/path/to/code npm test
 
 The recordings in `examples/` are not animations: `src/recorder.ts` drives a real editor from
 inside it, stopping at every frame, and `scripts/record.sh` photographs the window. Each scene
-names the one file it is about, and its GIF is written beside that file under the same name — so
-[examples/README.md](examples/README.md) can link the file and show the picture without a path
+names the one file it is about, and its GIF is written beside that file under the scene's own name
+— so [examples/README.md](examples/README.md) can link the file and show the picture without a path
 being burnt into the frames.
 
 ```bash
 CONCEAL_DEMO_FORK=/path/to/vscode-fork \
 CONCEAL_DEMO_WINSHOT=/path/to/screenshot-helper.ps1 \
   ./scripts/record.sh              # every scene in examples/scenes.json
-  ./scripts/record.sh 12 13        # only scenes whose id contains 12 or 13
+  ./scripts/record.sh 3            # every scene of section 3 — examples/3-*
+  ./scripts/record.sh 31 33        # only those two scenes
 ```
 
 It needs the conceal-capable fork (as `scripts/dev.sh` does), `ffmpeg`, and a screenshot helper
@@ -163,3 +167,10 @@ taking `-Hwnd`/`-Out` — this is a WSLg machine, where the editor window is a W
 other and there is no Linux screenshot tool. Nothing is on a timer: the recorder writes a
 rendezvous file when a state is ready and blocks until the picture has been taken, so no frame can
 catch a half-applied decoration.
+
+**A run owns the desktop's focus, so leave the machine alone while it records.** An editor command
+is delivered to the *focused* editor, and a window that does not hold the foreground has none — the
+keystroke is accepted, does nothing, and would be photographed under a caption saying it landed.
+The script raises its window before every frame, and the recorder checks that each keystroke moved
+the caret or changed the document, stopping with the name of the lost one rather than recording a
+picture that lies.

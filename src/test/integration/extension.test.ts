@@ -47,7 +47,7 @@ suite("conceal demo", () => {
   test("every shipped rule is runnable", () => {
     const stats = api.stats();
     assert.deepStrictEqual(stats.problems, []);
-    assert.ok(stats.exampleRules >= 16, `only ${stats.exampleRules} example rules loaded`);
+    assert.ok(stats.exampleRules >= 27, `only ${stats.exampleRules} example rules loaded`);
   });
 
   test("the commands are registered whether or not the API is there", async () => {
@@ -75,7 +75,7 @@ suite("conceal demo", () => {
   });
 
   test("an example file is concealed exactly when the API is available", async () => {
-    const editor = await open("1-hide/12-example-id-md.md");
+    const editor = await open("3-invisible-markers/notes.md");
     const stats = statsFor(editor);
     assert.strictEqual(stats.included, true);
     if (api.availability.kind === "available") {

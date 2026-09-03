@@ -8,9 +8,12 @@
 # can catch a half-applied decoration.
 #
 #   ./scripts/record.sh                      # every scene in examples/scenes.json
-#   ./scripts/record.sh 2                    # every scene of group 2 — examples/2-*
-#   ./scripts/record.sh 21 25                # only those two subcases
-#   ./scripts/record.sh 6-not-implemented    # a folder, spelled out
+#   ./scripts/record.sh 3                    # every scene of section 3 — examples/3-*
+#   ./scripts/record.sh 31 33                # only those two scenes
+#   ./scripts/record.sh 4-hide-markup        # a folder, spelled out
+#
+# The window is raised to the foreground for every frame, so a run owns the desktop's focus while
+# it lasts — an editor command only reaches an editor whose window has focus.
 #
 # Requirements — see "Recording the demos" in the README:
 #   * the conceal-capable fork, as for scripts/dev.sh (CONCEAL_DEMO_FORK)
@@ -52,8 +55,9 @@ mkdir -p "$RDV" "$RAW" "$CAPTIONED"
 # Pick the scenes asked for, and hand the recorder only those.
 #
 # An argument is a prefix, not a substring, because the numbering is a hierarchy: the first digit
-# is the group and the second the subcase, so `2` has to mean "group 2" and not "every id with a 2
-# in it" — which would drag in 12 and 62. A folder name works too, for the groups worth spelling.
+# is the section and the second the scene within it, so `2` has to mean "section 2" and not "every
+# id with a 2 in it" — which would drag in 12 and 42. A folder name works too, for the sections
+# worth spelling.
 python3 - "$REPO/examples/scenes.json" "$RDV/scenes.json" "$@" <<'PY'
 import json, sys
 source, target, *wanted = sys.argv[1:]
@@ -174,13 +178,51 @@ move_window() {
 	fi
 }
 
+# Give the recorded window the foreground, and make the call stick.
+#
+# The picture does not need focus; the *next step* does. An editor command is dispatched to the
+# focused editor, and a window that does not hold the OS focus has none — the command is accepted
+# and does nothing, which photographs as a keypress the editor ignored under a caption saying it
+# landed. `src/recorder.ts` refuses to record such a frame, so without this the run stops.
+#
+# Windows refuses `SetForegroundWindow` to a process that is not already in the foreground, which
+# is always the case here. Attaching this thread's input queue to the current foreground window's
+# thread is what lets the call through — the documented way to hand focus to a window you own
+# while somebody else's has it. The cost is that a recording session owns the desktop's focus
+# while it runs.
+cat > "$WORK/focus.ps1" <<'PS1'
+param([Parameter(Mandatory=$true)][long]$Hwnd)
+Add-Type -Namespace Rec -Name Fg -MemberDefinition @'
+[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+[DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+[DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr h, IntPtr pid);
+[DllImport("user32.dll")] public static extern bool AttachThreadInput(uint from, uint to, bool attach);
+[DllImport("user32.dll")] public static extern bool BringWindowToTop(IntPtr h);
+'@
+$target = [IntPtr]$Hwnd
+$foreground = [Rec.Fg]::GetForegroundWindow()
+if ($foreground -eq $target) { exit 0 }
+$mine = [Rec.Fg]::GetWindowThreadProcessId($foreground, [IntPtr]::Zero)
+$theirs = [Rec.Fg]::GetWindowThreadProcessId($target, [IntPtr]::Zero)
+[void][Rec.Fg]::AttachThreadInput($mine, $theirs, $true)
+[void][Rec.Fg]::BringWindowToTop($target)
+[void][Rec.Fg]::SetForegroundWindow($target)
+[void][Rec.Fg]::AttachThreadInput($mine, $theirs, $false)
+PS1
+
+focus_window() {
+	powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(wslpath -w "$WORK/focus.ps1")" -Hwnd "$HWND" >/dev/null 2>&1 || true
+}
+
 # One picture, retrying against a freshly resolved handle — see find_window.
 capture_frame() {
+	focus_window
 	if "$WINSHOT" capture -Hwnd "$HWND" -Out "$1" -NoFallback >/dev/null 2>&1; then
 		return 0
 	fi
 	HWND="$(find_window)"
 	[[ -n "$HWND" ]] || die "the editor window disappeared"
+	focus_window
 	"$WINSHOT" capture -Hwnd "$HWND" -Out "$1" -NoFallback >/dev/null
 }
 
@@ -284,11 +326,13 @@ for scene in $(ls "$RAW" | sed 's/-[0-9]\{3\}\.png$//' | sort -u); do
 	# The concat demuxer ignores the last entry's duration, so the final frame is named twice.
 	printf "file '%s'\n" "$last" >> "$list"
 
+	# The GIF goes in the folder of the file the scene is about, named after the scene — a case has
+	# one source file and several recordings of it, so the picture cannot take the file's own name.
 	gif="$EXAMPLES/$(python3 -c '
 import json, os, sys
 scenes = json.load(open(sys.argv[1]))["scenes"]
 example = next(s["example"] for s in scenes if s["id"] == sys.argv[2])
-print(os.path.splitext(example)[0])' "$RDV/scenes.json" "$scene").gif"
+print(os.path.join(os.path.dirname(example), sys.argv[2]))' "$RDV/scenes.json" "$scene").gif"
 	mkdir -p "$(dirname "$gif")"
 	ffmpeg -y -loglevel error -f concat -safe 0 -i "$list" \
 		-vf "fps=$FPS,split[a][b];[a]palettegen=stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=3" \

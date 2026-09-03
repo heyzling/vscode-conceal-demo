@@ -81,8 +81,16 @@ suite("interaction", () => {
 
   const settle = (): Promise<void> => once(vscode.window.onDidChangeTextEditorSelection, 500);
 
+  /** Editor commands are routed to the *focused* editor, and a host launched without the window
+   * taking focus has none — every command is then accepted and does nothing, which reads as the
+   * editor having changed its behaviour. Each keystroke puts focus back first. */
+  async function focusEditor(): Promise<void> {
+    await vscode.commands.executeCommand("workbench.action.focusActiveEditorGroup");
+  }
+
   /** A keystroke that moves the caret. */
   async function press(command: string, arg?: unknown): Promise<void> {
+    await focusEditor();
     const moved = settle();
     await vscode.commands.executeCommand(command, arg);
     await moved;
@@ -90,6 +98,7 @@ suite("interaction", () => {
 
   /** A keystroke that changes the document. */
   async function keyEdit(command: string, arg?: unknown): Promise<void> {
+    await focusEditor();
     const changed = once(
       vscode.workspace.onDidChangeTextDocument,
       1500,

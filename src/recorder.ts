@@ -53,6 +53,10 @@ export type Action =
   | { discard: true }
   /** Open an empty untitled document in the column beside, leaving the example on screen. */
   | { openBeside: true }
+  /** Replace text by position, for damage no keystroke can do — a concealed range holds no
+   * caret positions, so a character *inside* one cannot be typed over. `[line, column, length,
+   * text]`, 1-based, in the document's own coordinates. */
+  | { replace: [number, number, number, string] }
   /** Wait, for the rare case where a command animates. */
   | { wait: number };
 
@@ -123,6 +127,48 @@ async function activeEditor(): Promise<vscode.TextEditor> {
   return editor;
 }
 
+/** Commands that are keystrokes: each one must move the caret or change the document.
+ *
+ * The whole demo is the editor's own behaviour, so nothing here is simulated — which means a
+ * command that reaches no focused editor is accepted, does nothing, and is photographed under a
+ * caption saying it did. That failure is silent and survives into the GIF, so it is caught here
+ * instead: a recording that cannot reach the editor stops, and says which keystroke was lost.
+ * The usual cause is the recorded window having lost the foreground while the run was going. */
+const KEYSTROKE = /^(cursor|delete|undo|redo|lineBreakInsert|type$|editor\.action\.(selectAll|clipboard))/;
+
+interface EditorState {
+  version: number;
+  selection: string;
+}
+
+function snapshot(): EditorState | undefined {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    return undefined;
+  }
+  return {
+    version: editor.document.version,
+    selection: `${editor.selection.anchor.line}:${editor.selection.anchor.character}-${editor.selection.active.line}:${editor.selection.active.character}`,
+  };
+}
+
+async function mustHaveTakenEffect(command: string, before: EditorState | undefined): Promise<void> {
+  if (!KEYSTROKE.test(command) || !before) {
+    return;
+  }
+  // The extension host's copy of the selection arrives by event, so the state is read after a
+  // beat rather than immediately.
+  await delay(200);
+  const after = snapshot();
+  if (after && after.version === before.version && after.selection === before.selection) {
+    throw new Error(
+      `${command} changed nothing — the editor did not receive it. ` +
+        "The recorded window has to hold the foreground for a keystroke to land; leave the " +
+        "desktop alone while a recording runs.",
+    );
+  }
+}
+
 async function perform(action: Action, settings: SettingsMemory): Promise<void> {
   if ("open" in action) {
     // Always the first column. Without it the file lands in whatever group happened to be active,
@@ -168,6 +214,14 @@ async function perform(action: Action, settings: SettingsMemory): Promise<void> 
     });
     return;
   }
+  if ("replace" in action) {
+    const editor = await activeEditor();
+    const [line, column, length, text] = action.replace;
+    const start = new vscode.Position(line - 1, column - 1);
+    const end = new vscode.Position(line - 1, column - 1 + length);
+    await editor.edit((builder) => builder.replace(new vscode.Range(start, end), text));
+    return;
+  }
   if ("discard" in action) {
     const editor = await activeEditor();
     const document = editor.document;
@@ -196,7 +250,15 @@ async function perform(action: Action, settings: SettingsMemory): Promise<void> 
     return;
   }
   if ("command" in action) {
+    // Editor commands go to the *focused* editor, and this recorder never touches a keyboard, so
+    // focus is put back immediately before the command rather than once per step. A step's own
+    // actions move it — a paste lands in the split, a setting change goes through the workbench —
+    // and a command issued after that is accepted and silently does nothing, which photographs as
+    // an editor that ignored the keypress.
+    await vscode.commands.executeCommand("workbench.action.focusActiveEditorGroup");
+    const before = snapshot();
     await vscode.commands.executeCommand(action.command, ...(action.args ?? []));
+    await mustHaveTakenEffect(action.command, before);
     return;
   }
   if ("setting" in action) {

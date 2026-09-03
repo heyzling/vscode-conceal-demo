@@ -2,178 +2,16 @@
   "settleMs": 450,
   "scenes": [
     {
-      "id": "11-md-markup",
-      "title": "Hide — markdown emphasis markers",
-      "example": "1-hide/11-md-markup.md",
-      "window": [
-        1280,
-        380
-      ],
-      "steps": [
-        {
-          "caption": "Concealment OFF: visible Markdown markers",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
-        },
-        {
-          "caption": "Concealment ON: the markers are gone",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
-          ]
-        },
-        {
-          "caption": "Copy preserves original text",
-          "hold": 2.7,
-          "do": [
-            {
-              "select": [
-                3,
-                1,
-                3,
-                28
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "12-example-id-md",
-      "title": "Hide — a record id on every item",
-      "example": "1-hide/12-example-id-md.md",
-      "window": [
-        1280,
-        380
-      ],
-      "steps": [
-        {
-          "caption": "Concealment OFF: visible IDs",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
-        },
-        {
-          "caption": "Concealment ON: the IDs are not visible",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
-          ]
-        },
-        {
-          "caption": "Copy preserves original text",
-          "hold": 2.7,
-          "do": [
-            {
-              "select": [
-                3,
-                1,
-                4,
-                20
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "13-obsidian-block-id",
-      "title": "Hide — an Obsidian block anchor",
-      "example": "1-hide/13-obsidian-block-id.md",
-      "window": [
-        1280,
-        380
-      ],
-      "steps": [
-        {
-          "caption": "Concealment OFF: the anchor Obsidian at the end",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
-        },
-        {
-          "caption": "Concealment ON: the line ends where the sentence does",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
-          ]
-        },
-        {
-          "caption": "Copy preserves original text",
-          "hold": 2.7,
-          "do": [
-            {
-              "select": [
-                3,
-                1,
-                3,
-                26
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "21-tag-to-icon",
+      "id": "11-markdown-tags",
       "title": "Replace — a tag drawn as its icon",
-      "example": "2-replace/21-tag-to-icon.md",
+      "example": "1-replace/tags.md",
       "window": [
         1280,
-        400
+        420
       ],
       "steps": [
         {
-          "caption": "Concealment OFF: origian text",
+          "caption": "Concealment OFF: #done and #bug, as they are written",
           "hold": 2.4,
           "do": [
             {
@@ -193,29 +31,9 @@
           ]
         },
         {
-          "caption": "Find still matches #bug: the text is drawn over, not gone",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "editor.actions.findWithArgs",
-              "args": [
-                {
-                  "searchString": "#bug"
-                }
-              ]
-            },
-            {
-              "command": "editor.action.nextMatchFindAction"
-            }
-          ]
-        },
-        {
           "caption": "Copy preserves original text",
           "hold": 2.7,
           "do": [
-            {
-              "command": "closeFindWidget"
-            },
             {
               "select": [
                 3,
@@ -234,20 +52,46 @@
               "paste": true
             }
           ]
+        },
+        {
+          "caption": "Copy the glyph alone: also preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "open": "1-replace/tags.md"
+            },
+            {
+              "select": [
+                3,
+                3,
+                3,
+                8
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
         }
       ]
     },
     {
-      "id": "22-latex-formula",
-      "title": "Replace — TeX commands as their glyphs",
-      "example": "2-replace/22-latex-formula.tex",
+      "id": "12-ts-arrows",
+      "title": "Replace — a fat arrow drawn as ⇒",
+      "example": "1-replace/arrows.ts",
       "window": [
         1280,
-        380
+        500
       ],
       "steps": [
         {
-          "caption": "Concealment OFF: five commands, seven characters each",
+          "caption": "Concealment OFF: => in every arrow function",
           "hold": 2.4,
           "do": [
             {
@@ -257,7 +101,7 @@
           ]
         },
         {
-          "caption": "Concealment ON: one glyph per command, from a fixed table",
+          "caption": "Concealment ON: one glyph each, from a fixed table",
           "hold": 2.4,
           "do": [
             {
@@ -272,9 +116,89 @@
           "do": [
             {
               "select": [
+                3,
                 1,
+                4,
+                28
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
+        },
+        {
+          "caption": "Copy the glyph alone: also preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "open": "1-replace/arrows.ts"
+            },
+            {
+              "select": [
+                3,
+                19,
+                3,
+                21
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "13-latex",
+      "title": "Replace — TeX commands as their glyphs",
+      "example": "1-replace/math.tex",
+      "window": [
+        1280,
+        560
+      ],
+      "steps": [
+        {
+          "caption": "Concealment OFF: \\forall, \\in and the greek, spelled out",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "Concealment ON: what is not in the table — \\mathbb{R} — stays",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "Copy preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "select": [
+                4,
                 1,
-                2,
+                5,
                 24
               ]
             },
@@ -288,20 +212,46 @@
               "paste": true
             }
           ]
+        },
+        {
+          "caption": "Copy the glyph alone: also preserves original text",
+          "hold": 2.7,
+          "do": [
+            {
+              "open": "1-replace/math.tex"
+            },
+            {
+              "select": [
+                4,
+                1,
+                4,
+                8
+              ]
+            },
+            {
+              "copy": true
+            },
+            {
+              "openBeside": true
+            },
+            {
+              "paste": true
+            }
+          ]
         }
       ]
     },
     {
-      "id": "23-lisp-lambda",
-      "title": "Replace — prettify-symbols, in a settings file",
-      "example": "2-replace/23-lisp-lambda.el",
+      "id": "14-lisp",
+      "title": "Replace — lambda drawn as λ",
+      "example": "1-replace/lambda.el",
       "window": [
         1280,
-        380
+        340
       ],
       "steps": [
         {
-          "caption": "Concealment OFF: lambda, >= and sqrt, spelled out",
+          "caption": "Concealment OFF: lambda and >=, spelled out",
           "hold": 2.4,
           "do": [
             {
@@ -311,7 +261,7 @@
           ]
         },
         {
-          "caption": "Concealment ON: what prettify-symbols-mode draws",
+          "caption": "Concealment ON: one glyph each, from a fixed table",
           "hold": 2.4,
           "do": [
             {
@@ -328,7 +278,7 @@
               "select": [
                 1,
                 1,
-                2,
+                1,
                 22
               ]
             },
@@ -342,48 +292,20 @@
               "paste": true
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "24-writer-scene-syntax",
-      "title": "Replace — a glyph built per occurrence",
-      "example": "2-replace/24-writer-scene-syntax.md",
-      "window": [
-        1280,
-        440
-      ],
-      "steps": [
-        {
-          "caption": "Concealment OFF: r, l and v — round, level, version",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
         },
         {
-          "caption": "Concealment ON: the letter is drawn, the number kept",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
-          ]
-        },
-        {
-          "caption": "Copy preserves original text",
+          "caption": "Copy the glyph alone: also preserves original text",
           "hold": 2.7,
           "do": [
             {
+              "open": "1-replace/lambda.el"
+            },
+            {
               "select": [
                 1,
+                2,
                 1,
-                9,
-                16
+                8
               ]
             },
             {
@@ -400,26 +322,311 @@
       ]
     },
     {
-      "id": "25-password-mask",
-      "title": "Replace — a value masked at its own width",
-      "example": "2-replace/25-password-mask.env",
+      "id": "21-lisp",
+      "title": "Caret — crossing and deleting a drawn glyph",
+      "example": "2-caret/lambda.el",
       "window": [
         1280,
-        380
+        340
       ],
       "steps": [
         {
-          "caption": "Concealment OFF: a token anyone behind you can read",
+          "caption": "The caret rests on the right of λ",
           "hold": 2.4,
+          "do": [
+            {
+              "caret": [
+                1,
+                8
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "← crosses all six hidden characters in one press",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "cursorLeft"
+            }
+          ]
+        },
+        {
+          "caption": "→ crosses back, one press again",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "cursorRight"
+            }
+          ]
+        },
+        {
+          "caption": "Backspace takes the whole glyph — Ctrl+Backspace works the same",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "deleteLeft"
+            }
+          ]
+        },
+        {
+          "caption": "Ctrl+Z brings all back at once",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "undo"
+            },
+            {
+              "caret": [
+                1,
+                8
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "← once more: the caret is now on the glyph's left side",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "cursorLeft"
+            }
+          ]
+        },
+        {
+          "caption": "Delete from the left takes the whole glyph too",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "deleteRight"
+            }
+          ]
+        },
+        {
+          "caption": "Concealment OFF: lambda really is gone from the file",
+          "hold": 3.0,
           "do": [
             {
               "setting": "conceal-demo.enabled",
               "value": false
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "22-latex",
+      "title": "Caret — crossing and deleting a TeX command",
+      "example": "2-caret/math.tex",
+      "window": [
+        1280,
+        560
+      ],
+      "steps": [
+        {
+          "caption": "The caret rests on the right of ∀",
+          "hold": 2.4,
+          "do": [
+            {
+              "caret": [
+                4,
+                8
+              ]
+            }
+          ]
         },
         {
-          "caption": "Concealment ON: masked, and at the value's own width",
+          "caption": "← crosses all seven hidden characters in one press",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "cursorLeft"
+            }
+          ]
+        },
+        {
+          "caption": "→ crosses back, one press again",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "cursorRight"
+            }
+          ]
+        },
+        {
+          "caption": "Backspace takes the whole glyph — Ctrl+Backspace works the same",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "deleteLeft"
+            }
+          ]
+        },
+        {
+          "caption": "Ctrl+Z brings all back at once",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "undo"
+            },
+            {
+              "caret": [
+                4,
+                8
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "← once more: the caret is now on the glyph's left side",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "cursorLeft"
+            }
+          ]
+        },
+        {
+          "caption": "Delete from the left takes the whole glyph too",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "deleteRight"
+            }
+          ]
+        },
+        {
+          "caption": "Concealment OFF: \\forall really is gone from the file",
+          "hold": 3.0,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "23-markdown-tags",
+      "title": "Caret — crossing and deleting an icon",
+      "example": "2-caret/tags.md",
+      "window": [
+        1280,
+        420
+      ],
+      "steps": [
+        {
+          "caption": "The caret rests on the right of the icon",
+          "hold": 2.4,
+          "do": [
+            {
+              "caret": [
+                3,
+                8
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "← crosses all five hidden characters in one press",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "cursorLeft"
+            }
+          ]
+        },
+        {
+          "caption": "→ crosses back, one press again",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "cursorRight"
+            }
+          ]
+        },
+        {
+          "caption": "Backspace takes the whole glyph — Ctrl+Backspace works the same",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "deleteLeft"
+            }
+          ]
+        },
+        {
+          "caption": "Ctrl+Z brings all back at once",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "undo"
+            },
+            {
+              "caret": [
+                3,
+                8
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "← once more: the caret is now on the glyph's left side",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "cursorLeft"
+            }
+          ]
+        },
+        {
+          "caption": "Delete from the left takes the whole glyph too",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "deleteRight"
+            }
+          ]
+        },
+        {
+          "caption": "Concealment OFF: #done really is gone from the file",
+          "hold": 3.0,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "31-caret",
+      "title": "Invisible markers — a caret crossing what is not drawn",
+      "example": "3-invisible-markers/notes.md",
+      "window": [
+        1280,
+        500
+      ],
+      "steps": [
+        {
+          "caption": "Concealment OFF: a marker on every record, and two tags among them",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            },
+            {
+              "caret": [
+                4,
+                3
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "Concealment ON: the markers gone, the tags drawn, the records the same",
           "hold": 2.4,
           "do": [
             {
@@ -429,35 +636,168 @@
           ]
         },
         {
-          "caption": "Find still matches sk-live: a rendering feature, not a boundary",
-          "hold": 2.7,
+          "caption": "A list item: the caret at the marker's left edge, after the dash",
+          "hold": 2.4,
           "do": [
             {
-              "command": "editor.actions.findWithArgs",
-              "args": [
-                {
-                  "searchString": "sk-live"
-                }
+              "caret": [
+                4,
+                3
               ]
-            },
-            {
-              "command": "editor.action.nextMatchFindAction"
             }
           ]
         },
         {
-          "caption": "Copy preserves original text",
+          "caption": "← once: an ordinary step left, into the gap after the dash",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "cursorLeft"
+            }
+          ]
+        },
+        {
+          "caption": "→ once: an ordinary step back, onto the marker's edge",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "cursorRight"
+            }
+          ]
+        },
+        {
+          "caption": "→ again: one cell on screen, thirteen characters in the file",
+          "hold": 3.0,
+          "do": [
+            {
+              "command": "cursorRight"
+            }
+          ]
+        },
+        {
+          "caption": "Concealment OFF: that one press crossed the whole marker",
+          "hold": 3.0,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "A paragraph: the marker's one stop is column 1",
           "hold": 2.7,
           "do": [
             {
-              "command": "closeFindWidget"
+              "setting": "conceal-demo.enabled",
+              "value": true
             },
             {
+              "caret": [
+                7,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "← once and the line is gone: the marker holds no stop of its own",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "cursorLeft"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "32-delete-and-copy",
+      "title": "Invisible markers — what a delete takes, and what the clipboard carries",
+      "example": "3-invisible-markers/notes.md",
+      "window": [
+        1280,
+        500
+      ],
+      "steps": [
+        {
+          "caption": "Concealment ON: four ids, none of them on screen",
+          "hold": 2.4,
+          "do": [
+            {
+              "caret": [
+                7,
+                21
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "Ctrl+Backspace erases the word: the marker it cannot see is untouched",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "deleteWordLeft"
+            }
+          ]
+        },
+        {
+          "caption": "Again: the record looks empty, and its id is still inside it",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "deleteWordLeft"
+            }
+          ]
+        },
+        {
+          "caption": "BUG: one Delete takes all twelve hidden characters, and nothing says so",
+          "hold": 3.0,
+          "do": [
+            {
+              "command": "deleteRight"
+            }
+          ]
+        },
+        {
+          "caption": "Concealment OFF: that id really is gone, where the others are still there",
+          "hold": 3.0,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            }
+          ]
+        },
+        {
+          "caption": "Ctrl + Z, and every record is back",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            },
+            {
+              "command": "undo"
+            },
+            {
+              "command": "undo"
+            },
+            {
+              "command": "undo"
+            }
+          ]
+        },
+        {
+          "caption": "Copy one record: the id comes with it, having never been on screen",
+          "hold": 2.7,
+          "do": [
+            {
               "select": [
+                7,
                 1,
-                1,
-                1,
-                27
+                7,
+                21
               ]
             },
             {
@@ -474,80 +814,59 @@
       ]
     },
     {
-      "id": "61-logseq-properties",
-      "title": "Not implemented — property lines own a whole row",
-      "example": "6-not-implemented/61-logseq-properties.md",
+      "id": "33-enter-at-line-start",
+      "title": "Invisible markers — a line break in front of one",
+      "example": "3-invisible-markers/notes.md",
       "window": [
         1280,
-        420
+        500
       ],
       "steps": [
         {
-          "caption": "The property lines are hidden — and two blank rows are left",
-          "hold": 2.2
-        },
-        {
-          "caption": "Concealment OFF: id:: and collapsed:: own a line each",
-          "hold": 2.2,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
-        },
-        {
-          "caption": "On again. Hiding a line's text cannot hide the line",
-          "hold": 2.0,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
-          ]
-        },
-        {
-          "caption": "And the gutter stops numbering them: 1, 2, 3, then 6",
+          "caption": "Concealment ON: the caret is at the start of the last record",
           "hold": 2.4,
           "do": [
             {
               "caret": [
-                6,
+                7,
                 1
               ]
             }
           ]
         },
         {
-          "caption": "cursorStop \"before\" gives the numbers back — the rows stay",
-          "hold": 2.6,
+          "caption": "Enter at the start: the id travels down with its line",
+          "hold": 2.7,
           "do": [
             {
-              "rule": "wall-logseq-property-line",
-              "patch": {
-                "cursorStop": "before"
-              }
+              "command": "lineBreakInsert"
+            }
+          ]
+        },
+        {
+          "caption": "Concealment OFF: the marker moved with its text, intact",
+          "hold": 2.7,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
             }
           ]
         }
       ]
     },
     {
-      "id": "62-org-properties",
-      "title": "Not implemented — an org property drawer",
-      "example": "6-not-implemented/62-org-properties.org",
+      "id": "41-markdown",
+      "title": "Hide markup — deleting half of a pair",
+      "example": "4-hide-markup/emphasis.md",
       "window": [
         1280,
-        420
+        400
       ],
       "steps": [
         {
-          "caption": "The drawer is hidden, and four blank rows are what is left",
-          "hold": 2.2
-        },
-        {
-          "caption": "Concealment OFF: :PROPERTIES: to :END:, four lines of it",
-          "hold": 2.2,
+          "caption": "Concealment OFF: this is the file, every marker in it",
+          "hold": 2.4,
           "do": [
             {
               "setting": "conceal-demo.enabled",
@@ -556,8 +875,8 @@
           ]
         },
         {
-          "caption": "On again. The heading and its one sentence stay four rows apart",
-          "hold": 2.0,
+          "caption": "Concealment ON: the markers are gone, the words are not",
+          "hold": 2.4,
           "do": [
             {
               "setting": "conceal-demo.enabled",
@@ -566,26 +885,135 @@
           ]
         },
         {
-          "caption": "The gutter runs 1, then 6 — the hidden rows lose their numbers",
+          "caption": "The caret rests to the right of Bold, past the closing **",
           "hold": 2.4,
           "do": [
             {
               "caret": [
-                6,
+                3,
+                9
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "Backspace takes the whole delimiter: two asterisks, one press",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "deleteLeft"
+            }
+          ]
+        },
+        {
+          "caption": "BUG: its partner is left behind, so the markdown is broken",
+          "hold": 3.0,
+          "do": [
+            {
+              "caret": [
+                1,
                 1
               ]
             }
           ]
         },
         {
-          "caption": "cursorStop \"before\" fixes the gutter, not the gap",
-          "hold": 2.6,
+          "caption": "Ctrl + Z, and the pair closes up again",
+          "hold": 2.4,
           "do": [
             {
-              "rule": "wall-org-property-drawer",
-              "patch": {
-                "cursorStop": "before"
-              }
+              "command": "undo"
+            },
+            {
+              "caret": [
+                1,
+                1
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "42-json",
+      "title": "Hide markup — deleting a quote of a pair",
+      "example": "4-hide-markup/config.json",
+      "window": [
+        1280,
+        420
+      ],
+      "steps": [
+        {
+          "caption": "Concealment OFF: every key and every string is quoted",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": false
+            },
+            {
+              "caret": [
+                1,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "Concealment ON: bare keys, bare strings",
+          "hold": 2.4,
+          "do": [
+            {
+              "setting": "conceal-demo.enabled",
+              "value": true
+            }
+          ]
+        },
+        {
+          "caption": "The caret rests to the right of demo, past the closing quote",
+          "hold": 2.4,
+          "do": [
+            {
+              "caret": [
+                2,
+                17
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "Backspace takes the quote it is standing on the right of",
+          "hold": 2.7,
+          "do": [
+            {
+              "command": "deleteLeft"
+            }
+          ]
+        },
+        {
+          "caption": "BUG: its partner is left behind, so the JSON is broken",
+          "hold": 3.0,
+          "do": [
+            {
+              "caret": [
+                1,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "caption": "Ctrl + Z, and the pair closes up again",
+          "hold": 2.4,
+          "do": [
+            {
+              "command": "undo"
+            },
+            {
+              "caret": [
+                1,
+                1
+              ]
             }
           ]
         }

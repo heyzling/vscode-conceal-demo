@@ -51,6 +51,21 @@ function render(rules: Rule[], relativePath: string): string[] {
   return rendered;
 }
 
+/** Render arbitrary lines with the rules that apply to a given path — for the broken variants,
+ * which are edits a scene makes rather than files on disk. */
+function renderText(rules: Rule[], relativePath: string, lines: string[]): string[] {
+  const spans = spansForLines(rulesFor(rules, relativePath), lines, {
+    remaining: 10_000,
+    exhausted: false,
+  });
+  const rendered = [...lines];
+  for (const span of [...spans].reverse()) {
+    const line = rendered[span.line];
+    rendered[span.line] = line.slice(0, span.start) + span.replacement + line.slice(span.end);
+  }
+  return rendered;
+}
+
 function lineContaining(lines: string[], needle: string): string {
   const found = lines.find((line) => line.includes(needle));
   assert.ok(found !== undefined, `no rendered line contains ${JSON.stringify(needle)}`);
@@ -83,7 +98,13 @@ suite("shipped example rules", () => {
       .readdirSync(path.join(ROOT, "examples"), { withFileTypes: true })
       .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
       .map((entry) => entry.name);
-    assert.deepStrictEqual(folders.sort(), ["1-hide", "2-replace", "6-not-implemented", "fixtures"]);
+    assert.deepStrictEqual(folders.sort(), [
+      "1-replace",
+      "2-caret",
+      "3-invisible-markers",
+      "4-hide-markup",
+      "fixtures",
+    ]);
     for (const folder of folders) {
       const matching = rules.filter((rule) =>
         (rule.files ?? []).some((glob) => glob.includes(folder)),
@@ -102,80 +123,89 @@ suite("shipped example rules", () => {
     }
   });
 
-  test("11 removes markdown syntax and leaves the words", () => {
-    const lines = render(rules, "examples/1-hide/11-md-markup.md");
-    assert.strictEqual(lineContaining(lines, "Bold"), "Bold, italic, code.");
+  test("1 draws the glyphs prettify-symbols-mode draws", () => {
+    const lines = render(rules, "examples/1-replace/lambda.el");
+    assert.strictEqual(lines[0], "(λ (x) (≥ x 0))");
   });
 
-  test("12 hides an identity marker outright", () => {
-    const lines = render(rules, "examples/1-hide/12-example-id-md.md");
-    assert.strictEqual(lineContaining(lines, "Buy milk"), "- Buy milk");
-    assert.strictEqual(lineContaining(lines, "Go home"), "- Go home");
-  });
-
-  test("13 hides a block anchor and leaves the sentence", () => {
-    const lines = render(rules, "examples/1-hide/13-obsidian-block-id.md");
-    assert.strictEqual(lineContaining(lines, "anchored"), "An anchored line.");
-  });
-
-  test("21 draws a glyph per tag", () => {
-    const lines = render(rules, "examples/2-replace/21-tag-to-icon.md");
+  test("1 draws a glyph per tag", () => {
+    const lines = render(rules, "examples/1-replace/tags.md");
     assert.strictEqual(lineContaining(lines, "Ship"), "- ✅ Ship the fork");
     assert.strictEqual(lineContaining(lines, "gutter"), "- 🐞 Fix the gutter");
   });
 
-  test("22 draws a glyph per TeX command and leaves the rest", () => {
-    const lines = render(rules, "examples/2-replace/22-latex-formula.tex");
-    assert.strictEqual(lines[0], "∀ x ∈ \\mathbb{R}");
-    assert.strictEqual(lines[1], "α + β = γ");
+  test("1 draws a glyph per fat arrow", () => {
+    const lines = render(rules, "examples/1-replace/arrows.ts");
+    assert.strictEqual(lineContaining(lines, "sq"), "const sq = (n: N) ⇒ n * n;");
   });
 
-  test("23 draws what prettify-symbols-mode draws", () => {
-    const lines = render(rules, "examples/2-replace/23-lisp-lambda.el");
-    assert.strictEqual(lines[0], "(λ (x) (≥ x 0))");
-    assert.strictEqual(lines[1], "(λ (y) (√ y))");
+  test("1 draws a glyph per TeX command, and nothing for what is not in the table", () => {
+    const lines = render(rules, "examples/1-replace/math.tex");
+    assert.strictEqual(lineContaining(lines, "∀"), "∀ x ∈ \\mathbb{R}");
+    assert.strictEqual(lineContaining(lines, "α"), "α + β = γ");
+    assert.strictEqual(lineContaining(lines, "→"), "x → y");
   });
 
-  test("24 builds a different string per occurrence", () => {
-    const lines = render(rules, "examples/2-replace/24-writer-scene-syntax.md");
-    assert.strictEqual(lineContaining(lines, "icons"), "# ▲2 ⌁3 Writer scene icons");
-    assert.strictEqual(lineContaining(lines, "lighthouse"), "## ⟲1 ▲3 ⌁10 The lighthouse");
-    assert.strictEqual(lineContaining(lines, "ferry"), "## ⟲2 ▲1 ⌁7 The ferry");
-  });
-
-  test("24 costs one decoration type per distinct string drawn", () => {
-    const applicable = rulesFor(rules, "examples/2-replace/24-writer-scene-syntax.md");
-    const lines = fs
-      .readFileSync(path.join(ROOT, "examples/2-replace/24-writer-scene-syntax.md"), "utf8")
-      .split("\n");
-    const spans = spansForLines(applicable, lines, { remaining: 10_000, exhausted: false });
-    const keys = new Set(
-      spans.map((span) =>
-        decorationKey({
-          replacement: span.replacement,
-          cursorStop: span.rule.cursorStop,
-          style: span.rule.style,
-        }),
-      ),
+  test("2 conceals the same tags and glyphs its own copies carry", () => {
+    assert.deepStrictEqual(
+      render(rules, "examples/2-caret/tags.md"),
+      render(rules, "examples/1-replace/tags.md"),
+      "the caret scenes demonstrate the same rules as the replace ones",
     );
-    assert.strictEqual(applicable.length, 3, "three rules");
-    assert.ok(keys.size > applicable.length, `expected more types than rules, got ${keys.size}`);
+    assert.deepStrictEqual(
+      render(rules, "examples/2-caret/lambda.el"),
+      render(rules, "examples/1-replace/lambda.el"),
+    );
+    assert.deepStrictEqual(
+      render(rules, "examples/2-caret/math.tex"),
+      render(rules, "examples/1-replace/math.tex"),
+    );
   });
 
-  test("25 masks a value at its own width, right up to the cap", () => {
-    const lines = render(rules, "examples/2-replace/25-password-mask.env");
-    assert.strictEqual(lines[0], `API_TOKEN=${"•".repeat(16)}`, "sixteen is the cap exactly");
-    assert.strictEqual(lines[1], "LOG_LEVEL=•••••");
+  test("3 hides an identity marker on a list item and on a paragraph alike", () => {
+    const lines = render(rules, "examples/3-invisible-markers/notes.md");
+    assert.strictEqual(lineContaining(lines, "Buy milk"), "- Buy milk");
+    assert.strictEqual(lineContaining(lines, "Call Ann"), "Call Ann");
   });
 
-  test("hiding a property line's text leaves the line", () => {
-    const logseq = render(rules, "examples/6-not-implemented/61-logseq-properties.md");
-    assert.strictEqual(logseq[3], "", "id:: leaves an empty row");
-    assert.strictEqual(logseq[4], "", "collapsed:: leaves an empty row");
-    assert.strictEqual(logseq[5], "- Ship the fork");
+  test("3 draws the tags beside the markers it hides", () => {
+    const lines = render(rules, "examples/3-invisible-markers/notes.md");
+    assert.strictEqual(lineContaining(lines, "Ship"), "- ✅ Ship it");
+    assert.strictEqual(lineContaining(lines, "Fix"), "🐞 Fix it");
+  });
 
-    const org = render(rules, "examples/6-not-implemented/62-org-properties.org");
-    assert.deepStrictEqual(org.slice(0, 6), ["* Buy milk", "", "", "", "", "Milk, and nothing else."]);
+  test("3 leaves a marker that starts neither a line nor an item alone", () => {
+    const moved = renderText(rules, "examples/3-invisible-markers/notes.md", [
+      "Bread {ID:K71QMX} Buy milk",
+    ]);
+    assert.strictEqual(moved[0], "Bread {ID:K71QMX} Buy milk", "a marker off the record's start shows");
+  });
+
+  test("4 unquotes JSON keys and string values alike", () => {
+    const lines = render(rules, "examples/4-hide-markup/config.json");
+    assert.strictEqual(lineContaining(lines, "name"), "  name: demo,");
+    assert.strictEqual(lineContaining(lines, "count"), "  count: 12");
+  });
+
+  test("4 leaves an orphaned quote visible when its partner is gone", () => {
+    const orphan = renderText(rules, "examples/4-hide-markup/config.json", [
+      "{",
+      '  "name: "demo",',
+      "}",
+    ]);
+    assert.strictEqual(orphan[1], '  "name: demo,', "the key's opening quote has no partner");
+  });
+
+  test("4 removes markdown syntax and leaves the words", () => {
+    const lines = render(rules, "examples/4-hide-markup/emphasis.md");
+    assert.strictEqual(lineContaining(lines, "Bold"), "Bold, italic, code.");
+  });
+
+  test("4 leaves an orphaned delimiter visible when its partner is gone", () => {
+    const orphan = renderText(rules, "examples/4-hide-markup/emphasis.md", [
+      "Bold**, _italic_, `code`.",
+    ]);
+    assert.strictEqual(orphan[0], "Bold**, italic, code.");
   });
 
   test("a per-occurrence replacement costs one decoration type per distinct string", () => {
