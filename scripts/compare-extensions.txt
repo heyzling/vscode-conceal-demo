@@ -1,0 +1,18 @@
+# Extensions recorded beside the conceal API, one per line: publisher.name@version.
+#
+# Only extensions that are actively maintained are recorded against. A comparison with abandonware
+# proves nothing about what the platform allows — it invites "that is unmaintained" and the argument
+# is lost. Demand for the other cases is carried by install counts and by the editors that already
+# do this, in the proposal, not by filming a dead extension.
+#
+# Pinned, because a recording is evidence and the reader has to be able to say which build it was
+# made against. Installed into the dev profile only — scripts/dev.sh never touches your own editor.
+# Code OSS has no Marketplace, so the .vsix is fetched from the Marketplace API directly.
+
+# 5-mask: hides secrets by rewriting editor.tokenColorCustomizations, so the text stays selectable,
+# copyable and findable. 61 627 installs, released 2026-07.
+johnpapa.vscode-cloak@0.5.1
+
+# 6-fold: hides text with `textDecoration: 'none; display: none;'` and a `before` attachment.
+# 305 436 installs, tracker at zero open issues.
+moalamri.inline-fold@0.2.6

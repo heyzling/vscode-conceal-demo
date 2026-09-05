@@ -1,0 +1,10 @@
+{
+  "//": "Settings for the extensions the demo is recorded against. The conceal cases themselves are hardcoded and read nothing from here.",
+
+  "//inlineFold": "Recorded against in 6-fold, on the long class attributes it exists for. It matches by language rather than by path, so autoFold is off — left on it would decorate the conceal pane too and the two would fight over one range. Switch it on where you want it with 'Inline Fold: Toggle', which is per file.",
+  "inlineFold.autoFold": false,
+  "inlineFold.togglePerFile": true,
+
+  "//editor.conceal.enabled": "Not set here on purpose: the fork defaults it to true, and a workspace value would override what `Conceal Demo: Toggle Concealment` writes, leaving the command with no visible effect.",
+  "editor.minimap.enabled": false
+}
