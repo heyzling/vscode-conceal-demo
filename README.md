@@ -1,176 +1,123 @@
 # Conceal Demo
 
-A playground for the VS Code **conceal API** — the proposed `concealedText` decoration option that
-takes a run of text out of what the editor renders while the file keeps every character.
+A showcase of the VS Code **conceal decoration options**: the proposed `concealedText` decoration option that
+takes a run of text out of what the editor draws while the file keeps every character. It answers
+[microsoft/vscode#171074](https://github.com/microsoft/vscode/issues/171074) and lives in a fork,
+branch `concealed-text-1.135`; on a stock build the extension conceals nothing.
 
-The point of this extension is to find out how far *pure configuration* gets. Concealment is, at
-bottom, a grep with instructions about what to draw instead, so every rule here is a regular
-expression in a settings file. Where that stops working is the interesting result, and it is
-written down in [what pure configuration cannot reach](#what-pure-configuration-cannot-reach).
-
-> The API is a **proposal**, and one that lives in a fork rather than upstream
-> ([microsoft/vscode#171074](https://github.com/microsoft/vscode/issues/171074) is the request it
-> answers). Without it this extension conceals nothing, says so once, and gets out of the way.
-
-## Requirements
-
-A build of VS Code carrying the `concealedText` proposal, and a grant to use it. Running the fork
-from sources gives every extension every proposal it declares, which is what `scripts/dev.sh` does:
+One folder per case under [src/cases](src/cases), each hardcoded and readable top to bottom, with
+its example file under [examples](examples) and the recordings beside it. Ranges are found with
+regular expressions because this is a demo; a real extension asks its language's parser.
 
 ```bash
 npm install
-CONCEAL_DEMO_FORK=/path/to/vscode-fork ./scripts/dev.sh
+CONCEAL_DEMO_FORK=/path/to/vscode-fork ./scripts/dev.sh   # opens examples/ in the fork
 ```
 
-An **installed** build grants proposals through its own `product.json`:
+`Conceal Demo: Toggle Concealment` flips `editor.conceal.enabled`, the editor's own switch, which
+is how every recording shows what is really in the file.
 
-```json
-"extensionEnabledApiProposals": {
-  "heyzling.conceal-demo": ["concealedText"]
-}
+## 1 — Tags
+
+Shows basic replacement capabilities. Core functionality of proposal.
+
+[src/cases/1-tags/tags.ts](src/cases/1-tags/tags.ts) · [examples/1-tags/tags.md](examples/1-tags/tags.md)
+
+Replaces `#done` with one-symbol and `#bug` with multicharacter glyphs. "Tags to emoji" case is chosen as the most recognizable one. So specific LateX, or F# lamda syntax won't scare people. Replacement are really could be anything. See below to "Other Examples" section.
+
+**Elsewhere:**:
+- Vim's `conceal` with `cchar` (`:help conceal`)
+- Emacs `prettify-symbols-mode`
+- Obsidian Live Preview drawing tags as pills.
+
+| The editor does | The extension does |
+| --- | --- |
+| hides the range and draws the replacement in its place | finds the ranges and picks the glyph |
+| a caret stop on each side: one press or one word jump crosses it, ↑ and ↓ land on its nearest end | styles the replacement: colour, background, radius |
+| Backspace, Delete and word delete take the whole tag, in one undo step | re-applies on every edit, so a tag that stops matching stops being concealed |
+| selection, copy and Ctrl + F see the real text | - |
+
+**Prior art.** Two extensions do this with a decoration and a setting named `adjustCursorMovement`,
+which re-implements caret motion inside the extension. Their trackers show what that costs:
+
+- [Prettify Symbols Mode](https://marketplace.visualstudio.com/items?itemName=siegebell.prettify-symbols-mode),
+  23k installs, abandoned: [siegebell/vsc-prettify-symbols-mode#29](https://github.com/siegebell/vsc-prettify-symbols-mode/issues/29),
+  the caret adjustment breaks on two-byte characters.
+- [vsc-conceal](https://marketplace.visualstudio.com/items?itemName=BRBoer.vsc-conceal), its fork,
+  abandoned: [rocq-community/vsc-conceal#4](https://github.com/rocq-community/vsc-conceal/issues/4),
+  the caret drawn on the wrong side of the symbol, open since 2020.
+
+**Conceal decoration shape for this example**
+```ts
+const doneDecoration = vscode.window.createTextEditorDecorationType({
+  rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+  conceal: { replacement: { contentText: "✅" } },
+});
+
+const bugDecoration = vscode.window.createTextEditorDecorationType({
+  rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+  conceal: {
+    replacement: {
+      contentText: "🐞 bug",
+      color: new vscode.ThemeColor("charts.red"),
+      backgroundColor: new vscode.ThemeColor("editorInlayHint.background"),
+      borderRadius: "3px",
+    },
+  },
+});
+
+editor.setDecorations(doneDecoration, findRanges(editor.document, /#done\b/g));
 ```
 
-On any other build the extension detects that it cannot conceal, warns once, and does nothing else.
+**Concealment on and off**
 
-## Getting started
+![Concealment off with the four tags as text, then on with #done and #bug drawn as glyphs](examples/1-tags/11-toggle.gif)
 
-`scripts/dev.sh` opens [examples/](examples) as the workspace, which is all the demo needs:
-`conceal-demo.include` defaults to `["**/examples/**"]`, so nothing outside that folder is touched
-even though the rules ship enabled.
+**Write tag**
 
-Then open any file under `examples/` and read [examples/README.md](examples/README.md) — one
-section per behaviour, each linking the file, naming the rules that fire on it, and showing a
-recording. Start with section 1, then read section 4 for the bug the same idea comes with.
+![todo deleted letter by letter, done typed until the glyph appears, broken by one more letter and back](examples/1-tags/19-typing.gif)
 
-## How it is configured
 
-| Setting | Default | What it is for |
-| --- | --- | --- |
-| `conceal-demo.enabled` | `true` | Master switch. |
-| `conceal-demo.include` | `["**/examples/**"]` | Glob patterns a file must match before **any** rule runs. The blast-radius guard. |
-| `conceal-demo.rules` | `[]` | Your rules. |
-| `conceal-demo.exampleRules` | the shipped set | The demo rules, kept in their own setting so they never mix with yours. |
-| `conceal-demo.disableExamples` | `false` | Ignore `exampleRules` entirely. |
-| `conceal-demo.maxMatchesPerFile` | `2000` | Stop after this many matches in one file. |
-| `conceal-demo.trace` | `false` | Log every recomputation. |
+**Search finds the text under the glyph**
 
-A rule:
+![Ctrl+F finding done under its glyph and bug under its chip, concealment off showing each match on the real text](examples/1-tags/12-search.gif)
 
-```jsonc
-{
-  "id": "record-id",                       // for the log and the statistics
-  "files": ["**/notes/*.md"],              // globs, on top of conceal-demo.include
-  "languages": ["markdown"],               // language ids, optional
-  "pattern": "\\{![A-Za-z0-9]{6}\\} ",     // matched line by line; 'g' and 'd' are always on
-  "flags": "i",                            // extra flags; 'm', 's', 'y' are refused
-  "group": 0,                              // which capture group to conceal
-  "replaceWith": "",                       // "" hides; "$1"/"$&" build a string per occurrence
-  "cursorStop": "before",                  // read only when nothing is drawn
-  "padToWidth": false,                     // pad the replacement to the hidden text's width
-  "padWith": " ",                          // what to pad with — "•" for a mask
-  "hover": false,                          // show the concealed text on hover
-  "reveal": "never",                       // never | adjacent | line | selection
-  "style": { "color": "theme:editorCodeLens.foreground" }
-}
-```
+**What the clipboard carries**
 
-`style.color` and `style.backgroundColor` take a CSS colour or `theme:<colour-id>`.
+![Two lines, then the glyph alone, then the chip alone pasted into a tab beside: the tags, not the glyphs](examples/1-tags/13-copy.gif)
 
-The shipped set is [examples/default-rules.json](examples/default-rules.json), which is also the
-default of `conceal-demo.exampleRules` in `package.json` — one source of truth, copied by
-`npm run sync-example-rules` and checked by the tests. Paste that file's contents straight into a
-`settings.json` to start from it.
+**The caret around a glyph**
 
-## Commands
+![The caret crossing the glyph and the chip in one press, word jumps landing past them, and the same keys on the raw text with concealment off](examples/1-tags/14-caret.gif)
 
-- **Conceal Demo: Toggle Concealment**
-- **Conceal Demo: Show Statistics** — rules loaded, spans found, and the two numbers the API's shape
-  produces: how many decoration types have been created, and how many replacements the editor cut.
-- **Conceal Demo: Show Log**
+**A caret inside the range when concealment returns**
 
-## What pure configuration reaches
+![The caret parked inside #done and then inside #bug with concealment off, pushed out when concealment comes back](examples/1-tags/15-inside.gif)
 
-One folder of [examples/](examples) per behaviour, each with a recording beside every file it
-demonstrates. The cut is by behaviour rather than by language because the same rules serve every
-language: what changes from case to case is what the editor does around the concealed range.
+**Deleting a glyph**
 
-| Section | What it shows | Reached by a regex rule? |
-| --- | --- | --- |
-| [1 — replace and copy-paste](examples/README.md#1--replace-and-copy-paste) | A glyph drawn in the text's place, and a clipboard that still carries the file | Yes, at one decoration type per string drawn |
-| [2 — caret behaviour](examples/README.md#2--caret-behaviour) | Crossing a drawn glyph, and deleting every character it stands for | Yes — this is the editor's own behaviour, and it is free |
-| [3 — invisible markers](examples/README.md#3--invisible-markers) | A marker that draws nothing at all, at the start of every line | Yes, with `cursorStop` choosing the single position it collapses to |
-| [4 — hide markup](examples/README.md#4--hide-markup) | Emphasis and quotes hidden, and the delete that breaks them | Only halfway — a pair conceals, but no keystroke removes both halves |
+![Backspace, Ctrl+Backspace and Ctrl+Delete taking the whole tag, for the glyph and for the chip, concealment off proving it, undo bringing it back](examples/1-tags/16-delete.gif)
 
-## What pure configuration cannot reach
+**Two carets, two glyphs**
 
-Walls this extension hit, in the order they were hit. The long version, with what each one costs and
-what would fix it, is in the write-up that accompanies this repository.
+![Two carets deleting, restoring and typing braces around two glyphs at once](examples/1-tags/17-multicursor.gif)
 
-1. **A computed replacement.** `replaceWith` can only reassemble what the pattern captured. Turning
-   `abstractsingletonproxyfactorybean` into `aspfb`, a translation key into its translation, or a
-   citation key into `(Smith, 2020)` all need a value from outside the text, and no amount of regex
-   configuration produces one.
-2. **The 16-character cap.** The editor cuts every replacement to 16 characters. A fence chip
-   (`▸ #todo !#done · 20`) does not fit, and neither does masking a 40-character secret at its own
-   width.
-3. **One decoration type per string drawn.** The replacement is a property of the decoration
-   *type*, so a rule with `$1` in it creates a type per distinct result. The count grows with the
-   text, not with the configuration.
-4. **Whole-line concealment.** Hiding the text of a line that exists only for its text leaves an
-   empty line — and, with the default caret stop, a row with no line number in the gutter.
-5. **Click-to-expand.** A concealed range has no width, so a click on the placeholder cannot be told
-   from a click on the character beside it.
-6. **A glyph two cells wide.** A replacement is laid out by its UTF-16 code-unit count, not by what
-   it paints, so `✅` — one code unit, two cells — gets caret stops one column apart and the caret
-   is drawn through the middle of it. The editing stays correct; only the picture lies. Nothing to
-   configure around except never drawing such a glyph, which is
-   [2 — caret behaviour](examples/README.md#23--crossing-and-deleting-an-icon)'s last recording.
+**The caret up and down through glyph lines**
 
-## Development
+![Up and down landing on the nearest end of a glyph, never inside it](examples/1-tags/18-vertical.gif)
+
+
+## Recording
+
+The GIFs are played by the extension's own recorder and photographed by
+[scripts/record.sh](scripts/record.sh) on WSLg; its header lists the requirements.
 
 ```bash
-npm install
-npm run compile          # types, lint, rule sync, bundle
-npm run test:unit        # pure logic, no editor
-npm test                 # integration, in an extension host
-npm run vsix             # a .vsix in ./builds
+CONCEAL_DEMO_FORK=/path/to/vscode-fork CONCEAL_DEMO_WINSHOT=/path/to/winshot.ps1 \
+  ./scripts/record.sh 2          # case 2; `21 23` picks scenes
 ```
 
-`npm test` launches a stock VS Code by default, where it checks the half that has to work *without*
-the API. Point it at a build that has the proposal to run the same suite where concealment is real:
-
-```bash
-CONCEAL_DEMO_VSCODE=/path/to/code npm test
-```
-
-`src/vscode.proposed.concealedText.d.ts` is a vendored copy of the fork's declaration —
-`npx @vscode/dts dev` cannot fetch it, because the proposal is not in microsoft/vscode.
-
-## Recording the demos
-
-The recordings in `examples/` are not animations: `src/recorder.ts` drives a real editor from
-inside it, stopping at every frame, and `scripts/record.sh` photographs the window. Each scene
-names the one file it is about, and its GIF is written beside that file under the scene's own name
-— so [examples/README.md](examples/README.md) can link the file and show the picture without a path
-being burnt into the frames.
-
-```bash
-CONCEAL_DEMO_FORK=/path/to/vscode-fork \
-CONCEAL_DEMO_WINSHOT=/path/to/screenshot-helper.ps1 \
-  ./scripts/record.sh              # every scene in examples/scenes.json
-  ./scripts/record.sh 3            # every scene of section 3 — examples/3-*
-  ./scripts/record.sh 31 33        # only those two scenes
-```
-
-It needs the conceal-capable fork (as `scripts/dev.sh` does), `ffmpeg`, and a screenshot helper
-taking `-Hwnd`/`-Out` — this is a WSLg machine, where the editor window is a Win32 window like any
-other and there is no Linux screenshot tool. Nothing is on a timer: the recorder writes a
-rendezvous file when a state is ready and blocks until the picture has been taken, so no frame can
-catch a half-applied decoration.
-
-**A run owns the desktop's focus, so leave the machine alone while it records.** An editor command
-is delivered to the *focused* editor, and a window that does not hold the foreground has none — the
-keystroke is accepted, does nothing, and would be photographed under a caption saying it landed.
-The script raises its window before every frame, and the recorder checks that each keystroke moved
-the caret or changed the document, stopping with the name of the lost one rather than recording a
-picture that lies.
+A step marked `manual` in [examples/scenes.json](examples/scenes.json) is filmed by hand: the
+recorder sets the scene up and sizes the window, the Windows ffmpeg films the workbench rectangle
+with the pointer in it until Enter is pressed in the terminal, and the clip gets its caption like
+any frame. That is how the mouse scenes are made, since nothing in the pipeline can move the mouse.

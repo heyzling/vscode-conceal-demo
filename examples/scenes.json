@@ -2,1020 +2,537 @@
   "settleMs": 450,
   "scenes": [
     {
-      "id": "11-markdown-tags",
-      "title": "Replace — a tag drawn as its icon",
-      "example": "1-replace/tags.md",
-      "window": [
-        1280,
-        420
-      ],
+      "id": "11-toggle",
+      "title": "Tags — concealment on and off",
+      "example": "1-tags/tags.md",
+      "window": [1280, 500],
       "steps": [
         {
-          "caption": "Concealment OFF: #done and #bug, as they are written",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
+          "caption": "Concealment OFF: the tags are real text",
+          "hold": 1.7,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}]
         },
         {
-          "caption": "Concealment ON: each tag drawn as one glyph",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
-          ]
-        },
-        {
-          "caption": "Copy preserves original text",
-          "hold": 2.7,
-          "do": [
-            {
-              "select": [
-                3,
-                1,
-                4,
-                22
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
-        },
-        {
-          "caption": "Copy the glyph alone: also preserves original text",
-          "hold": 2.7,
-          "do": [
-            {
-              "open": "1-replace/tags.md"
-            },
-            {
-              "select": [
-                3,
-                3,
-                3,
-                8
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
+          "caption": "Concealment ON: #done and #bug drawn as glyphs",
+          "hold": 1.7,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}]
         }
       ]
     },
     {
-      "id": "12-ts-arrows",
-      "title": "Replace — a fat arrow drawn as ⇒",
-      "example": "1-replace/arrows.ts",
-      "window": [
-        1280,
-        500
-      ],
+      "id": "12-search",
+      "title": "Tags — search finds the text under the glyph",
+      "example": "1-tags/tags.md",
+      "window": [1280, 500],
       "steps": [
         {
-          "caption": "Concealment OFF: => in every arrow function",
-          "hold": 2.4,
+          "caption": "Concealment ON",
+          "hold": 1.2,
+          "do": [{"caret": [1, 1]}]
+        },
+        {
+          "caption": "Ctrl + F: finds done under the glyph",
+          "hold": 2.5,
           "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
+            {"command": "editor.actions.findWithArgs", "args": [{"searchString": "done"}]},
+            {"command": "editor.action.nextMatchFindAction"}
           ]
         },
         {
-          "caption": "Concealment ON: one glyph each, from a fixed table",
-          "hold": 2.4,
+          "caption": "Concealment OFF: the match is on the real text",
+          "hold": 2.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        },
+        {
+          "caption": "Concealment ON",
+          "hold": 1.2,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}]
+        },
+        {
+          "caption": "Ctrl + F: finds bug under the chip",
+          "hold": 2.5,
           "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
+            {"command": "editor.actions.findWithArgs", "args": [{"searchString": "bug"}]},
+            {"command": "editor.action.nextMatchFindAction"}
           ]
         },
         {
-          "caption": "Copy preserves original text",
-          "hold": 2.7,
-          "do": [
-            {
-              "select": [
-                3,
-                1,
-                4,
-                28
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
-        },
-        {
-          "caption": "Copy the glyph alone: also preserves original text",
-          "hold": 2.7,
-          "do": [
-            {
-              "open": "1-replace/arrows.ts"
-            },
-            {
-              "select": [
-                3,
-                19,
-                3,
-                21
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
+          "caption": "Concealment OFF: the match is on the real text",
+          "hold": 2.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
         }
       ]
     },
     {
-      "id": "13-latex",
-      "title": "Replace — TeX commands as their glyphs",
-      "example": "1-replace/math.tex",
-      "window": [
-        1280,
-        560
-      ],
+      "id": "13-copy",
+      "title": "Tags — what the clipboard carries",
+      "example": "1-tags/tags.md",
+      "window": [1280, 500],
       "steps": [
         {
-          "caption": "Concealment OFF: \\forall, \\in and the greek, spelled out",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
+          "caption": "Select and copy the lines with glyphs",
+          "hold": 1.2,
+          "live": 0.35,
+          "do": [{"select": [8, 1, 9, 22]}]
         },
         {
-          "caption": "Concealment ON: what is not in the table — \\mathbb{R} — stays",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
-          ]
+          "caption": "Open an empty tab beside it",
+          "hold": 1.2,
+          "do": [{"copy": true}, {"openBeside": true}]
         },
         {
-          "caption": "Copy preserves original text",
+          "caption": "Copy preserves the original text",
           "hold": 2.7,
-          "do": [
-            {
-              "select": [
-                4,
-                1,
-                5,
-                24
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
+          "do": [{"paste": true}]
         },
         {
-          "caption": "Copy the glyph alone: also preserves original text",
+          "caption": "Close the tab",
+          "hold": 1.2,
+          "do": [{"closeBeside": true}]
+        },
+        {
+          "caption": "Select only the #done glyph",
+          "hold": 1.2,
+          "live": 0.35,
+          "do": [{"select": [8, 3, 8, 8]}]
+        },
+        {
+          "caption": "Open an empty tab beside it",
+          "hold": 1.2,
+          "do": [{"copy": true}, {"openBeside": true}]
+        },
+        {
+          "caption": "Copy the glyph alone: also the original text",
           "hold": 2.7,
-          "do": [
-            {
-              "open": "1-replace/math.tex"
-            },
-            {
-              "select": [
-                4,
-                1,
-                4,
-                8
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
+          "do": [{"paste": true}]
+        },
+        {
+          "caption": "Close the tab",
+          "hold": 1.2,
+          "do": [{"closeBeside": true}]
+        },
+        {
+          "caption": "Select only the #bug chip",
+          "hold": 1.2,
+          "live": 0.35,
+          "do": [{"select": [9, 3, 9, 7]}]
+        },
+        {
+          "caption": "Open an empty tab beside it",
+          "hold": 1.2,
+          "do": [{"copy": true}, {"openBeside": true}]
+        },
+        {
+          "caption": "Copy the chip alone: also the original text",
+          "hold": 2.7,
+          "do": [{"paste": true}]
         }
       ]
     },
     {
-      "id": "14-lisp",
-      "title": "Replace — lambda drawn as λ",
-      "example": "1-replace/lambda.el",
-      "window": [
-        1280,
-        340
-      ],
+      "id": "14-caret",
+      "title": "Tags — the caret around a glyph",
+      "example": "1-tags/tags.md",
+      "window": [1280, 500],
       "steps": [
         {
-          "caption": "Concealment OFF: lambda and >=, spelled out",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
+          "caption": "Put the caret at the right of the glyph",
+          "hold": 1.6,
+          "do": [{"caret": [8, 8]}]
         },
         {
-          "caption": "Concealment ON: one glyph each, from a fixed table",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
-          ]
+          "caption": "Put the caret after Ship",
+          "hold": 1.6,
+          "skip": true,
+          "do": [{"caret": [8, 13]}]
         },
         {
-          "caption": "Copy preserves original text",
+          "caption": "Move left to the glyph",
+          "hold": 1.5,
+          "live": 0.27,
+          "skip": true,
+          "do": [{"command": "cursorLeft", "times": 5}]
+        },
+        {
+          "caption": "←: crosses the whole glyph",
+          "hold": 2.2,
+          "do": [{"command": "cursorLeft"}]
+        },
+        {
+          "caption": "→: goes back",
+          "hold": 2.2,
+          "do": [{"command": "cursorRight"}]
+        },
+        {
+          "caption": "Ctrl + ←: A word jump also works",
+          "hold": 2.2,
+          "do": [{"command": "cursorWordLeft"}]
+        },
+        {
+          "caption": "Ctrl + →: A word jump back",
+          "hold": 2.2,
+          "do": [{"command": "cursorWordRight"}]
+        },
+        {
+          "caption": "Concealment OFF: the caret stays where it was",
+          "hold": 2.2,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        },
+        {
+          "caption": "Now the caret walks #done letter by letter",
           "hold": 2.7,
-          "do": [
-            {
-              "select": [
-                1,
-                1,
-                1,
-                22
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
+          "live": 0.27,
+          "do": [{"command": "cursorLeft", "times": 5}]
         },
         {
-          "caption": "Copy the glyph alone: also preserves original text",
+          "caption": "Concealment ON, the caret at the right of the chip",
+          "hold": 1.6,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}, {"caret": [9, 7]}]
+        },
+        {
+          "caption": "←: crosses the whole chip",
+          "hold": 2.2,
+          "do": [{"command": "cursorLeft"}]
+        },
+        {
+          "caption": "→: goes back",
+          "hold": 2.2,
+          "do": [{"command": "cursorRight"}]
+        },
+        {
+          "caption": "Ctrl + ←: A word jump also works",
+          "hold": 2.2,
+          "do": [{"command": "cursorWordLeft"}]
+        },
+        {
+          "caption": "Ctrl + →: A word jump back",
+          "hold": 2.2,
+          "do": [{"command": "cursorWordRight"}]
+        },
+        {
+          "caption": "Concealment OFF: the caret stays where it was",
+          "hold": 2.2,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        },
+        {
+          "caption": "Now the caret walks #bug letter by letter",
           "hold": 2.7,
-          "do": [
-            {
-              "open": "1-replace/lambda.el"
-            },
-            {
-              "select": [
-                1,
-                2,
-                1,
-                8
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
+          "live": 0.27,
+          "do": [{"command": "cursorLeft", "times": 4}]
         }
       ]
     },
     {
-      "id": "21-lisp",
-      "title": "Caret — crossing and deleting a drawn glyph",
-      "example": "2-caret/lambda.el",
-      "window": [
-        1280,
-        340
-      ],
+      "id": "15-inside",
+      "title": "Tags — a caret inside the range when concealment returns",
+      "example": "1-tags/tags.md",
+      "window": [1280, 500],
       "steps": [
         {
-          "caption": "The caret rests on the right of λ",
-          "hold": 2.4,
-          "do": [
-            {
-              "caret": [
-                1,
-                8
-              ]
-            }
-          ]
+          "caption": "Concealment OFF: the tags are real text",
+          "hold": 1.6,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [8, 8]}]
         },
         {
-          "caption": "← crosses all six hidden characters in one press",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "cursorLeft"
-            }
-          ]
+          "caption": "Concealment OFF: the tags are real text",
+          "hold": 1.6,
+          "skip": true,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [8, 13]}]
         },
         {
-          "caption": "→ crosses back, one press again",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "cursorRight"
-            }
-          ]
+          "caption": "Move into the middle of #done",
+          "hold": 1.5,
+          "live": 0.27,
+          "skip": true,
+          "do": [{"command": "cursorLeft", "times": 7}]
         },
         {
-          "caption": "Backspace takes the whole glyph — Ctrl+Backspace works the same",
+          "caption": "Move into the middle of #done",
+          "hold": 1.5,
+          "live": 0.27,
+          "do": [{"command": "cursorLeft", "times": 2}]
+        },
+        {
+          "caption": "Concealment ON: a caret inside the range is pushed out",
+          "hold": 2.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}]
+        },
+        {
+          "caption": "Concealment OFF, the caret at the right of #bug",
+          "hold": 1.6,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [9, 7]}]
+        },
+        {
+          "caption": "Move into the middle of #bug",
+          "hold": 1.5,
+          "live": 0.27,
+          "do": [{"command": "cursorLeft", "times": 2}]
+        },
+        {
+          "caption": "Concealment ON: a caret inside the range is pushed out",
+          "hold": 2.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}]
+        }
+      ]
+    },
+    {
+      "id": "16-delete",
+      "title": "Tags — deleting a glyph",
+      "example": "1-tags/tags.md",
+      "window": [1280, 500],
+      "steps": [
+        {
+          "caption": "Put the caret at the right of the glyph",
+          "hold": 1.6,
+          "do": [{"caret": [8, 8]}]
+        },
+        {
+          "caption": "Put the caret after Ship",
+          "hold": 1.6,
+          "skip": true,
+          "do": [{"caret": [8, 13]}]
+        },
+        {
+          "caption": "Move left to the glyph",
+          "hold": 1.5,
+          "live": 0.27,
+          "skip": true,
+          "do": [{"command": "cursorLeft", "times": 5}]
+        },
+        {
+          "caption": "Backspace deletes the whole glyph in one press",
+          "hold": 2.5,
+          "do": [{"command": "deleteLeft"}]
+        },
+        {
+          "caption": "Concealment OFF: #done is gone from the file",
+          "hold": 2.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        },
+        {
+          "caption": "Ctrl + Z: Undo brings #done back in one step",
+          "hold": 2.5,
+          "do": [{"command": "undo"}]
+        },
+        {
+          "caption": "Concealment ON: the glyph is back",
+          "hold": 2.2,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}]
+        },
+        {
+          "caption": "Ctrl + Backspace: takes the glyph as one word",
+          "hold": 2.5,
+          "do": [{"command": "deleteWordLeft"}]
+        },
+        {
+          "caption": "Ctrl + Z: back again",
+          "hold": 2.5,
+          "do": [{"command": "undo"}]
+        },
+        {
+          "caption": "←: to the left of the glyph",
+          "hold": 2.2,
+          "do": [{"command": "cursorLeft"}]
+        },
+        {
+          "caption": "Ctrl + Delete: takes the glyph as one word, forward",
+          "hold": 2.5,
+          "do": [{"command": "deleteWordRight"}]
+        },
+        {
+          "caption": "Ctrl + Z: back again",
+          "hold": 2.5,
+          "do": [{"command": "undo"}]
+        },
+        {
+          "caption": "Put the caret at the right of the chip",
+          "hold": 1.6,
+          "do": [{"caret": [9, 7]}]
+        },
+        {
+          "caption": "Backspace deletes the whole chip in one press",
+          "hold": 2.5,
+          "do": [{"command": "deleteLeft"}]
+        },
+        {
+          "caption": "Concealment OFF: #bug is gone from the file",
+          "hold": 2.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        },
+        {
+          "caption": "Ctrl + Z: Undo brings #bug back in one step",
+          "hold": 2.5,
+          "do": [{"command": "undo"}]
+        },
+        {
+          "caption": "Concealment ON: the chip is back",
+          "hold": 2.2,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}]
+        },
+        {
+          "caption": "Ctrl + Backspace: takes the chip as one word",
+          "hold": 2.5,
+          "do": [{"command": "deleteWordLeft"}]
+        },
+        {
+          "caption": "Ctrl + Z: back again",
+          "hold": 2.5,
+          "do": [{"command": "undo"}]
+        },
+        {
+          "caption": "←: to the left of the chip",
+          "hold": 2.2,
+          "do": [{"command": "cursorLeft"}]
+        },
+        {
+          "caption": "Ctrl + Delete: takes the chip as one word, forward",
+          "hold": 2.5,
+          "do": [{"command": "deleteWordRight"}]
+        },
+        {
+          "caption": "Ctrl + Z: back again",
+          "hold": 2.5,
+          "do": [{"command": "undo"}]
+        }
+      ]
+    },
+    {
+      "id": "17-multicursor",
+      "title": "Tags — two carets, two glyphs",
+      "example": "1-tags/tags.md",
+      "window": [1280, 500],
+      "steps": [
+        {
+          "caption": "Put the caret at the start of the #done line",
+          "hold": 1.6,
+          "do": [{"caret": [8, 1]}]
+        },
+        {
+          "caption": "Ctrl + Alt + ↓: a second caret on the #bug line",
+          "hold": 2.0,
+          "do": [{"command": "editor.action.insertCursorBelow"}]
+        },
+        {
+          "caption": "Move both carets to the glyphs",
+          "hold": 2.2,
+          "live": 0.27,
+          "do": [{"command": "cursorRight", "times": 2}]
+        },
+        {
+          "caption": "Delete removes both glyphs in one press",
           "hold": 2.7,
-          "do": [
-            {
-              "command": "deleteLeft"
-            }
-          ]
+          "do": [{"command": "deleteRight"}]
         },
         {
-          "caption": "Ctrl+Z brings all back at once",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "undo"
-            },
-            {
-              "caret": [
-                1,
-                8
-              ]
-            }
-          ]
+          "caption": "Ctrl + Z: Undo brings both back",
+          "hold": 2.2,
+          "do": [{"command": "undo"}]
         },
         {
-          "caption": "← once more: the caret is now on the glyph's left side",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "cursorLeft"
-            }
-          ]
+          "caption": "Type before both glyphs",
+          "hold": 2.2,
+          "live": 0.27,
+          "do": [{"type": "{"}]
         },
         {
-          "caption": "Delete from the left takes the whole glyph too",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "deleteRight"
-            }
-          ]
+          "caption": "→: crosses both glyphs",
+          "hold": 2.2,
+          "do": [{"command": "cursorRight"}]
         },
         {
-          "caption": "Concealment OFF: lambda really is gone from the file",
+          "caption": "Type after both glyphs",
+          "hold": 2.2,
+          "live": 0.27,
+          "do": [{"type": "}"}]
+        },
+        {
+          "caption": "Concealment OFF: {#done} and {#bug}, tags untouched",
           "hold": 3.0,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
         }
       ]
     },
     {
-      "id": "22-latex",
-      "title": "Caret — crossing and deleting a TeX command",
-      "example": "2-caret/math.tex",
-      "window": [
-        1280,
-        560
-      ],
+      "id": "18-vertical",
+      "title": "Tags — the caret up and down through glyph lines",
+      "example": "1-tags/tags.md",
+      "window": [1280, 500],
       "steps": [
         {
-          "caption": "The caret rests on the right of ∀",
-          "hold": 2.4,
-          "do": [
-            {
-              "caret": [
-                4,
-                8
-              ]
-            }
-          ]
+          "caption": "Put the caret after Shi, level with the chip's end",
+          "hold": 1.28,
+          "do": [{"caret": [8, 12]}]
         },
         {
-          "caption": "← crosses all seven hidden characters in one press",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "cursorLeft"
-            }
-          ]
+          "caption": "↓ ↑: the column is matched",
+          "hold": 1.2,
+          "live": 0.72,
+          "do": [{"command": "cursorDown"}, {"command": "cursorUp"}]
         },
         {
-          "caption": "→ crosses back, one press again",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "cursorRight"
-            }
-          ]
+          "caption": "← ↓ ↑: jumps to the closest end of the glyph",
+          "hold": 0.72,
+          "live": 0.56,
+          "do": [{"command": "cursorLeft"}, {"command": "cursorDown"}, {"command": "cursorUp"}]
         },
         {
-          "caption": "Backspace takes the whole glyph — Ctrl+Backspace works the same",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "deleteLeft"
-            }
-          ]
+          "caption": "← ↓ ↑: jumps to the closest end of the glyph",
+          "hold": 0.72,
+          "live": 0.56,
+          "do": [{"command": "cursorLeft"}, {"command": "cursorDown"}, {"command": "cursorUp"}]
         },
         {
-          "caption": "Ctrl+Z brings all back at once",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "undo"
-            },
-            {
-              "caret": [
-                4,
-                8
-              ]
-            }
-          ]
+          "caption": "← ↓ ↑: jumps to the closest end of the glyph",
+          "hold": 0.72,
+          "live": 0.56,
+          "do": [{"command": "cursorLeft"}, {"command": "cursorDown"}, {"command": "cursorUp"}]
         },
         {
-          "caption": "← once more: the caret is now on the glyph's left side",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "cursorLeft"
-            }
-          ]
+          "caption": "← ↓ ↑: jumps to the closest end of the glyph",
+          "hold": 0.72,
+          "live": 0.56,
+          "do": [{"command": "cursorLeft"}, {"command": "cursorDown"}, {"command": "cursorUp"}]
         },
         {
-          "caption": "Delete from the left takes the whole glyph too",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "deleteRight"
-            }
-          ]
-        },
-        {
-          "caption": "Concealment OFF: \\forall really is gone from the file",
-          "hold": 3.0,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
+          "caption": "← ↓ ↑: before the glyph, the columns are matched again",
+          "hold": 2.0,
+          "live": 0.72,
+          "do": [{"command": "cursorLeft"}, {"command": "cursorDown"}, {"command": "cursorUp"}]
         }
       ]
     },
     {
-      "id": "23-markdown-tags",
-      "title": "Caret — crossing and deleting an icon",
-      "example": "2-caret/tags.md",
-      "window": [
-        1280,
-        420
-      ],
+      "id": "19-typing",
+      "title": "Tags — a tag typed in place of another",
+      "example": "1-tags/tags.md",
+      "window": [1280, 500],
       "steps": [
         {
-          "caption": "The caret rests on the right of the icon",
-          "hold": 2.4,
-          "do": [
-            {
-              "caret": [
-                3,
-                8
-              ]
-            }
-          ]
+          "caption": "Put the caret after #todo",
+          "hold": 1.6,
+          "do": [{"caret": [4, 8]}]
         },
         {
-          "caption": "← crosses all five hidden characters in one press",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "cursorLeft"
-            }
-          ]
+          "caption": "Delete todo letter by letter: painted text is ordinary text",
+          "hold": 1.5,
+          "live": 0.27,
+          "do": [{"command": "deleteLeft", "times": 4}]
         },
         {
-          "caption": "→ crosses back, one press again",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "cursorRight"
-            }
-          ]
+          "caption": "Type done: the glyph appears on its last letter",
+          "hold": 2.5,
+          "live": 0.27,
+          "do": [{"type": "done"}]
         },
         {
-          "caption": "Backspace takes the whole glyph — Ctrl+Backspace works the same",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "deleteLeft"
-            }
-          ]
+          "caption": "One letter more: doesn't match, back as text",
+          "hold": 2.5,
+          "do": [{"type": "x"}]
         },
         {
-          "caption": "Ctrl+Z brings all back at once",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "undo"
-            },
-            {
-              "caret": [
-                3,
-                8
-              ]
-            }
-          ]
-        },
-        {
-          "caption": "← once more: the caret is now on the glyph's left side",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "cursorLeft"
-            }
-          ]
-        },
-        {
-          "caption": "Delete from the left takes the whole glyph too",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "deleteRight"
-            }
-          ]
-        },
-        {
-          "caption": "Concealment OFF: #done really is gone from the file",
-          "hold": 3.0,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "31-caret",
-      "title": "Invisible markers — a caret crossing what is not drawn",
-      "example": "3-invisible-markers/notes.md",
-      "window": [
-        1280,
-        500
-      ],
-      "steps": [
-        {
-          "caption": "Concealment OFF: a marker on every record, and two tags among them",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            },
-            {
-              "caret": [
-                4,
-                3
-              ]
-            }
-          ]
-        },
-        {
-          "caption": "Concealment ON: the markers gone, the tags drawn, the records the same",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
-          ]
-        },
-        {
-          "caption": "A list item: the caret at the marker's left edge, after the dash",
-          "hold": 2.4,
-          "do": [
-            {
-              "caret": [
-                4,
-                3
-              ]
-            }
-          ]
-        },
-        {
-          "caption": "← once: an ordinary step left, into the gap after the dash",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "cursorLeft"
-            }
-          ]
-        },
-        {
-          "caption": "→ once: an ordinary step back, onto the marker's edge",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "cursorRight"
-            }
-          ]
-        },
-        {
-          "caption": "→ again: one cell on screen, thirteen characters in the file",
-          "hold": 3.0,
-          "do": [
-            {
-              "command": "cursorRight"
-            }
-          ]
-        },
-        {
-          "caption": "Concealment OFF: that one press crossed the whole marker",
-          "hold": 3.0,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
-        },
-        {
-          "caption": "A paragraph: the marker's one stop is column 1",
-          "hold": 2.7,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            },
-            {
-              "caret": [
-                7,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "caption": "← once and the line is gone: the marker holds no stop of its own",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "cursorLeft"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "32-delete-and-copy",
-      "title": "Invisible markers — what a delete takes, and what the clipboard carries",
-      "example": "3-invisible-markers/notes.md",
-      "window": [
-        1280,
-        500
-      ],
-      "steps": [
-        {
-          "caption": "Concealment ON: four ids, none of them on screen",
-          "hold": 2.4,
-          "do": [
-            {
-              "caret": [
-                7,
-                21
-              ]
-            }
-          ]
-        },
-        {
-          "caption": "Ctrl+Backspace erases the word: the marker it cannot see is untouched",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "deleteWordLeft"
-            }
-          ]
-        },
-        {
-          "caption": "Again: the record looks empty, and its id is still inside it",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "deleteWordLeft"
-            }
-          ]
-        },
-        {
-          "caption": "BUG: one Delete takes all twelve hidden characters, and nothing says so",
-          "hold": 3.0,
-          "do": [
-            {
-              "command": "deleteRight"
-            }
-          ]
-        },
-        {
-          "caption": "Concealment OFF: that id really is gone, where the others are still there",
-          "hold": 3.0,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
-        },
-        {
-          "caption": "Ctrl + Z, and every record is back",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            },
-            {
-              "command": "undo"
-            },
-            {
-              "command": "undo"
-            },
-            {
-              "command": "undo"
-            }
-          ]
-        },
-        {
-          "caption": "Copy one record: the id comes with it, having never been on screen",
-          "hold": 2.7,
-          "do": [
-            {
-              "select": [
-                7,
-                1,
-                7,
-                21
-              ]
-            },
-            {
-              "copy": true
-            },
-            {
-              "openBeside": true
-            },
-            {
-              "paste": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "33-enter-at-line-start",
-      "title": "Invisible markers — a line break in front of one",
-      "example": "3-invisible-markers/notes.md",
-      "window": [
-        1280,
-        500
-      ],
-      "steps": [
-        {
-          "caption": "Concealment ON: the caret is at the start of the last record",
-          "hold": 2.4,
-          "do": [
-            {
-              "caret": [
-                7,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "caption": "Enter at the start: the id travels down with its line",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "lineBreakInsert"
-            }
-          ]
-        },
-        {
-          "caption": "Concealment OFF: the marker moved with its text, intact",
-          "hold": 2.7,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "41-markdown",
-      "title": "Hide markup — deleting half of a pair",
-      "example": "4-hide-markup/emphasis.md",
-      "window": [
-        1280,
-        400
-      ],
-      "steps": [
-        {
-          "caption": "Concealment OFF: this is the file, every marker in it",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            }
-          ]
-        },
-        {
-          "caption": "Concealment ON: the markers are gone, the words are not",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
-          ]
-        },
-        {
-          "caption": "The caret rests to the right of Bold, past the closing **",
-          "hold": 2.4,
-          "do": [
-            {
-              "caret": [
-                3,
-                9
-              ]
-            }
-          ]
-        },
-        {
-          "caption": "Backspace takes the whole delimiter: two asterisks, one press",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "deleteLeft"
-            }
-          ]
-        },
-        {
-          "caption": "BUG: its partner is left behind, so the markdown is broken",
-          "hold": 3.0,
-          "do": [
-            {
-              "caret": [
-                1,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "caption": "Ctrl + Z, and the pair closes up again",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "undo"
-            },
-            {
-              "caret": [
-                1,
-                1
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "42-json",
-      "title": "Hide markup — deleting a quote of a pair",
-      "example": "4-hide-markup/config.json",
-      "window": [
-        1280,
-        420
-      ],
-      "steps": [
-        {
-          "caption": "Concealment OFF: every key and every string is quoted",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": false
-            },
-            {
-              "caret": [
-                1,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "caption": "Concealment ON: bare keys, bare strings",
-          "hold": 2.4,
-          "do": [
-            {
-              "setting": "conceal-demo.enabled",
-              "value": true
-            }
-          ]
-        },
-        {
-          "caption": "The caret rests to the right of demo, past the closing quote",
-          "hold": 2.4,
-          "do": [
-            {
-              "caret": [
-                2,
-                17
-              ]
-            }
-          ]
-        },
-        {
-          "caption": "Backspace takes the quote it is standing on the right of",
-          "hold": 2.7,
-          "do": [
-            {
-              "command": "deleteLeft"
-            }
-          ]
-        },
-        {
-          "caption": "BUG: its partner is left behind, so the JSON is broken",
-          "hold": 3.0,
-          "do": [
-            {
-              "caret": [
-                1,
-                1
-              ]
-            }
-          ]
-        },
-        {
-          "caption": "Ctrl + Z, and the pair closes up again",
-          "hold": 2.4,
-          "do": [
-            {
-              "command": "undo"
-            },
-            {
-              "caret": [
-                1,
-                1
-              ]
-            }
-          ]
+          "caption": "Backspace deletes the letter, the glyph is back",
+          "hold": 2.5,
+          "do": [{"command": "deleteLeft"}]
         }
       ]
     }

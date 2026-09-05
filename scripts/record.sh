@@ -8,9 +8,15 @@
 # can catch a half-applied decoration.
 #
 #   ./scripts/record.sh                      # every scene in examples/scenes.json
-#   ./scripts/record.sh 3                    # every scene of section 3 — examples/3-*
-#   ./scripts/record.sh 31 33                # only those two scenes
-#   ./scripts/record.sh 4-hide-markup        # a folder, spelled out
+#   ./scripts/record.sh 1                    # every scene of case 1 — examples/1-*
+#   ./scripts/record.sh 11 12                # only those two scenes
+#   ./scripts/record.sh 1-tags               # a folder, spelled out
+#
+# A step marked `manual` in scenes.json is a clip filmed by hand: the recorder sets the scene up,
+# this script films the workbench rectangle — pointer included — with the Windows ffmpeg until
+# Enter is pressed here, and the clip gets its caption like any frame. For a mouse scene, since
+# nothing here can move the mouse. CONCEAL_DEMO_CLIP_SECONDS stops the filming by itself instead,
+# for an unattended check of the pipeline.
 #
 # The window is raised to the foreground for every frame, so a run owns the desktop's focus while
 # it lasts — an editor command only reaches an editor whose window has focus.
@@ -20,6 +26,8 @@
 #   * ffmpeg, for assembling the frames
 #   * a Win32 screenshot helper taking -Hwnd/-Out, because WSLg has no Linux screenshot tool
 #     and the editor window is a Win32 window like any other (CONCEAL_DEMO_WINSHOT)
+#   * for clips filmed by hand only: ffmpeg.exe on the Windows side, which is what can film the
+#     desktop with the pointer in it (CONCEAL_DEMO_FFMPEG_WIN, default ffmpeg.exe from PATH)
 set -euo pipefail
 shopt -s nullglob
 
@@ -42,6 +50,11 @@ CAPTION_HEIGHT=84
 CAPTION_SIZE=27
 FONT="${CONCEAL_DEMO_FONT:-/usr/share/fonts/adwaita-mono-fonts/AdwaitaMono-Bold.ttf}"
 FPS=10
+# Where the window is put on the desktop; a clip filmed by hand is cut from the screen there.
+WIN_X=80
+WIN_Y=60
+WIN_FFMPEG="${CONCEAL_DEMO_FFMPEG_WIN:-ffmpeg.exe}"
+CLIP_SECONDS="${CONCEAL_DEMO_CLIP_SECONDS:-}"
 
 die() { echo "$*" >&2; exit 1; }
 
@@ -94,9 +107,11 @@ cat > "$WORK/profile/user-data/User/settings.json" <<'JSON'
   "workbench.tips.enabled": false,
   "workbench.layoutControl.enabled": false,
   "workbench.editor.enablePreview": false,
+  "workbench.editor.empty.hint": "hidden",
   "chat.commandCenter.enabled": false,
   "breadcrumbs.enabled": false,
   "editor.minimap.enabled": false,
+  "editor.folding": false,
   "editor.stickyScroll.enabled": false,
   "editor.smoothScrolling": false,
   "editor.cursorBlinking": "solid",
@@ -107,6 +122,7 @@ cat > "$WORK/profile/user-data/User/settings.json" <<'JSON'
   "editor.wordWrap": "wordWrapColumn",
   "editor.wordWrapColumn": 28,
   "editor.occurrencesHighlight": "off",
+  "editor.matchBrackets": "never",
   "editor.hover.enabled": false,
   "editor.suggestOnTriggerCharacters": false,
   "editor.quickSuggestions": { "other": "off", "comments": "off", "strings": "off" },
@@ -131,10 +147,9 @@ CONCEAL_DEMO_PROFILE="$WORK/profile" CONCEAL_DEMO_RECORD="$RDV" "$REPO/scripts/d
 EDITOR_PID=$!
 cleanup() {
 	# SIGKILL, not SIGTERM: a graceful quit stops to ask whether to save the tab a scene pasted
-	# into. The bracket keeps the pattern from matching pkill's own command line, which would
-	# otherwise make this script kill itself.
+	# into. Matched by the recording profile, so a dev instance of the same extension survives.
 	kill -9 "$EDITOR_PID" 2>/dev/null || true
-	pkill -9 -f "extensionDevelopmentPath=${REPO/\//[/]}" 2>/dev/null || true
+	pkill -9 -f "user-data-dir=$WORK/profile" 2>/dev/null || true
 }
 trap cleanup EXIT
 
@@ -169,7 +184,7 @@ echo "recording window $HWND"
 move_window() {
 	powershell.exe -NoProfile -Command "
 	  Add-Type -Namespace W -Name U -MemberDefinition '[DllImport(\"user32.dll\")] public static extern bool MoveWindow(IntPtr h,int x,int y,int w,int t,bool r);';
-	  [void][W.U]::MoveWindow([IntPtr]$HWND, 80, 60, $1, $2, \$true)" >/dev/null
+	  [void][W.U]::MoveWindow([IntPtr]$HWND, $WIN_X, $WIN_Y, $1, $2, \$true)" >/dev/null
 	sleep 1.2
 	local found
 	found="$(find_window)"
@@ -226,6 +241,33 @@ capture_frame() {
 	"$WINSHOT" capture -Hwnd "$HWND" -Out "$1" -NoFallback >/dev/null
 }
 
+# A clip filmed by hand: the desktop rectangle the workbench is drawn in, pointer included, until
+# Enter is pressed here. The Windows ffmpeg does the filming because only a Windows process sees
+# the desktop; it reads its "q" from a pipe held open from this side.
+record_clip() {
+	local out="$1" w="$2" h="$3" fifo="$WORK/clip.stdin" ffmpeg_pid
+	command -v "$WIN_FFMPEG" >/dev/null || die "no $WIN_FFMPEG to film a clip with — set CONCEAL_DEMO_FFMPEG_WIN"
+	rm -f "$fifo"
+	mkfifo "$fifo"
+	exec 3<>"$fifo"
+	"$WIN_FFMPEG" -hide_banner -loglevel error -y -f gdigrab -framerate "$FPS" -draw_mouse 1 \
+		-offset_x $(( WIN_X + BORDER_X )) -offset_y $(( WIN_Y + BORDER_Y )) -video_size "${w}x${h}" -i desktop \
+		-c:v ffv1 "$(wslpath -w "$out")" <"$fifo" &
+	ffmpeg_pid=$!
+	focus_window
+	if [[ -n "$CLIP_SECONDS" ]]; then
+		sleep "$CLIP_SECONDS"
+	else
+		echo "filming $(basename "$out" .mkv) at $(( WIN_X + BORDER_X )),$(( WIN_Y + BORDER_Y )),$w,$h: act in the editor window, then press Enter here to stop" >&2
+		read -r </dev/tty
+	fi
+	echo q >&3
+	wait "$ffmpeg_pid" || die "the clip was not written"
+	exec 3>&-
+	rm -f "$fifo"
+	[[ -s "$out" ]] || die "the clip is empty"
+}
+
 # The window rect a WSLg window reports is bigger than what it draws into: the workbench starts at
 # a fixed inset from the top left and runs to the far edge, so a naive capture has a black band
 # down one side and nothing to spare on the other. Measure the inset once from a real capture, then
@@ -272,7 +314,11 @@ print(*(window or [sys.argv[3], sys.argv[4]]))' "$RDV/scenes.json" "$scene" "$WI
 			resize_window "$w" "$h"
 			current_scene="$scene"
 		fi
-		capture_frame "$RAW/$name.png"
+		if [[ "$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("manual") or "")' "$ready")" == "True" ]]; then
+			record_clip "$RAW/$name.mkv" "$w" "$h"
+		else
+			capture_frame "$RAW/$name.png"
+		fi
 		touch "$RDV/$name.taken"
 		frames=$(( frames + 1 ))
 		shot=1
@@ -297,6 +343,7 @@ trap - EXIT
 for ready in "$RDV"/*.json; do
 	name="$(basename "$ready" .json)"
 	case "$name" in scenes | done) continue ;; esac
+	[[ -f "$RAW/$name.png" ]] || continue
 	scene="${name%-[0-9][0-9][0-9]}"
 	read -r w h < <(python3 -c '
 import json, sys
@@ -312,8 +359,35 @@ drawtext=fontfile='$FONT':textfile='$WORK/$name.txt':expansion=none:fontsize=$CA
 done
 
 # The concat demuxer is what turns "hold this state for 2.4 seconds" into frames, so a scene's
-# pacing lives in scenes.json next to the step it belongs to.
-for scene in $(ls "$RAW" | sed 's/-[0-9]\{3\}\.png$//' | sort -u); do
+# pacing lives in scenes.json next to the step it belongs to. The palette is built from every
+# frame: built from the differences alone, a glyph that is not in the first frame comes out grey.
+PALETTE="split[a][b];[a]palettegen[p];[b][p]paletteuse=dither=bayer:bayer_scale=3"
+for scene in $(ls "$RAW" | sed 's/-[0-9]\{3\}\.\(png\|mkv\)$//' | sort -u); do
+	# The GIF goes in the folder of the file the scene is about, named after the scene — a case has
+	# one source file and several recordings of it, so the picture cannot take the file's own name.
+	gif="$EXAMPLES/$(python3 -c '
+import json, os, sys
+scenes = json.load(open(sys.argv[1]))["scenes"]
+example = next(s["example"] for s in scenes if s["id"] == sys.argv[2])
+print(os.path.join(os.path.dirname(example), sys.argv[2]))' "$RDV/scenes.json" "$scene").gif"
+	mkdir -p "$(dirname "$gif")"
+
+	# A clip filmed by hand is the whole scene: its own pace, one caption throughout.
+	clips=("$RAW/$scene"-*.mkv)
+	if (( ${#clips[@]} > 0 )); then
+		stills=("$RAW/$scene"-*.png)
+		(( ${#clips[@]} == 1 && ${#stills[@]} == 0 )) || die "$scene: a scene filmed by hand has that one step only"
+		name="$(basename "${clips[0]}" .mkv)"
+		python3 -c 'import json,sys; sys.stdout.write(json.load(open(sys.argv[1]))["caption"])' "$RDV/$name.json" > "$WORK/$name.txt"
+		ffmpeg -y -loglevel error -i "${clips[0]}" -vf "\
+fps=$FPS,\
+pad=iw:ih+$CAPTION_HEIGHT:0:0:color=0x11151b,\
+drawtext=fontfile='$FONT':textfile='$WORK/$name.txt':expansion=none:fontsize=$CAPTION_SIZE:fontcolor=white:x=24:y=h-$CAPTION_HEIGHT+($CAPTION_HEIGHT-th)/2,\
+$PALETTE" -loop 0 "$gif"
+		echo "$(du -h "$gif" | cut -f1)	$gif"
+		continue
+	fi
+
 	list="$WORK/$scene.concat"
 	: > "$list"
 	last=""
@@ -323,19 +397,10 @@ for scene in $(ls "$RAW" | sed 's/-[0-9]\{3\}\.png$//' | sort -u); do
 		printf "file '%s'\nduration %s\n" "$frame" "$hold" >> "$list"
 		last="$frame"
 	done
-	# The concat demuxer ignores the last entry's duration, so the final frame is named twice.
+	# The concat demuxer shows the last entry for the previous entry's duration, whatever its own
+	# says, so the final frame is named twice and the output is cut at the holds' sum.
 	printf "file '%s'\n" "$last" >> "$list"
-
-	# The GIF goes in the folder of the file the scene is about, named after the scene — a case has
-	# one source file and several recordings of it, so the picture cannot take the file's own name.
-	gif="$EXAMPLES/$(python3 -c '
-import json, os, sys
-scenes = json.load(open(sys.argv[1]))["scenes"]
-example = next(s["example"] for s in scenes if s["id"] == sys.argv[2])
-print(os.path.join(os.path.dirname(example), sys.argv[2]))' "$RDV/scenes.json" "$scene").gif"
-	mkdir -p "$(dirname "$gif")"
-	ffmpeg -y -loglevel error -f concat -safe 0 -i "$list" \
-		-vf "fps=$FPS,split[a][b];[a]palettegen=stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=3" \
-		-loop 0 "$gif"
+	total="$(awk '/^duration/ { sum += $2 } END { print sum }' "$list")"
+	ffmpeg -y -loglevel error -f concat -safe 0 -i "$list" -vf "fps=$FPS,$PALETTE" -t "$total" -loop 0 "$gif"
 	echo "$(du -h "$gif" | cut -f1)	$gif"
 done
