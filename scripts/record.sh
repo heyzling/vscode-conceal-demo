@@ -12,6 +12,7 @@
 #   ./scripts/record.sh 0101 0102            # only those two scenes
 #   ./scripts/record.sh 01-tags              # a folder, spelled out
 #   CONCEAL_DEMO_SCENES=/tmp/probe.json ./scripts/record.sh 99   # another scene file, for probes
+#   CONCEAL_DEMO_NO_COMPARE=1 ./scripts/record.sh 01           # without the extensions compared against
 #
 # A step marked `manual` in scenes.json is a clip filmed by hand: the recorder sets the scene up,
 # this script films the workbench rectangle — pointer included — with the Windows ffmpeg until

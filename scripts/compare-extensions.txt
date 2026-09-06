@@ -9,9 +9,10 @@
 # made against. Installed into the dev profile only — scripts/dev.sh never touches your own editor.
 # Code OSS has no Marketplace, so the .vsix is fetched from the Marketplace API directly.
 
-# 5-mask: hides secrets by rewriting editor.tokenColorCustomizations, so the text stays selectable,
-# copyable and findable. 61 627 installs, released 2026-07.
-johnpapa.vscode-cloak@0.5.1
+# 04-mask: Camouflage hides a value with letterSpacing -1000em and opacity 0 and draws its mask
+# after it — the decoration route in its current form. 2 785 installs, v1.4.0 released 2026-06.
+# Cloak (61k) is not compared: it rewrites editor.tokenColorCustomizations, not a decoration.
+zeybek.camouflage@1.4.0
 
 # 07-fold has no comparison. Inline Fold (305k installs) hid text the same way, but its author lost
 # the publisher account and declared it dead in 2024-02 (moalamri/vscode-inline-fold#137,
