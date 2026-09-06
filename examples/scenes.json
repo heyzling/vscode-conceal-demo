@@ -693,10 +693,10 @@
       "id": "0701-fold",
       "title": "Fold — long class lists folded, one row each",
       "example": "07-fold/index.html",
-      "window": [1280, 740],
+      "window": [1280, 560],
       "steps": [
         {
-          "caption": "Concealment OFF: three class lists wrap over six rows, a fourth spans three lines",
+          "caption": "Concealment OFF: three class lists wrap over six rows",
           "hold": 2.7,
           "do": [{ "setting": "editor.wordWrapColumn", "value": 70 }, { "setting": "editor.conceal.enabled", "value": false }, { "caret": [1, 1] }]
         },
@@ -711,7 +711,7 @@
       "id": "0702-reveal",
       "title": "Fold — a fold opens when the caret reaches it",
       "example": "07-fold/index.html",
-      "window": [1280, 740],
+      "window": [1280, 560],
       "steps": [
         {
           "caption": "foldReveal = adjacent. The caret before a fold",
@@ -749,94 +749,15 @@
       ]
     },
     {
-      "id": "0703-multiline",
-      "title": "Fold — a value on three lines, one row",
-      "example": "07-fold/index.html",
-      "window": [1280, 740],
-      "steps": [
-        {
-          "caption": "Concealment OFF: a class list on three lines",
-          "hold": 2.5,
-          "do": [{ "setting": "editor.wordWrapColumn", "value": 70 }, { "setting": "editor.conceal.enabled", "value": false }, { "caret": [7, 1] }]
-        },
-        {
-          "caption": "Concealment ON: one row; lines 9 and 10 are left out, the numbering shows it",
-          "hold": 3.0,
-          "do": [{ "setting": "editor.conceal.enabled", "value": true }]
-        },
-        {
-          "caption": "The caret before the fold",
-          "hold": 1.6,
-          "do": [{ "caret": [8, 12] }]
-        },
-        {
-          "caption": "→: the caret reaches the fold, the lines are back",
-          "hold": 2.2,
-          "live": 0.7,
-          "do": [{ "command": "cursorRight", "times": 2 }]
-        },
-        {
-          "caption": "↓: through the value",
-          "hold": 1.2,
-          "live": 0.7,
-          "do": [{ "command": "cursorDown", "times": 2 }]
-        },
-        {
-          "caption": "↓: the caret leaves, one row again",
-          "hold": 2.7,
-          "do": [{ "command": "cursorDown" }]
-        }
-      ]
-    },
-    {
       "id": "0704-click",
       "title": "Fold — a click opens a fold (recorded by hand)",
       "example": "07-fold/index.html",
-      "window": [1280, 740],
+      "window": [1280, 560],
       "steps": [
         {
           "caption": "foldReveal = click: a click on a fold opens it, a click elsewhere closes it",
           "manual": true,
           "do": [{ "setting": "editor.wordWrapColumn", "value": 70 }, { "setting": "conceal-demo.foldReveal", "value": "click" }, { "caret": [3, 1] }]
-        }
-      ]
-    },
-    {
-      "id": "0705-tail",
-      "title": "Fold — text after a multi-line value: the limit of the emulation",
-      "example": "07-fold/tail.html",
-      "window": [1280, 520],
-      "steps": [
-        {
-          "caption": "Concealment OFF: text follows the value on its last line",
-          "hold": 2.5,
-          "do": [{ "setting": "editor.wordWrapColumn", "value": 70 }, { "setting": "conceal-demo.foldReveal", "value": "click" }, { "setting": "editor.conceal.enabled", "value": false }, { "caret": [3, 1] }]
-        },
-        {
-          "caption": "Concealment ON: one row, but the text after the value is drawn, in one colour",
-          "hold": 3.0,
-          "do": [{ "setting": "editor.conceal.enabled", "value": true }]
-        },
-        {
-          "caption": "The caret before the fold",
-          "hold": 1.6,
-          "do": [{ "caret": [5, 10] }]
-        },
-        {
-          "caption": "→ → →: a caret stop at the seam between ••• and the drawn text",
-          "hold": 2.5,
-          "live": 0.7,
-          "do": [{ "command": "cursorRight", "times": 3 }]
-        },
-        {
-          "caption": "→: past the drawn text in one press, it has no positions of its own",
-          "hold": 2.7,
-          "do": [{ "command": "cursorRight" }]
-        },
-        {
-          "caption": "↓: the real text sits on a hidden row, the caret skips to </body>",
-          "hold": 2.7,
-          "do": [{ "command": "cursorDown" }]
         }
       ]
     }

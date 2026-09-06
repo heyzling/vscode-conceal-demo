@@ -11,6 +11,10 @@ declare module 'vscode' {
 
 	// https://github.com/microsoft/vscode/issues/171074
 
+	// Concealing whole lines is out of scope here. A hidden row raises questions this API does
+	// not answer: what a deletion does at the seam between hidden and visible rows, and what the
+	// line-wise commands operate on. That work is kept on the `conceal-1.135-lines` branch.
+
 	export interface DecorationRenderOptions {
 		/**
 		 * Conceal the decorated ranges: their text is left out of the rendered view while the
@@ -28,8 +32,9 @@ declare module 'vscode' {
 		 * Rendered in place of the concealed text. It is drawn, not inserted: it is part of no
 		 * document position and is never selected or copied. Defaults to rendering nothing.
 		 *
-		 * Line feeds are dropped from `contentText`. The drawn length is capped by the
-		 * `editor.conceal.maximumReplacementLength` setting, a cut marked with `…`.
+		 * It is drawn in the color and font style of the text it stands for, unless the options
+		 * set their own. Line feeds are dropped from `contentText`. The drawn length is capped by
+		 * the `editor.conceal.maximumReplacementLength` setting, a cut marked with `…`.
 		 */
 		replacement?: ThemableDecorationAttachmentRenderOptions;
 
@@ -66,15 +71,6 @@ declare module 'vscode' {
 		 * decoration is applied again. Defaults to `true`.
 		 */
 		revealOnEdit?: boolean;
-
-		/**
-		 * Leave the decorated line out of the rendered view. The range is an anchor that
-		 * identifies the line; its extent is not consulted. Defaults to `false`.
-		 *
-		 * The margin keeps the document's numbering. The caret never rests on a concealed
-		 * line; it moves to the nearest visible line. At least one line always stays visible.
-		 */
-		line?: boolean;
 	}
 
 	export interface DecorationInstanceRenderOptions {

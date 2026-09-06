@@ -9,6 +9,11 @@ One folder per case under [src/cases](src/cases), each hardcoded and readable to
 its example file under [examples](examples) and the recordings beside it. Ranges are found with
 regular expressions because this is a demo; a real extension asks its language's parser.
 
+**Out of scope: hiding whole lines.** Every case here conceals ranges inside one line. Leaving a
+whole row out of the view is a separate question — what a deletion does where hidden and visible
+rows meet, what the line-wise commands operate on — and it is kept apart, on the fork's
+`conceal-1.135-lines` branch and this repository's `feature/lines`.
+
 ```bash
 npm install
 CONCEAL_DEMO_FORK=/path/to/vscode-fork ./scripts/dev.sh   # opens examples/ in the fork
@@ -182,9 +187,9 @@ editor.setDecorations(maskDecoration, secrets.map((range) => ({
 
 [src/cases/07-fold/fold.ts](src/cases/07-fold/fold.ts) · [examples/07-fold/index.html](examples/07-fold/index.html)
 
-Long `class` attributes folded to a bold `•••` chip, and a value written over three lines folded
-to one row. A fold opens when the caret reaches it and closes when the caret leaves; the
-setting `conceal-demo.foldReveal` picks whether any key opens it or a mouse click only.
+Long `class` attributes folded to a bold `•••` chip. A fold opens when the caret reaches it and
+closes when the caret leaves; the setting `conceal-demo.foldReveal` picks whether any key opens it
+or a mouse click only.
 
 **Elsewhere:** JetBrains folds inside a line with placeholder text. VS Code folds whole lines only:
 [microsoft/vscode#50840](https://github.com/microsoft/vscode/issues/50840) asks for folding inside
@@ -202,11 +207,10 @@ since 2024-06, with 40 issues open. So there is no side-by-side recording for th
 **What concealment changes for a fold**
 
 - **A folded row is as short as it looks.** Hidden characters still take their room under word
-  wrap, and a value written over several lines keeps its empty rows; the maintainer of Inline Fold
-  explains why he cannot fix that in [discussion #69](https://github.com/moalamri/vscode-inline-fold/discussions/69),
-  and [tailwind-fold#6](https://github.com/stivoat/tailwind-fold/issues/6) shows the hole.
-  Concealed, the editor lays the line out from what it draws, and `line: true` takes the extra
-  rows out.
+  wrap; the maintainer of Inline Fold explains why he cannot fix that in
+  [discussion #69](https://github.com/moalamri/vscode-inline-fold/discussions/69), and
+  [tailwind-fold#6](https://github.com/stivoat/tailwind-fold/issues/6) shows the hole. Concealed,
+  the editor lays the line out from what it draws.
 - **The caret cannot fall into hidden text.** With the trick, arrow keys walk through invisible
   characters and Backspace eats them, so the extensions must unfold whatever the caret or a
   selection touches, and that fights the selection ([inline-fold#119](https://github.com/moalamri/vscode-inline-fold/issues/119),
@@ -222,9 +226,8 @@ fold's edge, which the extension sees, just as a click on the extensions' `…` 
 | The editor does | The extension does |
 | --- | --- |
 | hides the value and draws the text given for that range | finds the values and picks the ones long enough to fold |
-| leaves the rows of a multi-line value out of the view, the numbering kept | decides what opens a fold: any arrival, or a click |
-| keeps the caret out of the fold: one press crosses it, one delete takes it | re-applies on every edit and caret move |
-| keeps copy, search and undo on the real text | |
+| keeps the caret out of the fold: one press crosses it, one delete takes it | decides what opens a fold: any arrival, or a click |
+| keeps copy, search and undo on the real text | re-applies on every edit and caret move |
 
 ```ts
 const foldDecoration = vscode.window.createTextEditorDecorationType({
@@ -240,32 +243,17 @@ const foldDecoration = vscode.window.createTextEditorDecorationType({
     },
   },
 });
-const hiddenLineDecoration = vscode.window.createTextEditorDecorationType({
-  conceal: { line: true },
-});
-const closingDecoration = vscode.window.createTextEditorDecorationType({
-  rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
-  conceal: { replacement: { contentText: '"' } },
-});
 
-// A value on several lines: its first line is concealed and drawn as `•••`, the closing quote
-// from its last line is drawn after it as a second replacement, and the lines below vanish.
-editor.setDecorations(foldDecoration, [firstLinePart]);
-editor.setDecorations(closingDecoration, [{ range: lastCharOfFirstLine, renderOptions: { conceal: { replacement: { contentText: '"' } } } }]);
-editor.setDecorations(hiddenLineDecoration, linesBelow);
+editor.setDecorations(foldDecoration, longValues);
 ```
 
 **Long class lists folded, one row each**
 
-![Concealment off with three class lists wrapping over six rows and a fourth on three lines, then on with each folded to one row](examples/07-fold/0701-fold.gif)
+![Concealment off with three class lists wrapping over six rows, then on with each folded to one row](examples/07-fold/0701-fold.gif)
 
 **A fold opens when the caret reaches it**
 
 ![The caret reaching a fold with the arrow key and the value opening, the caret leaving and the fold closing, then with click-only reveal the caret jumping over the closed fold](examples/07-fold/0702-reveal.gif)
-
-**A value on three lines, one row**
-
-![A three-line class list folded to one row with lines 9 and 10 left out of the view, the caret opening it and leaving](examples/07-fold/0703-multiline.gif)
 
 **A click opens a fold**
 
@@ -273,16 +261,9 @@ editor.setDecorations(hiddenLineDecoration, linesBelow);
 ![A click on a folded value opening it, a click elsewhere closing it](examples/07-fold/0704-click.gif)
 -->
 
-**Text after a multi-line value: the limit of the emulation**
-
-![A value on three lines with text after it on its last line, folded to one row with that text drawn in one colour, the caret stopping at the seam and skipping the hidden row](examples/07-fold/0705-tail.gif)
-
-Recorded as a known limit, not a feature. This is not folding: it is folding emulated with
-concealment, and a concealed range stays within one line. A value that ends part-way through a
-later line leaves its trailing text on a hidden row, so the extension draws that text on the first
-row instead. Drawn text is one colour, has no caret positions of its own, and a click on it lands on
-the fold's edge. Lifting this means laying one row out from several lines, a change to the editor's
-view model far beyond a decoration option, so it is left out of the concealment proposal's scope.
+A concealed range stays within one line, so a value written over several lines is left alone here.
+Folding one of those to a single row means laying one view row out from several model lines — the
+whole-line question above — and it lives on `feature/lines`.
 
 ## Recording
 
@@ -291,7 +272,7 @@ The GIFs are played by the extension's own recorder and photographed by
 
 ```bash
 CONCEAL_DEMO_FORK=/path/to/vscode-fork CONCEAL_DEMO_WINSHOT=/path/to/winshot.ps1 \
-  ./scripts/record.sh 07         # case 7; `0701 0703` picks scenes
+  ./scripts/record.sh 07         # case 7; `0701 0702` picks scenes
 ```
 
 A step marked `manual` in [examples/scenes.json](examples/scenes.json) is filmed by hand: the
