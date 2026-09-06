@@ -52,7 +52,7 @@ const BUG = /#bug\b/g;
 
 function refresh(editor: vscode.TextEditor): void {
   // This case's own example file only
-  if (!editor.document.uri.path.includes("/1-tags/")) {
+  if (!editor.document.uri.path.includes("/01-tags/")) {
     return;
   }
   editor.setDecorations(todoDecoration, findRanges(editor.document, TODO));

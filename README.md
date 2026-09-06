@@ -21,7 +21,7 @@ is how every recording shows what is really in the file.
 
 Shows basic replacement capabilities. Core functionality of proposal.
 
-[src/cases/1-tags/tags.ts](src/cases/1-tags/tags.ts) · [examples/1-tags/tags.md](examples/1-tags/tags.md)
+[src/cases/01-tags/tags.ts](src/cases/01-tags/tags.ts) · [examples/01-tags/tags.md](examples/01-tags/tags.md)
 
 Replaces `#done` with one-symbol and `#bug` with multicharacter glyphs. "Tags to emoji" case is chosen as the most recognizable one. So specific LateX, or F# lamda syntax won't scare people. Replacement are really could be anything. See below to "Other Examples" section.
 
@@ -71,41 +71,147 @@ editor.setDecorations(doneDecoration, findRanges(editor.document, /#done\b/g));
 
 **Concealment on and off**
 
-![Concealment off with the four tags as text, then on with #done and #bug drawn as glyphs](examples/1-tags/11-toggle.gif)
+![Concealment off with the four tags as text, then on with #done and #bug drawn as glyphs](examples/01-tags/0101-toggle.gif)
 
 **Write tag**
 
-![todo deleted letter by letter, done typed until the glyph appears, broken by one more letter and back](examples/1-tags/19-typing.gif)
+![todo deleted letter by letter, done typed until the glyph appears, broken by one more letter and back](examples/01-tags/0109-typing.gif)
 
 
 **Search finds the text under the glyph**
 
-![Ctrl+F finding done under its glyph and bug under its chip, concealment off showing each match on the real text](examples/1-tags/12-search.gif)
+![Ctrl+F finding done under its glyph and bug under its chip, concealment off showing each match on the real text](examples/01-tags/0102-search.gif)
 
 **What the clipboard carries**
 
-![Two lines, then the glyph alone, then the chip alone pasted into a tab beside: the tags, not the glyphs](examples/1-tags/13-copy.gif)
+![Two lines, then the glyph alone, then the chip alone pasted into a tab beside: the tags, not the glyphs](examples/01-tags/0103-copy.gif)
 
 **The caret around a glyph**
 
-![The caret crossing the glyph and the chip in one press, word jumps landing past them, and the same keys on the raw text with concealment off](examples/1-tags/14-caret.gif)
+![The caret crossing the glyph and the chip in one press, word jumps landing past them, and the same keys on the raw text with concealment off](examples/01-tags/0104-caret.gif)
 
 **A caret inside the range when concealment returns**
 
-![The caret parked inside #done and then inside #bug with concealment off, pushed out when concealment comes back](examples/1-tags/15-inside.gif)
+![The caret parked inside #done and then inside #bug with concealment off, pushed out when concealment comes back](examples/01-tags/0105-inside.gif)
 
 **Deleting a glyph**
 
-![Backspace, Ctrl+Backspace and Ctrl+Delete taking the whole tag, for the glyph and for the chip, concealment off proving it, undo bringing it back](examples/1-tags/16-delete.gif)
+![Backspace, Ctrl+Backspace and Ctrl+Delete taking the whole tag, for the glyph and for the chip, concealment off proving it, undo bringing it back](examples/01-tags/0106-delete.gif)
 
 **Two carets, two glyphs**
 
-![Two carets deleting, restoring and typing braces around two glyphs at once](examples/1-tags/17-multicursor.gif)
+![Two carets deleting, restoring and typing braces around two glyphs at once](examples/01-tags/0107-multicursor.gif)
 
 **The caret up and down through glyph lines**
 
-![Up and down landing on the nearest end of a glyph, never inside it](examples/1-tags/18-vertical.gif)
+![Up and down landing on the nearest end of a glyph, never inside it](examples/01-tags/0108-vertical.gif)
 
+
+## 7 — Fold
+
+[src/cases/07-fold/fold.ts](src/cases/07-fold/fold.ts) · [examples/07-fold/index.html](examples/07-fold/index.html)
+
+Long `class` attributes folded to a bold `•••` chip, and a value written over three lines folded
+to one row. A fold opens when the caret reaches it and closes when the caret leaves; the
+setting `conceal-demo.foldReveal` picks whether any key opens it or a mouse click only.
+
+**Elsewhere:** JetBrains folds inside a line with placeholder text. VS Code folds whole lines only:
+[microsoft/vscode#50840](https://github.com/microsoft/vscode/issues/50840) asks for folding inside
+a line, 171 👍, open since 2018, and the folding owner answered three times that it needs the editor
+core and cannot come from an extension. [#3352](https://github.com/microsoft/vscode/issues/3352),
+310 👍, asks for the closing brace on the same line, a special case of it.
+
+**Extensions today:** [Inline Fold](https://marketplace.visualstudio.com/items?itemName=moalamri.inline-fold),
+305k installs, and [Tailwind Fold](https://marketplace.visualstudio.com/items?itemName=stivo.tailwind-fold),
+337k, hide the characters with a CSS trick and draw `…`. Both are unmaintained: Inline Fold's author
+lost the publisher account and declared it dead in 2024 ([discussion #132](https://github.com/moalamri/vscode-inline-fold/discussions/132),
+[#137](https://github.com/moalamri/vscode-inline-fold/issues/137)); Tailwind Fold has had no release
+since 2024-06, with 40 issues open. So there is no side-by-side recording for this case.
+
+**What concealment changes for a fold**
+
+- **A folded row is as short as it looks.** Hidden characters still take their room under word
+  wrap, and a value written over several lines keeps its empty rows; the maintainer of Inline Fold
+  explains why he cannot fix that in [discussion #69](https://github.com/moalamri/vscode-inline-fold/discussions/69),
+  and [tailwind-fold#6](https://github.com/stivoat/tailwind-fold/issues/6) shows the hole.
+  Concealed, the editor lays the line out from what it draws, and `line: true` takes the extra
+  rows out.
+- **The caret cannot fall into hidden text.** With the trick, arrow keys walk through invisible
+  characters and Backspace eats them, so the extensions must unfold whatever the caret or a
+  selection touches, and that fights the selection ([inline-fold#119](https://github.com/moalamri/vscode-inline-fold/issues/119),
+  reproduced, never fixed). Concealed, a key jumps over the fold and a delete takes it whole, so
+  the extension picks when a fold opens: when the caret reaches it, on a click, or never.
+- **One switch for all of it.** `editor.conceal.enabled` and `editor.conceal.inDiffEditor` belong
+  to the editor, not to each extension ([inline-fold#136](https://github.com/moalamri/vscode-inline-fold/issues/136),
+  [tailwind-fold#40](https://github.com/stivoat/tailwind-fold/issues/40)).
+
+Opening a fold with a click works either way: a click on the drawn text puts the caret at the
+fold's edge, which the extension sees, just as a click on the extensions' `…` does.
+
+| The editor does | The extension does |
+| --- | --- |
+| hides the value and draws the text given for that range | finds the values and picks the ones long enough to fold |
+| leaves the rows of a multi-line value out of the view, the numbering kept | decides what opens a fold: any arrival, or a click |
+| keeps the caret out of the fold: one press crosses it, one delete takes it | re-applies on every edit and caret move |
+| keeps copy, search and undo on the real text | |
+
+```ts
+const foldDecoration = vscode.window.createTextEditorDecorationType({
+  rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+  conceal: {
+    replacement: {
+      contentText: "•••",
+      fontWeight: "bold",
+      color: new vscode.ThemeColor("editor.foreground"),
+      backgroundColor: new vscode.ThemeColor("editorInlayHint.background"),
+      borderRadius: "3px",
+      padding: "0 3px",
+    },
+  },
+});
+const hiddenLineDecoration = vscode.window.createTextEditorDecorationType({
+  conceal: { line: true },
+});
+const closingDecoration = vscode.window.createTextEditorDecorationType({
+  rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+  conceal: { replacement: { contentText: '"' } },
+});
+
+// A value on several lines: its first line is concealed and drawn as `•••`, the closing quote
+// from its last line is drawn after it as a second replacement, and the lines below vanish.
+editor.setDecorations(foldDecoration, [firstLinePart]);
+editor.setDecorations(closingDecoration, [{ range: lastCharOfFirstLine, renderOptions: { conceal: { replacement: { contentText: '"' } } } }]);
+editor.setDecorations(hiddenLineDecoration, linesBelow);
+```
+
+**Long class lists folded, one row each**
+
+![Concealment off with three class lists wrapping over six rows and a fourth on three lines, then on with each folded to one row](examples/07-fold/0701-fold.gif)
+
+**A fold opens when the caret reaches it**
+
+![The caret reaching a fold with the arrow key and the value opening, the caret leaving and the fold closing, then with click-only reveal the caret jumping over the closed fold](examples/07-fold/0702-reveal.gif)
+
+**A value on three lines, one row**
+
+![A three-line class list folded to one row with lines 9 and 10 left out of the view, the caret opening it and leaving](examples/07-fold/0703-multiline.gif)
+
+**A click opens a fold**
+
+<!-- Filmed by hand: ./scripts/record.sh 0704, then take this line out of the comment.
+![A click on a folded value opening it, a click elsewhere closing it](examples/07-fold/0704-click.gif)
+-->
+
+**Text after a multi-line value: the limit of the emulation**
+
+![A value on three lines with text after it on its last line, folded to one row with that text drawn in one colour, the caret stopping at the seam and skipping the hidden row](examples/07-fold/0705-tail.gif)
+
+Recorded as a known limit, not a feature. This is not folding: it is folding emulated with
+concealment, and a concealed range stays within one line. A value that ends part-way through a
+later line leaves its trailing text on a hidden row, so the extension draws that text on the first
+row instead. Drawn text is one colour, has no caret positions of its own, and a click on it lands on
+the fold's edge. Lifting this means laying one row out from several lines, a change to the editor's
+view model far beyond a decoration option, so it is left out of the concealment proposal's scope.
 
 ## Recording
 
@@ -114,7 +220,7 @@ The GIFs are played by the extension's own recorder and photographed by
 
 ```bash
 CONCEAL_DEMO_FORK=/path/to/vscode-fork CONCEAL_DEMO_WINSHOT=/path/to/winshot.ps1 \
-  ./scripts/record.sh 2          # case 2; `21 23` picks scenes
+  ./scripts/record.sh 07         # case 7; `0701 0703` picks scenes
 ```
 
 A step marked `manual` in [examples/scenes.json](examples/scenes.json) is filmed by hand: the

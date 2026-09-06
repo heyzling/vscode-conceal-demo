@@ -8,9 +8,10 @@
 # can catch a half-applied decoration.
 #
 #   ./scripts/record.sh                      # every scene in examples/scenes.json
-#   ./scripts/record.sh 1                    # every scene of case 1 — examples/1-*
-#   ./scripts/record.sh 11 12                # only those two scenes
-#   ./scripts/record.sh 1-tags               # a folder, spelled out
+#   ./scripts/record.sh 01                   # every scene of case 01 — examples/01-*
+#   ./scripts/record.sh 0101 0102            # only those two scenes
+#   ./scripts/record.sh 01-tags              # a folder, spelled out
+#   CONCEAL_DEMO_SCENES=/tmp/probe.json ./scripts/record.sh 99   # another scene file, for probes
 #
 # A step marked `manual` in scenes.json is a clip filmed by hand: the recorder sets the scene up,
 # this script films the workbench rectangle — pointer included — with the Windows ffmpeg until
@@ -67,11 +68,12 @@ mkdir -p "$RDV" "$RAW" "$CAPTIONED"
 
 # Pick the scenes asked for, and hand the recorder only those.
 #
-# An argument is a prefix, not a substring, because the numbering is a hierarchy: the first digit
-# is the section and the second the scene within it, so `2` has to mean "section 2" and not "every
-# id with a 2 in it" — which would drag in 12 and 42. A folder name works too, for the sections
-# worth spelling.
-python3 - "$REPO/examples/scenes.json" "$RDV/scenes.json" "$@" <<'PY'
+# An argument is a prefix, not a substring, because the numbering is a hierarchy: the first two
+# digits are the case and the last two the scene within it, so `07` has to mean "case 07" and not
+# "every id with 07 in it" — which would drag in 0107. A folder name works too, for the cases worth
+# spelling.
+# CONCEAL_DEMO_SCENES names another scene file, for probes that are not meant for the README.
+python3 - "${CONCEAL_DEMO_SCENES:-$REPO/examples/scenes.json}" "$RDV/scenes.json" "$@" <<'PY'
 import json, sys
 source, target, *wanted = sys.argv[1:]
 script = json.load(open(source))

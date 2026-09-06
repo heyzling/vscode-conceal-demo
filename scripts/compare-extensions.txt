@@ -13,6 +13,7 @@
 # copyable and findable. 61 627 installs, released 2026-07.
 johnpapa.vscode-cloak@0.5.1
 
-# 6-fold: hides text with `textDecoration: 'none; display: none;'` and a `before` attachment.
-# 305 436 installs, tracker at zero open issues.
-moalamri.inline-fold@0.2.6
+# 07-fold has no comparison. Inline Fold (305k installs) hid text the same way, but its author lost
+# the publisher account and declared it dead in 2024-02 (moalamri/vscode-inline-fold#137,
+# discussion #132); Tailwind Fold (337k) has had no release since 2024-06 and 40 issues open.
+# The case carries demand through microsoft/vscode#50840 and the maintainers' own words instead.
