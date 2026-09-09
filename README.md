@@ -132,6 +132,12 @@ The catalogues stand in for whatever a real extension asks — a translation ser
 server, a bibliography. Edit one and the source redraws with no edit of its own, saved or not; a
 catalogue that stops parsing brings every string back as text.
 
+**Editing one.** Backspace or Delete at a drawn string shows what is really there and deletes
+nothing; the next press edits the text it showed, and the string closes again when the caret
+leaves. That is `deletionPolicy: "reveal"`: the drawn form predicts nothing about the hidden text,
+so the first press must show before it takes — unlike `γ` for `\gamma`, where `passthrough` is
+right.
+
 What separates this from case 1 is that the vocabulary is unbounded: the string drawn cannot be
 rebuilt from the text that matched. A replacement carried by the decoration *type* would need one
 type per distinct string, and the count would grow with the file rather than with the extension.
@@ -160,7 +166,7 @@ undefined lines.
 // One type for every string drawn: only the replacement varies, and it travels with the range.
 const translationDecoration = vscode.window.createTextEditorDecorationType({
   rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
-  conceal: {},
+  conceal: { deletionPolicy: "reveal" },
 });
 
 editor.setDecorations(translationDecoration, matches.map((match) => ({

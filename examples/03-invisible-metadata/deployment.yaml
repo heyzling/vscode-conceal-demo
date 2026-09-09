@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout
+  labels:
+    app.kubernetes.io/name: checkout
+    app.kubernetes.io/version: "1.8.3"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: checkout
+  template:
+    metadata:
+      annotations:
+        checksum/config: 269d13e245cbe6a025f06912d31de24fd9acb72e15d92265bf5eed38e58df724
+    spec:
+      initContainers:
+        - name: migrate
+          image: ghcr.io/acme/checkout-migrate:1.8.3@sha256:9ca374b7e9016606caa4db2eb927dd5839345aec4c1dda43fb230d253f9ea3c8
+          args: ["--wait", "30s"]
+      containers:
+        - name: checkout
+          image: ghcr.io/acme/checkout:1.8.3@sha256:8e97ab000bc300541790623c7e4e8a15dddef06bcf9f8cf9918a7a3a06d0be5d
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+              memory: 192Mi
+        - name: envoy
+          image: docker.io/envoyproxy/envoy:v1.31.2@sha256:f24fb0c8484e8522b237ba8a605410d2f01a4ed4b91356177a09d6fc06f7a770
+          args: ["-c", "/etc/envoy/envoy.yaml"]
+        - name: metrics
+          image: quay.io/prometheus/statsd-exporter:v0.27.1
+          ports:
+            - containerPort: 9102

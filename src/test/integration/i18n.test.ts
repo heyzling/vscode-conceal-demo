@@ -128,6 +128,32 @@ suite("i18n", () => {
     }
   });
 
+  test("a delete key shows the call and takes nothing; the next press edits it", async function () {
+    if (!concealAvailable()) {
+      this.skip();
+    }
+    await writeCatalogue(pristine);
+    const editor = await open(SOURCE);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    const call = substitution(editor.document)[0];
+    const before = editor.document.getText();
+    editor.selection = new vscode.Selection(call.range.end, call.range.end);
+    await vscode.commands.executeCommand("workbench.action.focusActiveEditorGroup");
+    await vscode.commands.executeCommand("deleteLeft");
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    assert.strictEqual(editor.document.getText(), before, "the first press deletes nothing");
+    await vscode.commands.executeCommand("deleteLeft");
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    const line = editor.document.lineAt(call.range.start.line).text;
+    assert.ok(line.includes('t("account.greeting"') && !line.includes('t("account.greeting")'), "the second takes the character it showed");
+    await vscode.commands.executeCommand("undo");
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    assert.strictEqual(editor.document.getText(), before, "undo restores it");
+    // The call stays open while the caret is at it; leave, so it closes for the next test.
+    editor.selection = new vscode.Selection(0, 0, 0, 0);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+  });
+
   test("one press of the caret crosses a call drawn as its translation", async function () {
     if (!concealAvailable()) {
       this.skip();
