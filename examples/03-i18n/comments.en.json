@@ -1,0 +1,6 @@
+{
+  "Precios en céntimos, siempre enteros": "Prices in cents, always integers",
+  "Suma el carrito y aplica el descuento": "Add up the cart and apply the discount",
+  "Redondear al céntimo más cercano": "Round to the nearest cent",
+  "El descuento se aplica sobre el total y nunca sobre cada línea, porque el redondeo cambiaría el resultado": "The discount applies to the total, never to a single line: rounding would change the result"
+}

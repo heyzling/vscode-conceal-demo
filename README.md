@@ -112,6 +112,67 @@ editor.setDecorations(doneDecoration, findRanges(editor.document, /#done\b/g));
 ![Up and down landing on the nearest end of a glyph, never inside it](examples/01-tags/0108-vertical.gif)
 
 
+## 3 — Translation
+
+Shows a replacement no configuration can reach: computed per range, from a source outside the file.
+Two files, one mechanism.
+
+[src/cases/03-i18n/i18n.ts](src/cases/03-i18n/i18n.ts) · [examples/03-i18n/comments.ts](examples/03-i18n/comments.ts) · [examples/03-i18n/checkout.ts](examples/03-i18n/checkout.ts)
+
+**Comments in another language.** [comments.ts](examples/03-i18n/comments.ts) is written with Spanish
+comments; each one is concealed and its English drawn in its place, from
+[comments.en.json](examples/03-i18n/comments.en.json). The `//` stays visible, so the line still
+reads as a comment. A comment the catalogue does not answer is left in Spanish.
+
+**Translation keys.** [checkout.ts](examples/03-i18n/checkout.ts) calls `t("cart.empty")`; the call
+is concealed and the string from [messages.en.json](examples/03-i18n/messages.en.json) drawn in its
+place. A key with no entry stays as written.
+
+The catalogues stand in for whatever a real extension asks — a translation service, a language
+server, a bibliography. Edit one and the source redraws with no edit of its own, saved or not; a
+catalogue that stops parsing brings every string back as text.
+
+What separates this from case 1 is that the vocabulary is unbounded: the string drawn cannot be
+rebuilt from the text that matched. A replacement carried by the decoration *type* would need one
+type per distinct string, and the count would grow with the file rather than with the extension.
+`DecorationOptions` carries `conceal.replacement` per range instead, so one type serves them all.
+
+**Extensions today:**
+[Comment Translate](https://marketplace.visualstudio.com/items?itemName=intellsmi.comment-translate),
+701k installs, 4.9, actively maintained. Its immersive mode draws the translation *in place of* the
+comment — with `textDecoration: "none; display: none;"` on the original and a `before` attachment
+carrying the translation ([commentDecoration.ts#L189-L218](https://github.com/intellism/vscode-comment-translate/blob/008012f76816c1f57c3e05846c77ed01fea72f2c/src/languageFeature/commentDecoration.ts#L189-L218)),
+and it [removes the projection while the caret is inside the block](https://github.com/intellism/vscode-comment-translate/blob/008012f76816c1f57c3e05846c77ed01fea72f2c/src/languageFeature/commentDecoration.ts#L249-L256),
+because the caret would otherwise walk through characters nobody can see.
+[i18n Ally](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally), 1.03M installs,
+the largest base in this survey, draws the translation with an `after` decoration, so the key stays
+and the line grows; stalled since 2024-12 with 475 issues open, among them
+[#1215](https://github.com/lokalise/i18n-ally/issues/1215): stuck brackets, an invisible cursor,
+undefined lines.
+
+| The editor does | The extension does |
+| --- | --- |
+| hides the range and draws the string given for that one range | reads the catalogue and maps what is written → what is drawn |
+| keeps the caret out: one press crosses it, one delete takes it whole, so no projection has to be dropped near the caret | re-applies when a catalogue changes, saved or not |
+| keeps copy, search and diff on what is really written | leaves an unanswered string visible, and hovers the original under a translation |
+
+```ts
+// One type for every string drawn: only the replacement varies, and it travels with the range.
+const translationDecoration = vscode.window.createTextEditorDecorationType({
+  rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+  conceal: {},
+});
+
+editor.setDecorations(translationDecoration, matches.map((match) => ({
+  range: match.range,
+  renderOptions: { conceal: { replacement: { contentText: catalogue[match.text] } } },
+  hoverMessage: `\`${match.text}\``,
+})));
+```
+
+The long comment in `comments.ts` is drawn cut, ending in `…`: replacements are capped by
+`editor.conceal.maximumReplacementLength`, 43 characters by default, `0` to never truncate.
+
 ## 7 — Fold
 
 [src/cases/07-fold/fold.ts](src/cases/07-fold/fold.ts) · [examples/07-fold/index.html](examples/07-fold/index.html)

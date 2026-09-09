@@ -21,10 +21,35 @@ fi
 
 npm --prefix "$REPO" run compile
 
+MANIFEST="$REPO/scripts/compare-extensions.txt"
+
+# What the manifest names, as the directory names an install produces: publisher.name-version,
+# lowercased.
+wanted_compare_extensions() {
+	[[ -f "$MANIFEST" ]] || return 0
+	sed -n 's/^[[:space:]]*\([^#[:space:]][^@]*\)@\([^[:space:]]*\).*/\1-\2/p' "$MANIFEST" | tr "[:upper:]" "[:lower:]"
+}
+
+# A case dropped from the manifest leaves its extension installed, and it goes on decorating the
+# recordings it is no longer part of. The profile is synced to the manifest, not added to.
+prune_compare_extensions() {
+	local wanted directory name
+	wanted="$(wanted_compare_extensions)"
+	[[ -d "$PROFILE/extensions" ]] || return 0
+	for directory in "$PROFILE"/extensions/*/; do
+		[[ -d "$directory" ]] || continue
+		name="$(basename "$directory")"
+		grep -qxF "$name" <<< "$wanted" && continue
+		echo "removing $name"
+		"$FORK/scripts/code-cli.sh" --user-data-dir="$PROFILE/user-data" --extensions-dir="$PROFILE/extensions" \
+			--uninstall-extension "${name%-*}" >/dev/null || rm -rf "$directory"
+	done
+}
+
 # The extensions each case is compared against. Pinned by version and cached, so a re-run is offline
 # and two recordings months apart are made against the same build.
 install_compare_extensions() {
-	local manifest="$REPO/scripts/compare-extensions.txt" cache="$REPO/.vscode-test/vsix"
+	local manifest="$MANIFEST" cache="$REPO/.vscode-test/vsix"
 	local entry id version publisher name vsix
 	[[ -f "$manifest" ]] || return 0
 	mkdir -p "$cache"
@@ -69,6 +94,7 @@ PROFILE="${CONCEAL_DEMO_PROFILE:-$REPO/.vscode-test/dev-profile}"
 mkdir -p "$PROFILE"
 
 if [[ -z "${CONCEAL_DEMO_NO_COMPARE:-}" ]]; then
+	prune_compare_extensions
 	install_compare_extensions
 fi
 
