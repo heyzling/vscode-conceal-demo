@@ -1,3 +1,5 @@
+/** Utilidades del carrito: suma los precios de los artículos en céntimos, aplica el descuento sobre el total y devuelve siempre un entero, porque redondear cada línea por separado acumula errores **/
+
 // Precios en céntimos, siempre enteros
 export interface Item {
   price: number;

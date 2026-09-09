@@ -21,8 +21,8 @@ const translationDecoration = vscode.window.createTextEditorDecorationType({
 const SOURCES = [
   // A `t("key")` call drawn as the string the catalogue holds for that key.
   { file: "checkout.ts", catalogue: "messages.en.json", pattern: /\bt\("([\w.]+)"\)/g },
-  // A comment drawn in English, keyed by the Spanish it is written in; the `//` is left visible.
-  { file: "comments.ts", catalogue: "comments.en.json", pattern: /(?<=\/\/ )(.+)$/g },
+  // A comment drawn in English, keyed by the Spanish it is written in; its markers stay visible.
+  { file: "comments.ts", catalogue: "comments.en.json", pattern: /(?<=\/\/ |\/\*\* )(.+?)(?= \*\*\/$|$)/g },
 ];
 
 /** The catalogue beside `document`. An open buffer is read before disk, so an unsaved edit counts;

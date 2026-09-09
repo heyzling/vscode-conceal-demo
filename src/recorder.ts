@@ -1,5 +1,5 @@
 /**
- * Scripted playback behind the README's GIFs. Plays `examples/scenes.json` inside the editor and
+ * Scripted playback behind the README's GIFs. Plays `examples/scenes.jsonc` inside the editor and
  * stops at every frame until `scripts/record.sh` has photographed it: the recorder writes
  * `<frame>.json` into the rendezvous directory named by `CONCEAL_DEMO_RECORD`, the script answers
  * with `<frame>.taken`. Nothing runs unless that variable is set, and nothing is saved to disk.
@@ -137,6 +137,11 @@ async function press(command: string, args: unknown[] = []): Promise<void> {
   // A keystroke that changed nothing was dropped: the window did not hold the foreground.
   for (const deadline = Date.now() + KEYSTROKE_TIMEOUT_MS; editorState() === before; ) {
     if (Date.now() > deadline) {
+      // A delete that reveals a concealed range takes nothing and moves nothing either, so the
+      // window's own focus is what tells that from a keystroke the desktop swallowed.
+      if (vscode.window.state.focused) {
+        return;
+      }
       throw new Error(`${command} changed nothing (${before}); the recorded window must hold the foreground`);
     }
     await delay(20);
@@ -337,7 +342,7 @@ async function play(dir: string, scene: Scene, settleMs: number): Promise<void> 
 }
 
 async function record(dir: string): Promise<void> {
-  const script = JSON.parse(fs.readFileSync(path.join(dir, "scenes.json"), "utf8")) as Script;
+  const script = JSON.parse(fs.readFileSync(path.join(dir, "scenes.jsonc"), "utf8")) as Script;
   await vscode.commands.executeCommand("workbench.action.closeSidebar");
   await vscode.commands.executeCommand("workbench.action.closeAuxiliaryBar");
   await vscode.commands.executeCommand("workbench.action.closePanel");

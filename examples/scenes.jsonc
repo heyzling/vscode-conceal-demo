@@ -537,6 +537,119 @@
       ]
     },
     {
+      "id": "0201-toggle",
+      "title": "Translation — concealment on and off",
+      "example": "02-i18n/checkout.ts",
+      "window": [1280, 620],
+      "steps": [
+        {
+          "caption": "Concealment OFF: real code",
+          "hold": 1.7,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}]
+        },
+        {
+          "caption": "Concealment ON: replaced with calculated value",
+          "hold": 1.7,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}]
+        }
+      ]
+    },
+    {
+      "id": "0202-wrap",
+      "title": "Translation — wrap works on whats visible",
+      "example": "02-i18n/comments.ts",
+      "window": [1280, 620],
+      "steps": [
+        {
+          "caption": "Concealment OFF: three rows",
+          "hold": 1.7,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}]
+        },
+        {
+          "caption": "Concealment ON: one raw",
+          "hold": 1.7,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}]
+        }
+      ]
+    },
+    {
+      "id": "0203-delete",
+      "title": "Translation — delete",
+      "example": "02-i18n/checkout.ts",
+      "window": [1280, 620],
+      "steps": [
+        {
+          "caption": "START: The caret is near replaced string",
+          "hold": 1.8,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [7, 39]}]
+        },
+        {
+          "caption": "Backspace: nothing is deleted, real text revealed",
+          "hold": 2.0,
+          "do": [{"command": "deleteLeft"}]
+        },
+        {
+          "caption": "Backspace: now it works as usual",
+          "hold": 2.0,
+          "do": [{"command": "deleteLeft", "times": 1}]
+        },
+        {
+          "caption": "Ctrl + Z: text is still real",
+          "hold": 2.5,
+          "do": [{"command": "undo"}]
+        },
+        {
+          "caption": "→ →: replaced again",
+          "hold": 2.7,
+          "live": 0.45,
+          "do": [{"command": "cursorRight", "times": 2}]
+        }
+      ]
+    },
+    {
+      "id": "0204-edit",
+      "title": "Translation — a key edited under the drawn string",
+      "example": "02-i18n/checkout.ts",
+      "window": [1280, 620],
+      "steps": [
+        {
+          "caption": "START: The caret is near replaced string",
+          "hold": 1.8,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [8, 47]}]
+        },
+        {
+          "caption": "Backspace: real text revealed, nothing deleted",
+          "hold": 2.0,
+          "do": [{"command": "deleteLeft"}]
+        },
+        {
+          "caption": "← ←",
+          "hold": 1.6,
+          "live": 0.35,
+          "do": [{"command": "cursorLeft", "times": 2}]
+        },
+        {
+          "caption": "Ctrl + Backspace",
+          "hold": 1.6,
+          "live": 0.3,
+          "do": [{"command": "deleteWordLeft"}]
+        },
+        {
+          "caption": "Type new key",
+          "hold": 2.5,
+          "live": 0.1,
+          "do": [{"type": "checkout"}]
+        },
+        {
+          "caption": "→ → →: the new string is drawn",
+          "hold": 2.0,
+          "live": 0.45,
+          "do": [{"command": "cursorRight", "times": 3}]
+        }
+      ]
+    },
+    
+    {
       "id": "0701-fold",
       "title": "Fold — long class lists folded, one row each",
       "example": "07-fold/index.html",

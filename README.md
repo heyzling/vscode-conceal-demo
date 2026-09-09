@@ -24,6 +24,11 @@ is how every recording shows what is really in the file.
 
 ## 1 — Tags
 
+Shows:
+- text -> glyph replacement
+- caret movement
+- `deletionPolicy: atomic` behavior
+
 Shows basic replacement capabilities. Core functionality of proposal.
 
 [src/cases/01-tags/tags.ts](src/cases/01-tags/tags.ts) · [examples/01-tags/tags.md](examples/01-tags/tags.md)
@@ -112,49 +117,29 @@ editor.setDecorations(doneDecoration, findRanges(editor.document, /#done\b/g));
 ![Up and down landing on the nearest end of a glyph, never inside it](examples/01-tags/0108-vertical.gif)
 
 
-## 2 — Translation
+## 2 — Dynamic replacement
 
-Shows a replacement no configuration can reach: computed per range, from a source outside the file.
-Two files, one mechanism.
+Shows:
+- dynamic text replacement
+- `deletionPolicy: reveal`
+
 
 [src/cases/02-i18n/i18n.ts](src/cases/02-i18n/i18n.ts) · [examples/02-i18n/comments.ts](examples/02-i18n/comments.ts) · [examples/02-i18n/checkout.ts](examples/02-i18n/checkout.ts)
 
-**Comments in another language.** [comments.ts](examples/02-i18n/comments.ts) is written with Spanish
-comments; each one is concealed and its English drawn in its place, from
-[comments.en.json](examples/02-i18n/comments.en.json). The `//` stays visible, so the line still
-reads as a comment. A comment the catalogue does not answer is left in Spanish.
+This case shows ability to use conceal options to replace one text with another:
+- TS code with static values underneath replaced with said values.
+- Comments in Spanish replaced with English translation
 
-**Translation keys.** [checkout.ts](examples/02-i18n/checkout.ts) calls `t("cart.empty")`; the call
-is concealed and the string from [messages.en.json](examples/02-i18n/messages.en.json) drawn in its
-place. A key with no entry stays as written.
+Imitated with hardcoded JSON-config, but in real extension values can arrive from anywhere: a translation service, a language server, a bibliography, etc. 
 
-The catalogues stand in for whatever a real extension asks — a translation service, a language
-server, a bibliography. Edit one and the source redraws with no edit of its own, saved or not; a
-catalogue that stops parsing brings every string back as text.
-
-**Editing one.** Backspace or Delete at a drawn string shows what is really there and deletes
-nothing; the next press edits the text it showed, and the string closes again when the caret
-leaves. That is `deletionPolicy: "reveal"`: the drawn form predicts nothing about the hidden text,
-so the first press must show before it takes — unlike `γ` for `\gamma`, where `passthrough` is
-right.
-
-What separates this from case 1 is that the vocabulary is unbounded: the string drawn cannot be
-rebuilt from the text that matched. A replacement carried by the decoration *type* would need one
-type per distinct string, and the count would grow with the file rather than with the extension.
-`DecorationOptions` carries `conceal.replacement` per range instead, so one type serves them all.
+Here is where `deletionPolicy: reveal` works great. Often you don't want to delete the whole replacement at once like in tags example. You want to edit real text underneath. This policy automatically reveals real text on Backspace/Delete against concealed range.
 
 **Extensions today:**
 [Comment Translate](https://marketplace.visualstudio.com/items?itemName=intellsmi.comment-translate),
-701k installs, 4.9, actively maintained. Its immersive mode draws the translation *in place of* the
-comment — with `textDecoration: "none; display: none;"` on the original and a `before` attachment
-carrying the translation ([commentDecoration.ts#L189-L218](https://github.com/intellism/vscode-comment-translate/blob/008012f76816c1f57c3e05846c77ed01fea72f2c/src/languageFeature/commentDecoration.ts#L189-L218)),
-and it [removes the projection while the caret is inside the block](https://github.com/intellism/vscode-comment-translate/blob/008012f76816c1f57c3e05846c77ed01fea72f2c/src/languageFeature/commentDecoration.ts#L249-L256),
-because the caret would otherwise walk through characters nobody can see.
-[i18n Ally](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally), 1.03M installs,
-the largest base in this survey, draws the translation with an `after` decoration, so the key stays
-and the line grows; stalled since 2024-12 with 475 issues open, among them
-[#1215](https://github.com/lokalise/i18n-ally/issues/1215): stuck brackets, an invisible cursor,
-undefined lines.
+701k installs.
+[i18n Ally](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally), 1.03M installs.
+[stuck brackets, an invisible cursor,
+undefined lines](https://github.com/lokalise/i18n-ally/issues/1215).
 
 | The editor does | The extension does |
 | --- | --- |
@@ -175,9 +160,6 @@ editor.setDecorations(translationDecoration, matches.map((match) => ({
   hoverMessage: `\`${match.text}\``,
 })));
 ```
-
-The long comment in `comments.ts` is drawn cut, ending in `…`: replacements are capped by
-`editor.conceal.maximumReplacementLength`, 43 characters by default, `0` to never truncate.
 
 ## 7 — Fold
 

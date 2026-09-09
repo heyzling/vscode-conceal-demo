@@ -1,4 +1,7 @@
 {
+  "files.associations": {
+    "**/scenes.json": "jsonc"
+  },
   "files.exclude": {
     "out": false,
     "dist": false

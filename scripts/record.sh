@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 # Record the README's GIFs by driving a real editor and photographing it.
 #
-# The extension's recorder (src/recorder.ts) plays examples/scenes.json inside the running editor and
+# The extension's recorder (src/recorder.ts) plays examples/scenes.jsonc inside the running editor and
 # stops at every frame; this script is what takes the picture. The two meet in a rendezvous
 # directory: the recorder writes `<frame>.json` when a state is ready, this script captures the
 # window and writes `<frame>.taken`, and the recorder moves on. Nothing is on a timer, so no frame
 # can catch a half-applied decoration.
 #
-#   ./scripts/record.sh                      # every scene in examples/scenes.json
+#   ./scripts/record.sh                      # every scene in examples/scenes.jsonc
 #   ./scripts/record.sh 01                   # every scene of case 01 — examples/01-*
 #   ./scripts/record.sh 0101 0102            # only those two scenes
 #   ./scripts/record.sh 01-tags              # a folder, spelled out
 #   CONCEAL_DEMO_SCENES=/tmp/probe.json ./scripts/record.sh 99   # another scene file, for probes
 #   CONCEAL_DEMO_NO_COMPARE=1 ./scripts/record.sh 01           # without the extensions compared against
 #
-# A step marked `manual` in scenes.json is a clip filmed by hand: the recorder sets the scene up,
+# A step marked `manual` in scenes.jsonc is a clip filmed by hand: the recorder sets the scene up,
 # this script films the workbench rectangle — pointer included — with the Windows ffmpeg until
 # Enter is pressed here, and the clip gets its caption like any frame. For a mouse scene, since
 # nothing here can move the mouse. CONCEAL_DEMO_CLIP_SECONDS stops the filming by itself instead,
@@ -74,10 +74,19 @@ mkdir -p "$RDV" "$RAW" "$CAPTIONED"
 # "every id with 07 in it" — which would drag in 0107. A folder name works too, for the cases worth
 # spelling.
 # CONCEAL_DEMO_SCENES names another scene file, for probes that are not meant for the README.
-python3 - "${CONCEAL_DEMO_SCENES:-$REPO/examples/scenes.json}" "$RDV/scenes.json" "$@" <<'PY'
-import json, sys
+python3 - "${CONCEAL_DEMO_SCENES:-$REPO/examples/scenes.jsonc}" "$RDV/scenes.jsonc" "$@" <<'PY'
+import json, re, sys
 source, target, *wanted = sys.argv[1:]
-script = json.load(open(source))
+
+
+def plain(text):
+    # scenes.jsonc is JSONC: comments and trailing commas go, string contents stay.
+    outside = lambda m: m[0] if m[0].startswith('"') else ""
+    text = re.sub(r'"(?:\\.|[^"\\])*"|//[^\n]*|/\*.*?\*/', outside, text, flags=re.S)
+    return re.sub(r'"(?:\\.|[^"\\])*"|,(?=\s*[}\]])', outside, text, flags=re.S)
+
+
+script = json.loads(plain(open(source).read()))
 
 
 def asked_for(scene):
@@ -316,7 +325,7 @@ while :; do
 import json, sys
 scenes = json.load(open(sys.argv[1]))["scenes"]
 window = next((s.get("window") for s in scenes if s["id"] == sys.argv[2]), None)
-print(*(window or [sys.argv[3], sys.argv[4]]))' "$RDV/scenes.json" "$scene" "$WIDTH" "$HEIGHT")
+print(*(window or [sys.argv[3], sys.argv[4]]))' "$RDV/scenes.jsonc" "$scene" "$WIDTH" "$HEIGHT")
 			resize_window "$w" "$h"
 			current_scene="$scene"
 		fi
@@ -355,7 +364,7 @@ for ready in "$RDV"/*.json; do
 import json, sys
 scenes = json.load(open(sys.argv[1]))["scenes"]
 window = next((s.get("window") for s in scenes if s["id"] == sys.argv[2]), None)
-print(*(window or [sys.argv[3], sys.argv[4]]))' "$RDV/scenes.json" "$scene" "$WIDTH" "$HEIGHT")
+print(*(window or [sys.argv[3], sys.argv[4]]))' "$RDV/scenes.jsonc" "$scene" "$WIDTH" "$HEIGHT")
 	python3 -c 'import json,sys; sys.stdout.write(json.load(open(sys.argv[1]))["caption"])' "$ready" > "$WORK/$name.txt"
 	ffmpeg -y -loglevel error -i "$RAW/$name.png" -vf "\
 crop=$w:$h:$BORDER_X:$BORDER_Y,\
@@ -365,7 +374,7 @@ drawtext=fontfile='$FONT':textfile='$WORK/$name.txt':expansion=none:fontsize=$CA
 done
 
 # The concat demuxer is what turns "hold this state for 2.4 seconds" into frames, so a scene's
-# pacing lives in scenes.json next to the step it belongs to. The palette is built from every
+# pacing lives in scenes.jsonc next to the step it belongs to. The palette is built from every
 # frame: built from the differences alone, a glyph that is not in the first frame comes out grey.
 PALETTE="split[a][b];[a]palettegen[p];[b][p]paletteuse=dither=bayer:bayer_scale=3"
 for scene in $(ls "$RAW" | sed 's/-[0-9]\{3\}\.\(png\|mkv\)$//' | sort -u); do
@@ -375,7 +384,7 @@ for scene in $(ls "$RAW" | sed 's/-[0-9]\{3\}\.\(png\|mkv\)$//' | sort -u); do
 import json, os, sys
 scenes = json.load(open(sys.argv[1]))["scenes"]
 example = next(s["example"] for s in scenes if s["id"] == sys.argv[2])
-print(os.path.join(os.path.dirname(example), sys.argv[2]))' "$RDV/scenes.json" "$scene").gif"
+print(os.path.join(os.path.dirname(example), sys.argv[2]))' "$RDV/scenes.jsonc" "$scene").gif"
 	mkdir -p "$(dirname "$gif")"
 
 	# A clip filmed by hand is the whole scene: its own pace, one caption throughout.

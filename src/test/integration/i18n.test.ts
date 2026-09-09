@@ -105,6 +105,7 @@ suite("i18n", () => {
   test("draws a comment in the language the catalogue answers with", async () => {
     const editor = await open(COMMENTS);
     assert.deepStrictEqual(drawn(editor.document), [
+      "Cart utilities: adds up the item prices in cents, applies the discount to the total and always returns an integer, because rounding each line separately accumulates errors",
       "Prices in cents, always integers",
       "Add up the cart and apply the discount",
       "Round to the nearest cent",
