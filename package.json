@@ -64,7 +64,7 @@
             "A fold opens on a mouse click only; keys jump over it."
           ],
           "default": "adjacent",
-          "description": "Case 2: what opens a folded value."
+          "description": "Case 7: what opens a folded value."
         }
       }
     }

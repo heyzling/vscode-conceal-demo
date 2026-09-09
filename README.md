@@ -112,20 +112,20 @@ editor.setDecorations(doneDecoration, findRanges(editor.document, /#done\b/g));
 ![Up and down landing on the nearest end of a glyph, never inside it](examples/01-tags/0108-vertical.gif)
 
 
-## 3 — Translation
+## 2 — Translation
 
 Shows a replacement no configuration can reach: computed per range, from a source outside the file.
 Two files, one mechanism.
 
-[src/cases/03-i18n/i18n.ts](src/cases/03-i18n/i18n.ts) · [examples/03-i18n/comments.ts](examples/03-i18n/comments.ts) · [examples/03-i18n/checkout.ts](examples/03-i18n/checkout.ts)
+[src/cases/02-i18n/i18n.ts](src/cases/02-i18n/i18n.ts) · [examples/02-i18n/comments.ts](examples/02-i18n/comments.ts) · [examples/02-i18n/checkout.ts](examples/02-i18n/checkout.ts)
 
-**Comments in another language.** [comments.ts](examples/03-i18n/comments.ts) is written with Spanish
+**Comments in another language.** [comments.ts](examples/02-i18n/comments.ts) is written with Spanish
 comments; each one is concealed and its English drawn in its place, from
-[comments.en.json](examples/03-i18n/comments.en.json). The `//` stays visible, so the line still
+[comments.en.json](examples/02-i18n/comments.en.json). The `//` stays visible, so the line still
 reads as a comment. A comment the catalogue does not answer is left in Spanish.
 
-**Translation keys.** [checkout.ts](examples/03-i18n/checkout.ts) calls `t("cart.empty")`; the call
-is concealed and the string from [messages.en.json](examples/03-i18n/messages.en.json) drawn in its
+**Translation keys.** [checkout.ts](examples/02-i18n/checkout.ts) calls `t("cart.empty")`; the call
+is concealed and the string from [messages.en.json](examples/02-i18n/messages.en.json) drawn in its
 place. A key with no entry stays as written.
 
 The catalogues stand in for whatever a real extension asks — a translation service, a language

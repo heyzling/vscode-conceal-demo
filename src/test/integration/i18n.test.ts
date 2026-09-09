@@ -1,19 +1,19 @@
 import * as assert from "node:assert";
 import * as path from "node:path";
 import * as vscode from "vscode";
-import { substitution } from "../../cases/03-i18n/i18n";
+import { substitution } from "../../cases/02-i18n/i18n";
 
 /**
- * Case 3, the dynamic replacement: what is drawn comes from a file outside the source, and an edit
+ * Case 2, the dynamic replacement: what is drawn comes from a file outside the source, and an edit
  * to that file changes it with the source untouched.
  *
  * The projection is asserted directly — it is a pure function of the document and the catalogue.
  * The last test measures what the *editor* did with it and is skipped where there is no conceal
  * API, because there is then nothing to measure.
  */
-const SOURCE = "03-i18n/checkout.ts";
-const COMMENTS = "03-i18n/comments.ts";
-const CATALOGUE = "03-i18n/messages.en.json";
+const SOURCE = "02-i18n/checkout.ts";
+const COMMENTS = "02-i18n/comments.ts";
+const CATALOGUE = "02-i18n/messages.en.json";
 
 /** Two steps, because one cannot tell the two failures apart: a build without the feature has no
  * default for the setting, and a build with it throws for an extension that was not granted it. */

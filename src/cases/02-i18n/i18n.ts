@@ -67,7 +67,7 @@ export function substitution(document: vscode.TextDocument): vscode.DecorationOp
 
 function refresh(editor: vscode.TextEditor): void {
   // This case's own example files only
-  if (!editor.document.uri.path.includes("/03-i18n/")) {
+  if (!editor.document.uri.path.includes("/02-i18n/")) {
     return;
   }
   editor.setDecorations(translationDecoration, substitution(editor.document));
@@ -81,7 +81,7 @@ function refreshAll(): void {
 
 export function activate(context: vscode.ExtensionContext): void {
   // The catalogues stand in for an external system: they change with no edit to the source file.
-  const catalogueWatcher = vscode.workspace.createFileSystemWatcher("**/03-i18n/*.json");
+  const catalogueWatcher = vscode.workspace.createFileSystemWatcher("**/02-i18n/*.json");
   context.subscriptions.push(
     translationDecoration,
     catalogueWatcher,

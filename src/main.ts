@@ -5,7 +5,7 @@
 
 import * as vscode from "vscode";
 import * as tags from "./cases/01-tags/tags";
-import * as i18n from "./cases/03-i18n/i18n";
+import * as i18n from "./cases/02-i18n/i18n";
 import * as fold from "./cases/07-fold/fold";
 import * as recorder from "./recorder";
 import * as toggle from "./toggle";
