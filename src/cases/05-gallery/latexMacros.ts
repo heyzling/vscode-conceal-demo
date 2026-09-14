@@ -1,6 +1,6 @@
 /**
- * `\alpha` drawn as α, and so on from a table. The glyph says what the macro is, so the delete
- * keys edit the macro's real characters one at a time: Backspace on α leaves `\alph` in view.
+ * `\alpha` drawn as α, and so on from a table. Backspace on α shows `\alpha` and takes nothing;
+ * the next press edits the macro's real characters.
  */
 
 import * as vscode from "vscode";
@@ -19,7 +19,7 @@ const GLYPH: Record<string, string> = {
 };
 
 const macro = vscode.window.createTextEditorDecorationType({
-  conceal: { deletionPolicy: "passthrough" },
+  conceal: { deletionPolicy: "reveal" },
 });
 
 export const examples: Example[] = [

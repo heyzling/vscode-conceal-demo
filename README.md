@@ -330,7 +330,7 @@ editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text,
 
 **A marker without a partner shows itself**
 
-![One asterisk deleted with concealment off, concealment on leaving both halves in view, undo restoring the pair, hidden again once the caret leaves it](examples/04-markup/0407-orphan.gif)
+![One asterisk deleted with concealment off, concealment on leaving both halves in view, undo restoring the pair, hidden again at once](examples/04-markup/0407-orphan.gif)
 
 **A link shows itself on Backspace and hides again**
 
@@ -359,17 +359,16 @@ each is anchored to its key: typing at the visible end of a key stays inside the
 
 ![A new arrow function typed, the arrow drawn as one symbol the moment it is complete](examples/05-gallery/0503-tsarrow.gif)
 
-**LaTeX macros** — `\alpha` as α, from a table. The glyph says what the macro is, so this is
-`passthrough`: Backspace on α takes one real character and leaves `\alph` in view.
+**LaTeX macros** — `\alpha` as α, from a table. `reveal`: Backspace on α shows `\alpha` and
+takes nothing; the next press edits the macro one character at a time.
 [latexMacros.ts](src/cases/05-gallery/latexMacros.ts) · [formula.tex](examples/05-gallery/formula.tex)
 
-![A formula typed with each macro drawn as it completes, Backspace on π leaving the macro in view one character short, the letter typed back and π drawn again](examples/05-gallery/0504-latex.gif)
+![A formula typed with each macro drawn as it completes, Backspace on π showing the macro, a second Backspace taking its last letter, the letter typed back and π drawn again](examples/05-gallery/0504-latex.gif)
 
 **Tag rotation** — `#todo` as ⬜, `#done` as ✅. A click on the glyph rewrites the tag to the
 other one, as does `Conceal Demo: Rotate Tag` at the caret; the rewrite is the extension's edit,
-since a click on drawn text only puts the caret at its edge. `revealOnEdit: false`, because the
-edit is the extension's own and leaves a tag behind. The recording uses the command — nothing in
-the pipeline can move the mouse.
+since a click on drawn text only puts the caret at its edge. The recording uses the command —
+nothing in the pipeline can move the mouse.
 [tagRotation.ts](src/cases/05-gallery/tagRotation.ts) · [todo.md](examples/05-gallery/todo.md)
 
 ![A box glyph rotated to a check mark and back by the command](examples/05-gallery/0505-tags.gif)

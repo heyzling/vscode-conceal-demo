@@ -953,9 +953,9 @@
           "do": [{"setting": "editor.conceal.enabled", "value": true}]
         },
         {
-          "caption": "Ctrl + Z: a pair again, hidden once the caret leaves it",
+          "caption": "Ctrl + Z: a pair again, hidden at once",
           "hold": 1.8,
-          "do": [{"command": "undo"}, {"caret": [1, 1]}]
+          "do": [{"command": "undo"}]
         }
       ]
     },
@@ -1074,7 +1074,7 @@
     },
     {
       "id": "0504-latex",
-      "title": "Gallery — macros as their symbols, edited one character at a time",
+      "title": "Gallery — macros as their symbols, shown before they are edited",
       "example": "05-gallery/formula.tex",
       "window": [1280, 400],
       "steps": [
@@ -1095,8 +1095,13 @@
           "do": [{"command": "cursorLeft"}]
         },
         {
-          "caption": "Backspace: one real character goes, the macro shows itself",
+          "caption": "Backspace: the macro shows itself, nothing is deleted",
           "hold": 1.8,
+          "do": [{"command": "deleteLeft"}]
+        },
+        {
+          "caption": "Backspace: now one real character goes",
+          "hold": 1.5,
           "do": [{"command": "deleteLeft"}]
         },
         {

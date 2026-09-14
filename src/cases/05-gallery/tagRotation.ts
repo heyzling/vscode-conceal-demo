@@ -12,8 +12,7 @@ const NEXT: Record<string, string> = { "#todo": "#done", "#done": "#todo" };
 const TAG = /#(?:todo|done)\b/g;
 const FILE = "todo.md";
 
-// The rewrite is this file's own edit and leaves a tag behind, so it does not reveal the range.
-const tag = vscode.window.createTextEditorDecorationType({ conceal: { revealOnEdit: false } });
+const tag = vscode.window.createTextEditorDecorationType({ conceal: {} });
 
 export const examples: Example[] = [
   { file: FILE, pattern: TAG, decoration: tag, replacement: (match) => GLYPH[match[0]] },
