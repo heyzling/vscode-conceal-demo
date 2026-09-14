@@ -230,6 +230,7 @@ Shows:
 - concealment of a pair with nothing drawn in its place
 - `anchor: after` on the opening marker, `anchor: before` on the closing one
 - `deletionPolicy: protect`
+- a link drawn as its text: per-range `replacement`, `deletionPolicy: reveal`
 
 [src/cases/04-markup/markup.ts](src/cases/04-markup/markup.ts) · [examples/04-markup/emphasis.md](examples/04-markup/emphasis.md)
 
@@ -255,6 +256,13 @@ Both markers are hidden from a live parse — here one regular expression per ki
 whole pair — so a marker that loses its partner stops matching and stays in view: the file stopped
 being valid markdown and the screen says so.
 
+A link is the other kind of thing. `[CommonMark spec](https://commonmark.org/)` is one unit,
+concealed whole with its text drawn in its place, blue and underlined the way a browser draws it.
+The drawn text predicts nothing about the url, so this is `reveal`, as in case 2: a delete key
+beside the link shows all of it and takes nothing, the next press edits what it showed, and once
+the caret leaves, the link is drawn again over whatever it now says. The url stays reachable on
+hover.
+
 **Elsewhere:** Vim's markdown conceal, Org mode's `org-hide-emphasis-markers`, Obsidian's Live
 Preview, Typora.
 
@@ -264,6 +272,7 @@ Preview, Typora.
 | one caret stop per marker, on the inside of the pair: typing at either visible edge stays inside | styles the text between them: bold, italic, code |
 | Enter or a space at either edge lands outside the pair, so the emphasis closes first | re-applies on every edit, so an orphan marker shows itself |
 | Backspace and Delete take the visible neighbours and step over a marker | removes a pair as a command, since only it knows what the pair spans |
+| draws a link's text over the whole link, shows the link on a delete key beside it and hides it again when the caret leaves | picks what a link draws: its text, blue, underlined, with the url on hover |
 
 ```ts
 const openingDecoration = vscode.window.createTextEditorDecorationType({
@@ -276,16 +285,28 @@ const closingDecoration = vscode.window.createTextEditorDecorationType({
 
 const boldDecoration = vscode.window.createTextEditorDecorationType({ fontWeight: "bold" });
 
+// A link is one range drawing its own text; the drawn text predicts nothing about the url.
+const linkDecoration = vscode.window.createTextEditorDecorationType({
+  conceal: { deletionPolicy: "reveal" },
+});
+
 // Every pair as its opener, text and closer, from one expression per kind: /\*\*([^*]+)\*\*/g
 const found = pairs(editor.document);
 editor.setDecorations(openingDecoration, found.map((pair) => pair.opener));
 editor.setDecorations(closingDecoration, found.map((pair) => pair.closer));
 editor.setDecorations(boldDecoration, found.filter((pair) => pair.kind === "bold").map((pair) => pair.text));
+
+// Every `[text](url)`, drawn as its text.
+editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text, url }) => ({
+  range,
+  renderOptions: { conceal: { replacement: { contentText: text, color: new vscode.ThemeColor("textLink.foreground"), textDecoration: "underline" } } },
+  hoverMessage: url,
+})));
 ```
 
 **Markers on and off**
 
-![Concealment off with the markers as text, then on with the words styled and the markers gone](examples/04-markup/0401-toggle.gif)
+![Concealment off with the markers and the link as text, then on with the words styled, the markers gone and the link drawn as its text](examples/04-markup/0401-toggle.gif)
 
 **A hidden marker costs no keypress**
 
@@ -310,6 +331,10 @@ editor.setDecorations(boldDecoration, found.filter((pair) => pair.kind === "bold
 **A marker without a partner shows itself**
 
 ![One asterisk deleted with concealment off, concealment on leaving both halves in view, undo restoring the pair, hidden again once the caret leaves it](examples/04-markup/0407-orphan.gif)
+
+**A link shows itself on Backspace and hides again**
+
+![Backspace after a link showing the whole link and deleting nothing, the url edited in place, the caret leaving and the link drawn again, concealment off showing the new url](examples/04-markup/0408-link.gif)
 
 ## 7 — Fold
 

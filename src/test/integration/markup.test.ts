@@ -1,7 +1,7 @@
 import * as assert from "node:assert";
 import * as path from "node:path";
 import * as vscode from "vscode";
-import { pairs } from "../../cases/04-markup/markup";
+import { links, pairs } from "../../cases/04-markup/markup";
 
 /** Case 4, markdown emphasis: the parse is a pure function of the document, asserted directly. */
 suite("markup", () => {
@@ -25,6 +25,15 @@ suite("markup", () => {
       ["bold", "**", "bold", "**"],
       ["code", "`", "code", "`"],
     ]);
+  });
+
+  test("finds a link as the whole of it, its text and its url", async () => {
+    const document = await open("04-markup/emphasis.md");
+    const found = links(document);
+    assert.strictEqual(found.length, 1);
+    assert.strictEqual(document.getText(found[0].range), "[CommonMark spec](https://commonmark.org/)");
+    assert.strictEqual(found[0].text, "CommonMark spec");
+    assert.strictEqual(found[0].url, "https://commonmark.org/");
   });
 
   test("a marker without a partner is not a pair", async () => {

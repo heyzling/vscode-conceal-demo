@@ -5,8 +5,11 @@
  * edge of the word stays inside the pair, Enter or a space typed there lands outside it, and no
  * delete key reaches a marker.
  *
+ * A link is one unit: the whole `[text](url)` is concealed and its text drawn in its place, so a
+ * delete key shows the link before it takes anything, and it hides again once the caret leaves.
+ *
  * Conceal options used: `anchor: "after"` and `anchor: "before"`, `deletionPolicy: "protect"`,
- * with no `replacement`.
+ * with no `replacement`; for links a per-range `replacement` with `deletionPolicy: "reveal"`.
  */
 
 import * as vscode from "vscode";
@@ -49,6 +52,14 @@ const KINDS = [
   },
 ] as const;
 
+/** A link reads as its text, drawn over the whole `[text](url)`. The drawn text predicts nothing
+ * about the url, so a delete key shows the link before it takes. */
+const linkDecoration = vscode.window.createTextEditorDecorationType({
+  conceal: { deletionPolicy: "reveal" },
+});
+
+const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;
+
 export type Kind = (typeof KINDS)[number]["name"];
 
 /** One emphasised run: its two markers and the text between them. */
@@ -84,6 +95,31 @@ export function pairs(document: vscode.TextDocument): Pair[] {
   return found;
 }
 
+/** One link: the whole `[text](url)` and its two parts. */
+export interface Link {
+  range: vscode.Range;
+  text: string;
+  url: string;
+}
+
+/** Every link in `document`, line by line. */
+export function links(document: vscode.TextDocument): Link[] {
+  const found: Link[] = [];
+  for (let line = 0; line < document.lineCount; line += 1) {
+    const text = document.lineAt(line).text;
+    LINK.lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = LINK.exec(text)) !== null) {
+      found.push({
+        range: new vscode.Range(line, match.index, line, match.index + match[0].length),
+        text: match[1],
+        url: match[2],
+      });
+    }
+  }
+  return found;
+}
+
 function refresh(editor: vscode.TextEditor): void {
   // This case's own example file only
   if (!editor.document.uri.path.includes("/04-markup/")) {
@@ -95,6 +131,20 @@ function refresh(editor: vscode.TextEditor): void {
   for (const kind of KINDS) {
     editor.setDecorations(kind.decoration, found.filter((pair) => pair.kind === kind.name).map((pair) => pair.text));
   }
+  // Each link draws its own text; the url stays reachable on hover.
+  editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text, url }) => ({
+    range,
+    renderOptions: {
+      conceal: {
+        replacement: {
+          contentText: text,
+          color: new vscode.ThemeColor("textLink.foreground"),
+          textDecoration: "underline",
+        },
+      },
+    },
+    hoverMessage: url,
+  })));
 }
 
 function refreshAll(): void {
@@ -108,6 +158,7 @@ export function activate(context: vscode.ExtensionContext): void {
     openingDecoration,
     closingDecoration,
     ...KINDS.map((kind) => kind.decoration),
+    linkDecoration,
     vscode.window.onDidChangeVisibleTextEditors(refreshAll),
     vscode.workspace.onDidChangeTextDocument(refreshAll),
   );

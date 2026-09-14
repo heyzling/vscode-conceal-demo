@@ -777,7 +777,7 @@
       "id": "0401-toggle",
       "title": "Markup — concealment on and off",
       "example": "04-markup/emphasis.md",
-      "window": [1280, 400],
+      "window": [1280, 440],
       "steps": [
         {
           "caption": "Concealment OFF: the markers are real text",
@@ -785,7 +785,7 @@
           "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}]
         },
         {
-          "caption": "Concealment ON: the words keep their style, the markers are gone",
+          "caption": "Concealment ON: the markers are gone, the link is its text",
           "hold": 1.7,
           "do": [{"setting": "editor.conceal.enabled", "value": true}]
         }
@@ -795,7 +795,7 @@
       "id": "0402-caret",
       "title": "Markup — a hidden marker costs no keypress",
       "example": "04-markup/emphasis.md",
-      "window": [1280, 400],
+      "window": [1280, 440],
       "steps": [
         {
           "caption": "The caret after Use",
@@ -825,7 +825,7 @@
       "id": "0403-typing",
       "title": "Markup — typing at either visible edge stays inside the pair",
       "example": "04-markup/emphasis.md",
-      "window": [1280, 400],
+      "window": [1280, 440],
       "steps": [
         {
           "caption": "The caret at the visible start of bold",
@@ -860,7 +860,7 @@
       "id": "0404-space",
       "title": "Markup — a space at the visible end lands outside the pair",
       "example": "04-markup/emphasis.md",
-      "window": [1280, 400],
+      "window": [1280, 440],
       "steps": [
         {
           "caption": "The caret at the visible end of bold",
@@ -884,7 +884,7 @@
       "id": "0405-enter",
       "title": "Markup — Enter at the visible end leaves the pair whole",
       "example": "04-markup/emphasis.md",
-      "window": [1280, 440],
+      "window": [1280, 480],
       "steps": [
         {
           "caption": "The caret at the visible end of bold",
@@ -907,7 +907,7 @@
       "id": "0406-protect",
       "title": "Markup — no delete key reaches a marker",
       "example": "04-markup/emphasis.md",
-      "window": [1280, 400],
+      "window": [1280, 440],
       "steps": [
         {
           "caption": "The caret at the visible end of bold",
@@ -935,7 +935,7 @@
       "id": "0407-orphan",
       "title": "Markup — a marker without a partner shows itself",
       "example": "04-markup/emphasis.md",
-      "window": [1280, 400],
+      "window": [1280, 440],
       "steps": [
         {
           "caption": "Concealment OFF, the caret before the opening **",
@@ -956,6 +956,46 @@
           "caption": "Ctrl + Z: a pair again, hidden once the caret leaves it",
           "hold": 1.8,
           "do": [{"command": "undo"}, {"caret": [1, 1]}]
+        }
+      ]
+    },
+    {
+      "id": "0408-link",
+      "title": "Markup — a link shows itself on Backspace and hides again",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 440],
+      "steps": [
+        {
+          "caption": "The caret after the link",
+          "hold": 1.1,
+          "do": [{"caret": [5, 72]}]
+        },
+        {
+          "caption": "Backspace: the whole link shows itself, nothing is deleted",
+          "hold": 1.8,
+          "do": [{"command": "deleteLeft"}]
+        },
+        {
+          "caption": "←: before the closing bracket",
+          "hold": 1.1,
+          "do": [{"command": "cursorLeft"}]
+        },
+        {
+          "caption": "Type: the url is edited in place",
+          "hold": 1.5,
+          "live": 0.15,
+          "do": [{"type": "spec/"}]
+        },
+        {
+          "caption": "→ →: the caret leaves, the link is drawn again",
+          "hold": 1.8,
+          "live": 0.5,
+          "do": [{"command": "cursorRight", "times": 2}]
+        },
+        {
+          "caption": "Concealment OFF: the url changed, the text did not",
+          "hold": 2.1,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
         }
       ]
     },
