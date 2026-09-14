@@ -653,39 +653,46 @@
       "id": "0301-toggle",
       "title": "Metadata — concealment on and off",
       "example": "03-invisible-metadata/notes.md",
-      "window": [1280, 620],
+      "window": [1280, 500],
       "steps": [
         {
           "caption": "Concealment OFF: the block ids are real text",
-          "hold": 1.7,
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}]
         },
         {
           "caption": "Concealment ON: nothing is drawn in their place",
-          "hold": 1.7,
+          "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": true}]
         }
       ]
     },
     {
       "id": "0302-caret",
-      "title": "Metadata — the caret crosses an id",
+      "title": "Metadata — the caret crosses an id and comes back",
       "example": "03-invisible-metadata/notes.md",
-      "window": [1280, 620],
+      "window": [1280, 500],
       "steps": [
         {
           "caption": "The caret before a hidden id",
-          "hold": 1.6,
-          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [12, 46]}]
+          "hold": 1.1,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [8, 49]}]
         },
         {
-          "caption": "→: one press crosses it",
-          "hold": 2.5,
-          "do": [{"command": "cursorRight"}]
+          "caption": "→ →: one press for the id, one for a bracket",
+          "hold": 1.5,
+          "live": 0.5,
+          "do": [{"command": "cursorRight", "times": 2}]
         },
         {
-          "caption": "Concealment OFF: eight characters, one press",
-          "hold": 3.0,
+          "caption": "← ←: back the same way",
+          "hold": 1.5,
+          "live": 0.5,
+          "do": [{"command": "cursorLeft", "times": 2}]
+        },
+        {
+          "caption": "Concealment OFF: eight characters, one press each way",
+          "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}]
         }
       ]
@@ -694,56 +701,50 @@
       "id": "0303-protect",
       "title": "Metadata — an id survives a delete",
       "example": "03-invisible-metadata/notes.md",
-      "window": [1280, 620],
+      "window": [1280, 500],
       "steps": [
         {
           "caption": "The caret at the end of the line",
-          "hold": 1.6,
+          "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 64]}]
         },
         {
           "caption": "Backspace: the id is skipped, the period goes",
-          "hold": 2.2,
+          "hold": 1.5,
           "do": [{"command": "deleteLeft"}]
         },
         {
           "caption": "Backspace: and the letter before it",
-          "hold": 2.2,
+          "hold": 1.5,
           "do": [{"command": "deleteLeft"}]
         },
         {
           "caption": "Concealment OFF: the id is untouched",
-          "hold": 3.0,
+          "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}]
         }
       ]
     },
     {
       "id": "0304-typing",
-      "title": "Metadata — text typed at the line end goes in front of the id",
+      "title": "Metadata — a word typed at the line end goes in front of the id",
       "example": "03-invisible-metadata/notes.md",
-      "window": [1280, 620],
+      "window": [1280, 500],
       "steps": [
         {
           "caption": "The caret at the end of the line",
-          "hold": 1.6,
+          "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 56]}]
         },
         {
-          "caption": "Delete the end of the sentence letter by letter",
-          "hold": 1.5,
-          "live": 0.2,
-          "do": [{"command": "deleteLeft", "times": 15}]
-        },
-        {
-          "caption": "Type it back: the text lands in front of the id",
-          "hold": 2.5,
-          "live": 0.2,
-          "do": [{"type": "hich is not it."}]
+          "caption": "Type a word: it lands in front of the id",
+          "hold": 1.8,
+          "live": 0.15,
+          "do": [{"type": " Sadly."}]
         },
         {
           "caption": "Concealment OFF: the id still closes the line",
-          "hold": 3.0,
+          "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}]
         }
       ]
@@ -752,22 +753,209 @@
       "id": "0305-enter",
       "title": "Metadata — Enter at the line end leaves the id on its line",
       "example": "03-invisible-metadata/notes.md",
-      "window": [1280, 654],
+      "window": [1280, 570],
       "steps": [
         {
           "caption": "The caret at the end of the line",
-          "hold": 1.6,
+          "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 56]}]
         },
         {
-          "caption": "Enter: a new line opens below",
-          "hold": 2.2,
-          "do": [{"type": "\n"}]
+          "caption": "Enter, Enter: two new lines open below",
+          "hold": 1.5,
+          "live": 0.6,
+          "do": [{"type": "\n\n"}]
         },
         {
           "caption": "Concealment OFF: the id stays on its line",
-          "hold": 3.0,
+          "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        }
+      ]
+    },
+    {
+      "id": "0401-toggle",
+      "title": "Markup — concealment on and off",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 400],
+      "steps": [
+        {
+          "caption": "Concealment OFF: the markers are real text",
+          "hold": 1.7,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}]
+        },
+        {
+          "caption": "Concealment ON: the words keep their style, the markers are gone",
+          "hold": 1.7,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}]
+        }
+      ]
+    },
+    {
+      "id": "0402-caret",
+      "title": "Markup — a hidden marker costs no keypress",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 400],
+      "steps": [
+        {
+          "caption": "The caret after Use",
+          "hold": 1.1,
+          "do": [{"caret": [3, 4]}]
+        },
+        {
+          "caption": "→ →: the space and the hidden ** in one press, then b",
+          "hold": 1.5,
+          "live": 0.5,
+          "do": [{"command": "cursorRight", "times": 2}]
+        },
+        {
+          "caption": "← ←: back the same way",
+          "hold": 1.5,
+          "live": 0.5,
+          "do": [{"command": "cursorLeft", "times": 2}]
+        },
+        {
+          "caption": "Concealment OFF: four characters, one press each",
+          "hold": 2.1,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        }
+      ]
+    },
+    {
+      "id": "0403-typing",
+      "title": "Markup — typing at either visible edge stays inside the pair",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 400],
+      "steps": [
+        {
+          "caption": "The caret at the visible start of bold",
+          "hold": 1.1,
+          "do": [{"caret": [3, 7]}]
+        },
+        {
+          "caption": "Type at the start: the word grows, still bold",
+          "hold": 1.5,
+          "live": 0.15,
+          "do": [{"type": "semi"}]
+        },
+        {
+          "caption": "The caret at the visible end of the other bold",
+          "hold": 1.1,
+          "do": [{"caret": [4, 47]}]
+        },
+        {
+          "caption": "Type at the end: the same",
+          "hold": 1.5,
+          "live": 0.15,
+          "do": [{"type": "face"}]
+        },
+        {
+          "caption": "Concealment OFF: both words grew inside their markers",
+          "hold": 2.1,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        }
+      ]
+    },
+    {
+      "id": "0404-space",
+      "title": "Markup — a space at the visible end lands outside the pair",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 400],
+      "steps": [
+        {
+          "caption": "The caret at the visible end of bold",
+          "hold": 1.1,
+          "do": [{"caret": [3, 11]}]
+        },
+        {
+          "caption": "Space, then a word: the pair closes first, the word is plain",
+          "hold": 1.8,
+          "live": 0.15,
+          "do": [{"type": " text"}]
+        },
+        {
+          "caption": "Concealment OFF: the space went behind the closing **",
+          "hold": 2.1,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        }
+      ]
+    },
+    {
+      "id": "0405-enter",
+      "title": "Markup — Enter at the visible end leaves the pair whole",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 440],
+      "steps": [
+        {
+          "caption": "The caret at the visible end of bold",
+          "hold": 1.1,
+          "do": [{"caret": [3, 11]}]
+        },
+        {
+          "caption": "Enter: the rest of the line moves down",
+          "hold": 1.5,
+          "do": [{"type": "\n"}]
+        },
+        {
+          "caption": "Concealment OFF: the closing ** stayed on its line",
+          "hold": 2.1,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        }
+      ]
+    },
+    {
+      "id": "0406-protect",
+      "title": "Markup — no delete key reaches a marker",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 400],
+      "steps": [
+        {
+          "caption": "The caret at the visible end of bold",
+          "hold": 1.1,
+          "do": [{"caret": [3, 11]}]
+        },
+        {
+          "caption": "Backspace: the letter goes, the marker stays",
+          "hold": 1.5,
+          "do": [{"command": "deleteLeft"}]
+        },
+        {
+          "caption": "Delete: steps over the marker, takes the space behind it",
+          "hold": 1.5,
+          "do": [{"command": "deleteRight"}]
+        },
+        {
+          "caption": "Concealment OFF: both markers untouched",
+          "hold": 2.1,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        }
+      ]
+    },
+    {
+      "id": "0407-orphan",
+      "title": "Markup — a marker without a partner shows itself",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 400],
+      "steps": [
+        {
+          "caption": "Concealment OFF, the caret before the opening **",
+          "hold": 1.1,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [3, 5]}]
+        },
+        {
+          "caption": "Delete one asterisk, as another tool might",
+          "hold": 1.5,
+          "do": [{"command": "deleteRight"}]
+        },
+        {
+          "caption": "Concealment ON: the pair is broken, so both halves stay in view",
+          "hold": 2.1,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}]
+        },
+        {
+          "caption": "Ctrl + Z: a pair again, hidden once the caret leaves it",
+          "hold": 1.8,
+          "do": [{"command": "undo"}, {"caret": [1, 1]}]
         }
       ]
     },

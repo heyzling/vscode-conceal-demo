@@ -7,6 +7,7 @@ import * as vscode from "vscode";
 import * as tags from "./cases/01-tags/tags";
 import * as i18n from "./cases/02-i18n/i18n";
 import * as metadata from "./cases/03-invisible-metadata/metadata";
+import * as markup from "./cases/04-markup/markup";
 import * as fold from "./cases/07-fold/fold";
 import * as recorder from "./recorder";
 import * as toggle from "./toggle";
@@ -16,6 +17,7 @@ export function activate(context: vscode.ExtensionContext): void {
   tags.activate(context);
   i18n.activate(context);
   metadata.activate(context);
+  markup.activate(context);
   fold.activate(context);
   // Dev tooling: plays the scenes behind the README's GIFs, and does nothing otherwise.
   recorder.activate();

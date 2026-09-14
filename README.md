@@ -210,19 +210,106 @@ const idDecoration = vscode.window.createTextEditorDecorationType({
 
 **The caret crosses an id**
 
-![One press carrying the caret past a hidden id, then concealment off showing the eight characters it crossed](examples/03-invisible-metadata/0302-caret.gif)
+![Two presses right crossing a hidden id and a bracket, two back, then concealment off showing the eight characters crossed in one press](examples/03-invisible-metadata/0302-caret.gif)
 
 **A delete skips an id**
 
 ![Two Backspaces at the end of a line taking the period and the letter before it, concealment off showing the id between them untouched](examples/03-invisible-metadata/0303-protect.gif)
 
-**Text typed at the line end**
+**A word typed at the line end**
 
-![The end of a sentence deleted and typed back at the line end, concealment off showing the id still closing the line](examples/03-invisible-metadata/0304-typing.gif)
+![A word typed at the end of a line, concealment off showing it in front of the id that still closes the line](examples/03-invisible-metadata/0304-typing.gif)
 
 **Enter at the line end**
 
-![Enter at the end of a line opening an empty line below it, concealment off showing the id still on the line above](examples/03-invisible-metadata/0305-enter.gif)
+![Two Enters at the end of a line opening two empty lines below it, concealment off showing the id still on the line above](examples/03-invisible-metadata/0305-enter.gif)
+
+## 4 — Markup
+
+Shows:
+- concealment of a pair with nothing drawn in its place
+- `anchor: after` on the opening marker, `anchor: before` on the closing one
+- `deletionPolicy: protect`
+
+[src/cases/04-markup/markup.ts](src/cases/04-markup/markup.ts) · [examples/04-markup/emphasis.md](examples/04-markup/emphasis.md)
+
+Markdown emphasis: `**bold**`, `_italic_` and `` `code` `` read as the styled word alone. The
+oldest conceal case there is, and the one where the editor's part matters most, because the hidden
+text wraps text that is being edited.
+
+Each marker belongs to the text it wraps. The opening `**` belongs to the word behind it, so its one
+caret stop is behind the marker: a letter typed at the visible start of `bold` is bold. The closing
+`**` belongs to the word in front, so its stop is in front of the marker: a letter typed at the
+visible end of `bold` is bold too. Enter or a space typed at either stop lands *outside* the pair,
+so the emphasis closes before the line breaks and `**bold **` is never written. Without the anchors
+the caret would collapse to the arrival side of each marker, and one of the two edges would put
+typed text outside the pair.
+
+`protect` keeps the delete keys off the markers: Backspace at the visible end takes the letter,
+Delete there steps over the closing marker and takes the character behind it. That makes a pair
+unremovable by ordinary editing, which is the point, and the extension owes the user another route —
+`Ctrl+B` unwrapping the word, its job anyway since only it knows what a pair spans. This demo does
+not implement it.
+
+Both markers are hidden from a live parse — here one regular expression per kind, each matching a
+whole pair — so a marker that loses its partner stops matching and stays in view: the file stopped
+being valid markdown and the screen says so.
+
+**Elsewhere:** Vim's markdown conceal, Org mode's `org-hide-emphasis-markers`, Obsidian's Live
+Preview, Typora.
+
+| The editor does | The extension does |
+| --- | --- |
+| hides both markers and draws nothing, so `**bold**` reads as `bold` | finds the pairs — a parse, one regular expression per kind here |
+| one caret stop per marker, on the inside of the pair: typing at either visible edge stays inside | styles the text between them: bold, italic, code |
+| Enter or a space at either edge lands outside the pair, so the emphasis closes first | re-applies on every edit, so an orphan marker shows itself |
+| Backspace and Delete take the visible neighbours and step over a marker | removes a pair as a command, since only it knows what the pair spans |
+
+```ts
+const openingDecoration = vscode.window.createTextEditorDecorationType({
+  conceal: { anchor: "after", deletionPolicy: "protect" },
+});
+
+const closingDecoration = vscode.window.createTextEditorDecorationType({
+  conceal: { anchor: "before", deletionPolicy: "protect" },
+});
+
+const boldDecoration = vscode.window.createTextEditorDecorationType({ fontWeight: "bold" });
+
+// Every pair as its opener, text and closer, from one expression per kind: /\*\*([^*]+)\*\*/g
+const found = pairs(editor.document);
+editor.setDecorations(openingDecoration, found.map((pair) => pair.opener));
+editor.setDecorations(closingDecoration, found.map((pair) => pair.closer));
+editor.setDecorations(boldDecoration, found.filter((pair) => pair.kind === "bold").map((pair) => pair.text));
+```
+
+**Markers on and off**
+
+![Concealment off with the markers as text, then on with the words styled and the markers gone](examples/04-markup/0401-toggle.gif)
+
+**A hidden marker costs no keypress**
+
+![One press carrying the caret over a space and the hidden opening marker, back the same way, then concealment off showing four characters at one press each](examples/04-markup/0402-caret.gif)
+
+**Typing at either visible edge stays inside the pair**
+
+![semi typed at the visible start of bold and face at the visible end of another, concealment off showing both words grown inside their markers](examples/04-markup/0403-typing.gif)
+
+**A space at the visible end lands outside the pair**
+
+![A space and a word typed at the visible end of bold, the word plain, concealment off showing the space behind the closing marker](examples/04-markup/0404-space.gif)
+
+**Enter at the visible end leaves the pair whole**
+
+![Enter at the visible end of bold moving the rest of the line down, concealment off showing the closing marker still on its line](examples/04-markup/0405-enter.gif)
+
+**No delete key reaches a marker**
+
+![Backspace at the visible end of bold taking the letter, Delete taking the space behind the closing marker, concealment off showing both markers untouched](examples/04-markup/0406-protect.gif)
+
+**A marker without a partner shows itself**
+
+![One asterisk deleted with concealment off, concealment on leaving both halves in view, undo restoring the pair, hidden again once the caret leaves it](examples/04-markup/0407-orphan.gif)
 
 ## 7 — Fold
 
