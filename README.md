@@ -161,6 +161,69 @@ editor.setDecorations(translationDecoration, matches.map((match) => ({
 })));
 ```
 
+## 3 — Invisible metadata
+
+Shows:
+- concealment with nothing drawn in its place
+- `anchor: lineEnd`
+- `deletionPolicy: protect`
+
+[src/cases/03-invisible-metadata/metadata.ts](src/cases/03-invisible-metadata/metadata.ts) · [examples/03-invisible-metadata/notes.md](examples/03-invisible-metadata/notes.md)
+
+Machine data written into a file by something other than the person reading it: Obsidian block
+ids — `^a3f9c1` closing a block, `[[Note#^id]]` inside a link. Written when you copy a link to a
+block, never typed by hand.
+
+Nothing is drawn in their place, so a concealed range takes no room and holds no caret position:
+one press carries the caret past it and on to the next character it can see, and a line is as long
+as it looks.
+
+An id is anchored to the end of its line. Its one caret stop is at the visible end of the line,
+so text typed there goes in front of the id, and Enter there opens the next line while the id stays
+on the line it closes. Without the anchor one of the two goes wrong whichever side the stop is on:
+typed text lands behind the id, or Enter carries the id down onto the new line.
+
+An id is also `protect`: a delete steps over it, so a Backspace at the end of a line takes the
+sentence, not the id it cannot see.
+
+**Elsewhere:** Obsidian's Live Preview draws block ids as dimmed labels and hides them only in
+Reading view; users who hide them with CSS report the caret walking the invisible characters and
+typing landing behind the id. Logseq keeps its `id::` on a line of its own, which is the whole-line
+case this repository leaves out.
+
+| The editor does | The extension does |
+| --- | --- |
+| hides the range and draws nothing, so the line is as short as it looks | finds the ids |
+| collapses it to one caret position, crossed in one press, never landed inside | marks them anchored and protected |
+| keeps a line break typed at the line end behind the id, and typed text in front of it | re-applies on every edit |
+| keeps save, copy, search and diff on the real text | |
+
+```ts
+const idDecoration = vscode.window.createTextEditorDecorationType({
+  conceal: { anchor: "lineEnd", deletionPolicy: "protect" },
+});
+```
+
+**Block ids on and off**
+
+![Concealment off with the block ids as text, then on with nothing in their place](examples/03-invisible-metadata/0301-toggle.gif)
+
+**The caret crosses an id**
+
+![One press carrying the caret past a hidden id, then concealment off showing the eight characters it crossed](examples/03-invisible-metadata/0302-caret.gif)
+
+**A delete skips an id**
+
+![Two Backspaces at the end of a line taking the period and the letter before it, concealment off showing the id between them untouched](examples/03-invisible-metadata/0303-protect.gif)
+
+**Text typed at the line end**
+
+![The end of a sentence deleted and typed back at the line end, concealment off showing the id still closing the line](examples/03-invisible-metadata/0304-typing.gif)
+
+**Enter at the line end**
+
+![Enter at the end of a line opening an empty line below it, concealment off showing the id still on the line above](examples/03-invisible-metadata/0305-enter.gif)
+
 ## 7 — Fold
 
 [src/cases/07-fold/fold.ts](src/cases/07-fold/fold.ts) · [examples/07-fold/index.html](examples/07-fold/index.html)

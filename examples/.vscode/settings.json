@@ -1,4 +1,4 @@
 {
-  //"editor.conceal.enabled": "Not set here on purpose: the fork defaults it to true, and a workspace value would override what `Conceal Demo: Toggle Concealment` writes, leaving the command with no visible effect.",
-  "editor.minimap.enabled": false
+  "editor.minimap.enabled": false,
+  "editor.renderWhitespace": "all",
 }

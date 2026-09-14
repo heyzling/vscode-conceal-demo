@@ -650,6 +650,128 @@
     },
     
     {
+      "id": "0301-toggle",
+      "title": "Metadata — concealment on and off",
+      "example": "03-invisible-metadata/notes.md",
+      "window": [1280, 620],
+      "steps": [
+        {
+          "caption": "Concealment OFF: the block ids are real text",
+          "hold": 1.7,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}]
+        },
+        {
+          "caption": "Concealment ON: nothing is drawn in their place",
+          "hold": 1.7,
+          "do": [{"setting": "editor.conceal.enabled", "value": true}]
+        }
+      ]
+    },
+    {
+      "id": "0302-caret",
+      "title": "Metadata — the caret crosses an id",
+      "example": "03-invisible-metadata/notes.md",
+      "window": [1280, 620],
+      "steps": [
+        {
+          "caption": "The caret before a hidden id",
+          "hold": 1.6,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [12, 46]}]
+        },
+        {
+          "caption": "→: one press crosses it",
+          "hold": 2.5,
+          "do": [{"command": "cursorRight"}]
+        },
+        {
+          "caption": "Concealment OFF: eight characters, one press",
+          "hold": 3.0,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        }
+      ]
+    },
+    {
+      "id": "0303-protect",
+      "title": "Metadata — an id survives a delete",
+      "example": "03-invisible-metadata/notes.md",
+      "window": [1280, 620],
+      "steps": [
+        {
+          "caption": "The caret at the end of the line",
+          "hold": 1.6,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 64]}]
+        },
+        {
+          "caption": "Backspace: the id is skipped, the period goes",
+          "hold": 2.2,
+          "do": [{"command": "deleteLeft"}]
+        },
+        {
+          "caption": "Backspace: and the letter before it",
+          "hold": 2.2,
+          "do": [{"command": "deleteLeft"}]
+        },
+        {
+          "caption": "Concealment OFF: the id is untouched",
+          "hold": 3.0,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        }
+      ]
+    },
+    {
+      "id": "0304-typing",
+      "title": "Metadata — text typed at the line end goes in front of the id",
+      "example": "03-invisible-metadata/notes.md",
+      "window": [1280, 620],
+      "steps": [
+        {
+          "caption": "The caret at the end of the line",
+          "hold": 1.6,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 56]}]
+        },
+        {
+          "caption": "Delete the end of the sentence letter by letter",
+          "hold": 1.5,
+          "live": 0.2,
+          "do": [{"command": "deleteLeft", "times": 15}]
+        },
+        {
+          "caption": "Type it back: the text lands in front of the id",
+          "hold": 2.5,
+          "live": 0.2,
+          "do": [{"type": "hich is not it."}]
+        },
+        {
+          "caption": "Concealment OFF: the id still closes the line",
+          "hold": 3.0,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        }
+      ]
+    },
+    {
+      "id": "0305-enter",
+      "title": "Metadata — Enter at the line end leaves the id on its line",
+      "example": "03-invisible-metadata/notes.md",
+      "window": [1280, 654],
+      "steps": [
+        {
+          "caption": "The caret at the end of the line",
+          "hold": 1.6,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 56]}]
+        },
+        {
+          "caption": "Enter: a new line opens below",
+          "hold": 2.2,
+          "do": [{"type": "\n"}]
+        },
+        {
+          "caption": "Concealment OFF: the id stays on its line",
+          "hold": 3.0,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}]
+        }
+      ]
+    },
+    {
       "id": "0701-fold",
       "title": "Fold — long class lists folded, one row each",
       "example": "07-fold/index.html",
