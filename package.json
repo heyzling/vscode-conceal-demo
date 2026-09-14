@@ -45,29 +45,11 @@
         "category": "Conceal Demo"
       },
       {
-        "command": "conceal-demo.toggleFoldRevealOnClick",
-        "title": "Toggle Fold Reveal On Click",
+        "command": "conceal-demo.rotateTag",
+        "title": "Rotate Tag",
         "category": "Conceal Demo"
       }
-    ],
-    "configuration": {
-      "title": "Conceal Demo",
-      "properties": {
-        "conceal-demo.foldReveal": {
-          "type": "string",
-          "enum": [
-            "adjacent",
-            "click"
-          ],
-          "enumDescriptions": [
-            "A fold opens when the caret reaches it, by any key or by a click.",
-            "A fold opens on a mouse click only; keys jump over it."
-          ],
-          "default": "adjacent",
-          "description": "Case 7: what opens a folded value."
-        }
-      }
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

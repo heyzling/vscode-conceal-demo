@@ -1000,74 +1000,168 @@
       ]
     },
     {
-      "id": "0701-fold",
-      "title": "Fold — long class lists folded, one row each",
-      "example": "07-fold/index.html",
-      "window": [1280, 560],
+      "id": "0501-json",
+      "title": "Gallery — JSON keys without their quotes",
+      "example": "05-gallery/config.json",
+      "window": [1280, 440],
       "steps": [
         {
-          "caption": "Concealment OFF: three class lists wrap over six rows",
-          "hold": 2.7,
-          "do": [{ "setting": "editor.wordWrapColumn", "value": 70 }, { "setting": "editor.conceal.enabled", "value": false }, { "caret": [1, 1] }]
+          "caption": "The caret at the end of a line",
+          "hold": 1.1,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.autoClosingQuotes", "value": "never"}, {"caret": [3, 22]}]
         },
         {
-          "caption": "Concealment ON: each folded to •••, one row each",
-          "hold": 3.0,
-          "do": [{ "setting": "editor.conceal.enabled", "value": true }]
+          "caption": "Enter, then a new key: its quotes vanish at the colon",
+          "hold": 1.5,
+          "live": 0.12,
+          "do": [{"type": "\n\"author\": \"heyzling\","}]
+        },
+        {
+          "caption": "The caret after the colon",
+          "hold": 1.1,
+          "do": [{"caret": [4, 12]}]
+        },
+        {
+          "caption": "←: through the hidden quote in one press",
+          "hold": 1.5,
+          "do": [{"command": "cursorLeft"}]
+        },
+        {
+          "caption": "Type: the key grows inside its quotes",
+          "hold": 2.1,
+          "live": 0.3,
+          "do": [{"type": "s"}]
         }
       ]
     },
     {
-      "id": "0702-reveal",
-      "title": "Fold — a fold opens when the caret reaches it",
-      "example": "07-fold/index.html",
-      "window": [1280, 560],
+      "id": "0502-fsharp",
+      "title": "Gallery — fun as λ, -> as →",
+      "example": "05-gallery/lambda.fs",
+      "window": [1280, 400],
       "steps": [
         {
-          "caption": "foldReveal = adjacent. The caret before a fold",
-          "hold": 1.6,
-          "do": [{ "setting": "editor.wordWrapColumn", "value": 70 }, { "setting": "conceal-demo.foldReveal", "value": "adjacent" }, { "caret": [4, 14] }]
+          "caption": "The caret at the end of the line",
+          "hold": 1.1,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [2, 25]}]
         },
         {
-          "caption": "→: the caret reaches the fold, it opens",
-          "hold": 2.2,
-          "live": 0.7,
-          "do": [{ "command": "cursorRight", "times": 2 }]
-        },
-        {
-          "caption": "→: inside the value",
-          "hold": 1.2,
-          "live": 0.27,
-          "do": [{ "command": "cursorRight", "times": 6 }]
-        },
-        {
-          "caption": "↑: the caret leaves, the fold closes",
-          "hold": 2.5,
-          "do": [{ "command": "cursorUp" }]
-        },
-        {
-          "caption": "foldReveal = click. The caret before the fold again",
-          "hold": 1.6,
-          "do": [{ "setting": "conceal-demo.foldReveal", "value": "click" }, { "caret": [4, 14] }]
-        },
-        {
-          "caption": "→: the caret jumps over the fold, it stays closed; a click opens it",
-          "hold": 2.7,
-          "live": 0.7,
-          "do": [{ "command": "cursorRight", "times": 3 }]
+          "caption": "Enter, then a new function: fun and -> are drawn as you type",
+          "hold": 2.1,
+          "live": 0.12,
+          "do": [{"type": "\nlet double = fun x -> x * 2"}]
         }
       ]
     },
     {
-      "id": "0704-click",
-      "title": "Fold — a click opens a fold (recorded by hand)",
-      "example": "07-fold/index.html",
+      "id": "0503-tsarrow",
+      "title": "Gallery — => as one ⇒",
+      "example": "05-gallery/arrow.ts",
+      "window": [1280, 400],
+      "steps": [
+        {
+          "caption": "The caret at the end of the line",
+          "hold": 1.1,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [2, 34]}]
+        },
+        {
+          "caption": "Enter, then a new function: => is drawn as you type",
+          "hold": 2.1,
+          "live": 0.12,
+          "do": [{"type": "\nconst double = (x: number) => x * 2;"}]
+        }
+      ]
+    },
+    {
+      "id": "0504-latex",
+      "title": "Gallery — macros as their symbols, edited one character at a time",
+      "example": "05-gallery/formula.tex",
+      "window": [1280, 400],
+      "steps": [
+        {
+          "caption": "The caret at the end of the line",
+          "hold": 1.1,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [2, 24]}]
+        },
+        {
+          "caption": "Enter, then a formula: each macro is drawn as it completes",
+          "hold": 1.8,
+          "live": 0.12,
+          "do": [{"type": "\n$\\gamma \\leq \\pi$"}]
+        },
+        {
+          "caption": "←: the caret on the right of π",
+          "hold": 1.1,
+          "do": [{"command": "cursorLeft"}]
+        },
+        {
+          "caption": "Backspace: one real character goes, the macro shows itself",
+          "hold": 1.8,
+          "do": [{"command": "deleteLeft"}]
+        },
+        {
+          "caption": "Type the letter back",
+          "hold": 1.5,
+          "live": 0.3,
+          "do": [{"type": "i"}]
+        },
+        {
+          "caption": "→: the caret leaves, π is drawn again",
+          "hold": 2.1,
+          "do": [{"command": "cursorRight"}]
+        }
+      ]
+    },
+    {
+      "id": "0505-tags",
+      "title": "Gallery — a tag rotated in place",
+      "example": "05-gallery/todo.md",
+      "window": [1280, 440],
+      "steps": [
+        {
+          "caption": "The caret at ⬜, a #todo drawn as a box",
+          "hold": 1.1,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [3, 8]}]
+        },
+        {
+          "caption": "Rotate Tag — a click on the glyph does the same: #todo becomes #done",
+          "hold": 1.8,
+          "do": [{"command": "conceal-demo.rotateTag"}]
+        },
+        {
+          "caption": "Again: back to #todo",
+          "hold": 2.1,
+          "do": [{"command": "conceal-demo.rotateTag"}]
+        }
+      ]
+    },
+    {
+      "id": "0506-fold",
+      "title": "Gallery — a long value folded, shown on Backspace, folded again",
+      "example": "05-gallery/card.html",
       "window": [1280, 560],
       "steps": [
         {
-          "caption": "foldReveal = click: a click on a fold opens it, a click elsewhere closes it",
-          "manual": true,
-          "do": [{ "setting": "editor.wordWrapColumn", "value": 70 }, { "setting": "conceal-demo.foldReveal", "value": "click" }, { "caret": [3, 1] }]
+          "caption": "Three class lists, each folded to •••; the caret at the right of one",
+          "hold": 1.1,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [5, 64]}]
+        },
+        {
+          "caption": "Backspace: the value shows itself, nothing is deleted",
+          "hold": 1.8,
+          "do": [{"command": "deleteLeft"}]
+        },
+        {
+          "caption": "Type: the value is edited in place",
+          "hold": 1.5,
+          "live": 0.15,
+          "do": [{"type": " italic"}]
+        },
+        {
+          "caption": "→ →: the caret leaves, folded again",
+          "hold": 2.1,
+          "live": 0.5,
+          "do": [{"command": "cursorRight", "times": 2}]
         }
       ]
     }

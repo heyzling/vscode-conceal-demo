@@ -336,87 +336,59 @@ editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text,
 
 ![Backspace after a link showing the whole link and deleting nothing, the url edited in place, the caret leaving and the link drawn again, concealment off showing the new url](examples/04-markup/0408-link.gif)
 
-## 7 — Fold
+## 5 — Gallery
 
-[src/cases/07-fold/fold.ts](src/cases/07-fold/fold.ts) · [examples/07-fold/index.html](examples/07-fold/index.html)
+Small examples, one file each under [src/cases/05-gallery](src/cases/05-gallery): a regular
+expression, a decoration type, an example file under [examples/05-gallery](examples/05-gallery),
+and nothing else. One recording each, concealment on throughout — what the API looks like while
+you work.
 
-Long `class` attributes folded to a bold `•••` chip. A fold opens when the caret reaches it and
-closes when the caret leaves; the setting `conceal-demo.foldReveal` picks whether any key opens it
-or a mouse click only.
+**JSON keys** — `"name":` reads as `name:`. The quotes are grammar, so they are `protect`ed, and
+each is anchored to its key: typing at the visible end of a key stays inside the quotes.
+[jsonKeys.ts](src/cases/05-gallery/jsonKeys.ts) · [config.json](examples/05-gallery/config.json)
 
-**Elsewhere:** JetBrains folds inside a line with placeholder text. VS Code folds whole lines only:
-[microsoft/vscode#50840](https://github.com/microsoft/vscode/issues/50840) asks for folding inside
-a line, 171 👍, open since 2018, and the folding owner answered three times that it needs the editor
-core and cannot come from an extension. [#3352](https://github.com/microsoft/vscode/issues/3352),
-310 👍, asks for the closing brace on the same line, a special case of it.
+![A new key typed into a JSON file, its quotes vanishing at the colon, the caret crossing the hidden quote in one press and the key growing inside its quotes](examples/05-gallery/0501-json.gif)
 
-**Extensions today:** [Inline Fold](https://marketplace.visualstudio.com/items?itemName=moalamri.inline-fold),
-305k installs, and [Tailwind Fold](https://marketplace.visualstudio.com/items?itemName=stivo.tailwind-fold),
-337k, hide the characters with a CSS trick and draw `…`. Both are unmaintained: Inline Fold's author
-lost the publisher account and declared it dead in 2024 ([discussion #132](https://github.com/moalamri/vscode-inline-fold/discussions/132),
-[#137](https://github.com/moalamri/vscode-inline-fold/issues/137)); Tailwind Fold has had no release
-since 2024-06, with 40 issues open. So there is no side-by-side recording for this case.
+**F# lambda** — `fun` as λ, `->` as →, drawn the moment they are typed.
+[fsharpLambda.ts](src/cases/05-gallery/fsharpLambda.ts) · [lambda.fs](examples/05-gallery/lambda.fs)
 
-**What concealment changes for a fold**
+![A new F# function typed, fun and the arrow drawn as their symbols as they are typed](examples/05-gallery/0502-fsharp.gif)
 
-- **A folded row is as short as it looks.** Hidden characters still take their room under word
-  wrap; the maintainer of Inline Fold explains why he cannot fix that in
-  [discussion #69](https://github.com/moalamri/vscode-inline-fold/discussions/69), and
-  [tailwind-fold#6](https://github.com/stivoat/tailwind-fold/issues/6) shows the hole. Concealed,
-  the editor lays the line out from what it draws.
-- **The caret cannot fall into hidden text.** With the trick, arrow keys walk through invisible
-  characters and Backspace eats them, so the extensions must unfold whatever the caret or a
-  selection touches, and that fights the selection ([inline-fold#119](https://github.com/moalamri/vscode-inline-fold/issues/119),
-  reproduced, never fixed). Concealed, a key jumps over the fold and a delete takes it whole, so
-  the extension picks when a fold opens: when the caret reaches it, on a click, or never.
-- **One switch for all of it.** `editor.conceal.enabled` and `editor.conceal.inDiffEditor` belong
-  to the editor, not to each extension ([inline-fold#136](https://github.com/moalamri/vscode-inline-fold/issues/136),
-  [tailwind-fold#40](https://github.com/stivoat/tailwind-fold/issues/40)).
+**TS arrow** — `=>` as one ⇒.
+[tsArrow.ts](src/cases/05-gallery/tsArrow.ts) · [arrow.ts](examples/05-gallery/arrow.ts)
 
-Opening a fold with a click works either way: a click on the drawn text puts the caret at the
-fold's edge, which the extension sees, just as a click on the extensions' `…` does.
+![A new arrow function typed, the arrow drawn as one symbol the moment it is complete](examples/05-gallery/0503-tsarrow.gif)
 
-| The editor does | The extension does |
-| --- | --- |
-| hides the value and draws the text given for that range | finds the values and picks the ones long enough to fold |
-| keeps the caret out of the fold: one press crosses it, one delete takes it | decides what opens a fold: any arrival, or a click |
-| keeps copy, search and undo on the real text | re-applies on every edit and caret move |
+**LaTeX macros** — `\alpha` as α, from a table. The glyph says what the macro is, so this is
+`passthrough`: Backspace on α takes one real character and leaves `\alph` in view.
+[latexMacros.ts](src/cases/05-gallery/latexMacros.ts) · [formula.tex](examples/05-gallery/formula.tex)
 
-```ts
-const foldDecoration = vscode.window.createTextEditorDecorationType({
-  rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
-  conceal: {
-    replacement: {
-      contentText: "•••",
-      fontWeight: "bold",
-      color: new vscode.ThemeColor("editor.foreground"),
-      backgroundColor: new vscode.ThemeColor("editorInlayHint.background"),
-      borderRadius: "3px",
-      padding: "0 3px",
-    },
-  },
-});
+![A formula typed with each macro drawn as it completes, Backspace on π leaving the macro in view one character short, the letter typed back and π drawn again](examples/05-gallery/0504-latex.gif)
 
-editor.setDecorations(foldDecoration, longValues);
-```
+**Tag rotation** — `#todo` as ⬜, `#done` as ✅. A click on the glyph rewrites the tag to the
+other one, as does `Conceal Demo: Rotate Tag` at the caret; the rewrite is the extension's edit,
+since a click on drawn text only puts the caret at its edge. `revealOnEdit: false`, because the
+edit is the extension's own and leaves a tag behind. The recording uses the command — nothing in
+the pipeline can move the mouse.
+[tagRotation.ts](src/cases/05-gallery/tagRotation.ts) · [todo.md](examples/05-gallery/todo.md)
 
-**Long class lists folded, one row each**
+![A box glyph rotated to a check mark and back by the command](examples/05-gallery/0505-tags.gif)
 
-![Concealment off with three class lists wrapping over six rows, then on with each folded to one row](examples/07-fold/0701-fold.gif)
+**Inline fold** — a `class` value longer than 30 characters folded to a `•••` chip. The chip
+predicts nothing about the value, so this is `reveal` again: Backspace beside it shows the value
+and takes nothing, the next keys edit it, and the caret leaving folds it again. A folded row is as
+short as it looks and the caret cannot fall into the fold, the two things the CSS trick cannot do:
+[Inline Fold](https://marketplace.visualstudio.com/items?itemName=moalamri.inline-fold), 305k
+installs, and [Tailwind Fold](https://marketplace.visualstudio.com/items?itemName=stivo.tailwind-fold),
+337k, hide the characters and draw `…` — the hidden characters keep their room under word wrap
+([inline-fold#69](https://github.com/moalamri/vscode-inline-fold/discussions/69)), arrow keys walk
+through them ([inline-fold#119](https://github.com/moalamri/vscode-inline-fold/issues/119)), and
+both are unmaintained ([inline-fold#132](https://github.com/moalamri/vscode-inline-fold/discussions/132)).
+VS Code folds whole lines only: [microsoft/vscode#50840](https://github.com/microsoft/vscode/issues/50840),
+171 👍, open since 2018, answered three times with "needs the editor core".
+[fold.ts](src/cases/05-gallery/fold.ts) · [card.html](examples/05-gallery/card.html)
 
-**A fold opens when the caret reaches it**
-
-![The caret reaching a fold with the arrow key and the value opening, the caret leaving and the fold closing, then with click-only reveal the caret jumping over the closed fold](examples/07-fold/0702-reveal.gif)
-
-**A click opens a fold**
-
-<!-- Filmed by hand: ./scripts/record.sh 0704, then take this line out of the comment.
-![A click on a folded value opening it, a click elsewhere closing it](examples/07-fold/0704-click.gif)
--->
-
-A concealed range stays within one line, so a value written over several lines is left alone here.
-Folding one of those to a single row means laying one view row out from several model lines — the
-whole-line question above — and it lives on `feature/lines`.
+![Three folded class lists, Backspace at one showing the value and deleting nothing, a word typed into it, the caret leaving and the value folded again](examples/05-gallery/0506-fold.gif)
 
 ## Recording
 
@@ -425,7 +397,7 @@ The GIFs are played by the extension's own recorder and photographed by
 
 ```bash
 CONCEAL_DEMO_FORK=/path/to/vscode-fork CONCEAL_DEMO_WINSHOT=/path/to/winshot.ps1 \
-  ./scripts/record.sh 07         # case 7; `0701 0702` picks scenes
+  ./scripts/record.sh 05         # case 5; `0501 0506` picks scenes
 ```
 
 A step marked `manual` in [examples/scenes.json](examples/scenes.json) is filmed by hand: the
