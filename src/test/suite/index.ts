@@ -11,7 +11,7 @@ import Mocha from "mocha";
  * nothing for `useInstallation` to install. See `scripts/test-fork.sh`.
  */
 export async function run(): Promise<void> {
-  const mocha = new Mocha({ ui: "tdd", color: true, timeout: 20000 });
+  const mocha = new Mocha({ ui: "tdd", color: true, timeout: 20000, grep: process.env.CONCEAL_DEMO_GREP });
   const testsRoot = path.resolve(__dirname, "../integration");
   for (const file of fs.readdirSync(testsRoot).sort()) {
     if (file.endsWith(".test.js")) {

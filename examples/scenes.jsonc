@@ -765,23 +765,23 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Start: before the hidden id",
+          "caption": "Start",
           "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [8, 49]}],
           "expect": {"caret": [8, 49]}
         },
         {
-          "caption": "→ →: one press for the id, one for a bracket",
+          "caption": "→ →",
           "hold": 1.5,
           "live": 0.5,
           "do": [{"command": "cursorRight", "times": 2}],
           "expect": [{"caret": [8, 58]}, {"caret": [8, 59]}]
         },
         {
-          "caption": "← ←",
+          "caption": "← ← ← ←",
           "hold": 1.5,
-          "live": 0.5,
-          "do": [{"command": "cursorLeft", "times": 2}],
+          "live": 0.3,
+          "do": [{"command": "cursorLeft", "times": 4}],
           "expect": [{"caret": [8, 58]}, {"caret": [8, 49]}]
         },
         {
@@ -793,93 +793,114 @@
       ]
     },
     {
-      "id": "0303-protect",
-      "title": "Metadata — an id survives a delete",
+      "id": "0303-backspace",
+      "title": "Metadata — Backspace skips the id",
       "example": "03-invisible-metadata/notes.md",
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Start: at the line end",
-          "hold": 1.1,
+          "caption": "Start",
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 64]}],
           "expect": {"caret": [4, 56]}
         },
         {
-          "caption": "Backspace: the id is skipped, the period goes",
-          "hold": 1.5,
-          "do": [{"command": "deleteLeft"}],
-          "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it ^a3f9c1"}}
-        },
-        {
           "caption": "Backspace",
-          "hold": 1.5,
-          "do": [{"command": "deleteLeft"}],
-          "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not i ^a3f9c1"}}
+          "hold": 1.0,
+          "live": 0.3,
+          "do": [{"command": "deleteLeft", "times": 3}],
+          "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not  ^a3f9c1"}, "caret": [4, 53]}
         },
         {
           "caption": "Concealment OFF",
-          "hold": 2.1,
+          "hold": 1.5,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
-          "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not i ^a3f9c1"}}
+          "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not  ^a3f9c1"}}
         }
       ]
     },
     {
-      "id": "0304-typing",
+      "id": "0304-delete",
+      "title": "Metadata — Delete skips the id and joins the next line",
+      "example": "03-invisible-metadata/notes.md",
+      "window": [1280, 500],
+      "steps": [
+        {
+          "caption": "Start",
+          "hold": 1.2,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 64]}],
+          "expect": {"caret": [4, 56]}
+        },
+        {
+          "caption": "Delete",
+          "hold": 1.5,
+          "do": [{"command": "deleteRight"}],
+          "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it. ^a3f9c1", "5": "Where does it stop holding? Nothing on sample efficiency. ^b7d204"}, "caret": [4, 56]}
+        },
+        {
+          "caption": "Concealment OFF",
+          "hold": 1.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}],
+          "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it. ^a3f9c1", "5": "Where does it stop holding? Nothing on sample efficiency. ^b7d204"}}
+        }
+      ]
+    },
+    {
+      "id": "0305-typing",
       "title": "Metadata — a word typed at the line end goes in front of the id",
       "example": "03-invisible-metadata/notes.md",
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Start: at the line end",
-          "hold": 1.1,
+          "caption": "Start",
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 56]}],
           "expect": {"caret": [4, 56]}
         },
         {
           "caption": "Sadly.",
-          "hold": 1.8,
+          "hold": 1.5,
           "live": 0.15,
           "do": [{"type": " Sadly."}],
           "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it. Sadly. ^a3f9c1"}, "caret": [4, 63]}
         },
         {
           "caption": "Concealment OFF",
-          "hold": 2.1,
+          "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it. Sadly. ^a3f9c1"}}
         }
       ]
     },
     {
-      "id": "0305-enter",
+      "id": "0306-enter",
       "title": "Metadata — Enter at the line end leaves the id on its line",
       "example": "03-invisible-metadata/notes.md",
       "window": [1280, 570],
       "steps": [
         {
           "caption": "Start: at the line end",
-          "hold": 1.1,
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 56]}],
           "expect": {"caret": [4, 56]}
         },
         {
           "caption": "Enter, Enter",
-          "hold": 1.5,
+          "hold": 1.2,
           "live": 0.6,
           "do": [{"type": "\n\n"}],
           "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it. ^a3f9c1", "5": "", "6": ""}, "caret": [6, 1]}
         },
         {
           "caption": "Concealment OFF",
-          "hold": 2.1,
+          "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it. ^a3f9c1", "5": "", "6": ""}}
         }
       ]
     },
     {
-      "id": "0306-copy",
+      "id": "0307-copy",
       "title": "Metadata — what the clipboard carries",
       "example": "03-invisible-metadata/notes.md",
       "window": [1280, 560],
@@ -915,7 +936,7 @@
         },
         {
           "caption": "Shift + End: the selection stops in front of the id",
-          "hold": 1.5,
+          "hold": 1.8,
           "do": [{"command": "cursorEndSelect"}],
           "expect": {"selection": [4, 49, 4, 56]}
         },
@@ -934,18 +955,54 @@
           "caption": "",
           "hold": 0.85,
           "do": [{"closeBeside": true}]
+        }
+      ]
+    },
+    {
+      "id": "0308-copyref",
+      "title": "Metadata — what the clipboard carries around a hidden ref",
+      "example": "03-invisible-metadata/notes.md",
+      "window": [1280, 560],
+      "steps": [
+        {
+          "caption": "",
+          "hold": 1.1,
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [8, 57]}],
+          "expect": {"caret": [8, 57]}
+        },
+        {
+          "caption": "Shift + →",
+          "hold": 1.5,
+          "do": [{"command": "cursorRightSelect"}],
+          "expect": {"selection": [8, 57, 8, 58]}
+        },
+        {
+          "caption": "",
+          "hold": 0.85,
+          "do": [{"copy": true}, {"openBeside": true}]
+        },
+        {
+          "caption": "Paste",
+          "hold": 1.8,
+          "do": [{"paste": true}],
+          "expect": {"beside": "]"}
+        },
+        {
+          "caption": "",
+          "hold": 0.85,
+          "do": [{"closeBeside": true}]
         },
         {
           "caption": "",
           "hold": 1.1,
-          "do": [{"caret": [8, 49]}],
-          "expect": {"caret": [8, 49]}
+          "do": [{"caret": [8, 29]}],
+          "expect": {"caret": [8, 29]}
         },
         {
-          "caption": "Shift + →: one press selects the whole ref",
+          "caption": "Shift + End",
           "hold": 1.5,
-          "do": [{"command": "cursorRightSelect"}],
-          "expect": {"selection": [8, 49, 8, 57]}
+          "do": [{"command": "cursorEndSelect"}],
+          "expect": {"selection": [8, 29, 8, 59]}
         },
         {
           "caption": "",
@@ -956,7 +1013,7 @@
           "caption": "",
           "hold": 1.8,
           "do": [{"paste": true}],
-          "expect": {"beside": "#^c05b31"}
+          "expect": {"beside": "[[Seminar 2026-09-02#^c05b31]]"}
         }
       ]
     },

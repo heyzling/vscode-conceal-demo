@@ -186,23 +186,31 @@ const idDecoration = vscode.window.createTextEditorDecorationType({
 
 **The cursor crosses an id**
 
-![Two presses right crossing a hidden id and a bracket, two back, then concealment off showing the eight characters crossed in one press](examples/03-invisible-metadata/0302-cursor.gif)
+![Two presses right crossing a hidden id and a bracket, two back, then concealment off showing the eight characters crossed in one press](examples/03-invisible-metadata/0302-caret.gif)
 
-**A delete skips an id**
+**Backspace skips an id**
 
-![Two Backspaces at the end of a line taking the period and the letter before it, concealment off showing the id between them untouched](examples/03-invisible-metadata/0303-protect.gif)
+![Three Backspaces at the end of a line taking the last word and its period, concealment off showing the id behind them untouched](examples/03-invisible-metadata/0303-backspace.gif)
+
+**Delete skips an id**
+
+![Delete at the end of a line stepping over the id and joining the next line, concealment off showing the id still closing the line](examples/03-invisible-metadata/0304-delete.gif)
 
 **A word typed at the line end**
 
-![A word typed at the end of a line, concealment off showing it in front of the id that still closes the line](examples/03-invisible-metadata/0304-typing.gif)
+![A word typed at the end of a line, concealment off showing it in front of the id that still closes the line](examples/03-invisible-metadata/0305-typing.gif)
 
 **Enter at the line end**
 
-![Two Enters at the end of a line opening two empty lines below it, concealment off showing the id still on the line above](examples/03-invisible-metadata/0305-enter.gif)
+![Two Enters at the end of a line opening two empty lines below it, concealment off showing the id still on the line above](examples/03-invisible-metadata/0306-enter.gif)
 
 **What the clipboard carries**
 
-![A paragraph, a selection to the line end, then the hidden ref alone pasted into a tab beside: the id comes with whole lines and not with the text before it, the ref as its real text](examples/03-invisible-metadata/0306-copy.gif)
+![A paragraph, then a selection to the line end, each pasted into a tab beside: the id comes with whole lines and not with the text before it](examples/03-invisible-metadata/0307-copy.gif)
+
+**What the clipboard carries around a hidden ref**
+
+![One bracket next to the hidden ref, then the whole wikilink, each pasted into a tab beside: the bracket comes alone, the wikilink with its ref as real text](examples/03-invisible-metadata/0308-copyref.gif)
 
 ## 4 — Markup
 
