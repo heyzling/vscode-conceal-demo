@@ -5,14 +5,14 @@ A showcase of the VS Code **conceal decoration options**.
 ## Links
 
 1. Proposal: [Concealed text — a proposed VS Code API (v4) · GitHub](https://gist.github.com/heyzling/6235fd30bda7605199963e15f12142f5)
-1. Implementation: [VS Code Fork conceal-1.135 branch](https://github.com/heyzling/vscode/tree/concealed-text-1.135)
+1. Implementation: [VS Code Fork concealed-text-1.135 branch](https://github.com/heyzling/vscode/tree/concealed-text-1.135)
 1. 2023, motivating request, still open, Backlog, 60 👍: [#171074 Feature request: prettify symbols mode](https://github.com/microsoft/vscode/issues/171074)
 
 ## Implementation
 
-Every case implementation lives in separate folder in `src/cases/00-my/*.ts`. It works only in in file in the corresponding `examples/00-my` dir.
+Each case lives in its own folder, `src/cases/<NN-name>/`. It only works on files in the matching `examples/<NN-name>` dir.
 
-All cases parsing implemented with regexp. Real extensions should use specialized parsers instead.
+All parsing is done with regexp. Real extensions should use specialized parsers instead.
 
 
 ## Run
@@ -23,6 +23,7 @@ CONCEAL_DEMO_FORK=/path/to/vscode-fork ./scripts/dev.sh   # opens examples/ in t
 ```
 
 ON/OFF concealment via command: `Conceal Demo: Toggle Concealment`.
+
 
 
 ## 1 — Tags
@@ -61,42 +62,41 @@ const bugDecoration = vscode.window.createTextEditorDecorationType({
 editor.setDecorations(doneDecoration, findRanges(editor.document, /#done\b/g));
 ```
 
-**Concealment on and off**
+**1 — Concealment on and off**
 
 ![Concealment off with the four tags as text, then on with #done and #bug drawn as glyphs](examples/01-tags/0101-toggle.gif)
 
-**Writing a tag**
-
-![todo deleted letter by letter, done typed until the glyph appears, broken by one more letter and back](examples/01-tags/0109-typing.gif)
-
-
-**Search finds the text under the glyph**
+**2 — Search finds the text under the glyph**
 
 ![Ctrl+F finding done under its glyph and bug under its chip, concealment off showing each match on the real text](examples/01-tags/0102-search.gif)
 
-**What the clipboard carries**
+**3 — What the clipboard carries**
 
 ![Two lines, then the glyph alone, then the chip alone pasted into a tab beside: the tags, not the glyphs](examples/01-tags/0103-copy.gif)
 
-**The cursor around a glyph**
+**4 — The cursor around a glyph**
 
-![The cursor crossing the glyph and the chip in one press, word jumps landing past them, and the same keys on the raw text with concealment off](examples/01-tags/0104-cursor.gif)
+![The cursor crossing the glyph and the chip in one press, word jumps landing past them, and the same keys on the raw text with concealment off](examples/01-tags/0104-caret.gif)
 
-**A cursor inside the range when concealment returns**
+**5 — A cursor inside the range when concealment returns**
 
 ![The cursor parked inside #done and then inside #bug with concealment off, pushed out when concealment comes back](examples/01-tags/0105-inside.gif)
 
-**Deleting a glyph**
+**6 — Deleting a glyph (atomic)**
 
 ![Backspace, Ctrl+Backspace and Ctrl+Delete taking the whole tag, for the glyph and for the chip, concealment off proving it, undo bringing it back](examples/01-tags/0106-delete.gif)
 
-**Two cursors, two glyphs**
+**7 — Two cursors, two glyphs**
 
 ![Two cursors deleting, restoring and typing braces around two glyphs at once](examples/01-tags/0107-multicursor.gif)
 
-**The cursor up and down through glyph lines**
+**8 — The cursor up and down through glyph lines**
 
 ![Up and down landing on the nearest end of a glyph, never inside it](examples/01-tags/0108-vertical.gif)
+
+**9 — Writing a tag**
+
+![todo deleted letter by letter, done typed until the glyph appears, broken by one more letter and back](examples/01-tags/0109-typing.gif)
 
 
 ## 2 — Dynamic replacement
@@ -133,20 +133,21 @@ editor.setDecorations(translationDecoration, matches.map((match) => ({
 })));
 ```
 
-**Concealment on and off**
+**1 — Concealment on and off**
 
 ![Concealment off with the translation keys as code, then on with the strings from the catalogue drawn in their place](examples/02-i18n/0201-toggle.gif)
 
-**Wrap works on what is visible**
+**2 — Wrap works on what is visible**
 
 ![A Spanish comment wrapped over three rows with concealment off, its English translation on one row with concealment on](examples/02-i18n/0202-wrap.gif)
 
-**A delete key reveals the text**
+**3 — A delete key reveals the text**
+
 First `Backspace` only reveals the real text. Second actually deletes it.
 
 ![Backspace beside a drawn string showing the key and deleting nothing, a second Backspace taking a character, undo, then the cursor moving on and the string drawn again](examples/02-i18n/0203-delete.gif)
 
-**A key edited under the drawn string**
+**4 — A key edited under the drawn string**
 
 ![Backspace revealing the key, Ctrl+Backspace taking its last segment, a new one typed, the cursor moving on and the new string drawn](examples/02-i18n/0204-edit.gif)
 
@@ -162,21 +163,10 @@ First `Backspace` only reveals the real text. Second actually deletes it.
 - Example: [examples/03-invisible-metadata/notes.md](examples/03-invisible-metadata/notes.md)
 
 **What it does:**
-Machine data written into a file by something other than the person reading it: Obsidian block
-ids — `^a3f9c1` closing a block, `[[Note#^id]]` inside a link. Written when you copy a link to a
-block, never typed by hand.
+Hides machine metadata: notes IDs in this example.
 
-Nothing is drawn in their place, so a concealed range takes no room and holds no cursor position:
-one press carries the cursor past it and on to the next character it can see, and a line is as long
-as it looks.
-
-An id is anchored to the end of its line. Its one cursor stop is at the visible end of the line,
-so text typed there goes in front of the id, and Enter there opens the next line while the id stays
-on the line it closes. Without the anchor one of the two goes wrong whichever side the stop is on:
-typed text lands behind the id, or Enter carries the id down onto the new line.
-
-An id is also `protect`: a delete steps over it, so a Backspace at the end of a line takes the
-sentence, not the id it cannot see.
+- `my note ^a3f9c1` -> `my note`
+- `this is my link [[Note#^id]]` -> `this is my link [[Note]]`
 
 **Conceal decoration shape for this example**
 ```ts
@@ -185,42 +175,45 @@ const idDecoration = vscode.window.createTextEditorDecorationType({
 });
 ```
 
-**Block ids on and off**
+**1 — Block ids on and off**
 
 ![Concealment off with the block ids as text, then on with nothing in their place](examples/03-invisible-metadata/0301-toggle.gif)
 
-**The cursor crosses an id**
+**2 — The cursor crosses an id**
 
 ![Two presses right crossing a hidden id and a bracket, two back, then concealment off showing the eight characters crossed in one press](examples/03-invisible-metadata/0302-caret.gif)
 
-**Backspace skips an id**
+**3 — Backspace skips an id**
 
 ![Three Backspaces at the end of a line taking the last word and its period, concealment off showing the id behind them untouched](examples/03-invisible-metadata/0303-backspace.gif)
 
-**Delete skips an id**
+**4 — Delete skips an id**
 
 ![Delete at the end of a line stepping over the id and joining the next line, concealment off showing the id still closing the line](examples/03-invisible-metadata/0304-delete.gif)
 
-**A word typed at the line end**
+**5 — A word typed at the line end**
 
 ![A word typed at the end of a line, concealment off showing it in front of the id that still closes the line](examples/03-invisible-metadata/0305-typing.gif)
 
-**Enter at the line end**
+**6 — Enter at the line end**
+
 
 ![Two Enters at the end of a line opening two empty lines below it, concealment off showing the id still on the line above](examples/03-invisible-metadata/0306-enter.gif)
 
-**What the clipboard carries**
+**7 — What the clipboard carries**
+
+ID is copied only if the next line is also selected.
 
 ![A paragraph, then a selection to the line end, each pasted into a tab beside: the id comes with whole lines and not with the text before it](examples/03-invisible-metadata/0307-copy.gif)
 
-**What the clipboard carries around a hidden ref**
+**8 — What the clipboard carries around a hidden ref**
 
 ![One bracket next to the hidden ref, then the whole wikilink, each pasted into a tab beside: the bracket comes alone, the wikilink with its ref as real text](examples/03-invisible-metadata/0308-copyref.gif)
 
-## 4 — Markup
+## 4 — Hide Markdown markup
 
 **Shows:**
-- concealment of a pair with nothing drawn in its place
+- conceal markup
 - `anchor: after` on the opening marker, `anchor: before` on the closing one
 - `deletionPolicy: protect` behavior
 - a link drawn as its text: per-range `replacement`, `deletionPolicy: reveal`
@@ -230,34 +223,13 @@ const idDecoration = vscode.window.createTextEditorDecorationType({
 - Example: [examples/04-markup/emphasis.md](examples/04-markup/emphasis.md)
 
 **What it does:**
-Markdown emphasis: `**bold**`, `_italic_` and `` `code` `` read as the styled word alone. The
-oldest conceal case there is, and the one where the editor's part matters most, because the hidden
-text wraps text that is being edited.
+- Hides Markdown emphasis: `**bold**`, `_italic_` and `` `code` `` read as the styled word alone.
+- `[My link example](https://example.com)` -> [My link example](https://example.com)
 
-Each marker belongs to the text it wraps. The opening `**` belongs to the word behind it, so its one
-cursor stop is behind the marker: a letter typed at the visible start of `bold` is bold. The closing
-`**` belongs to the word in front, so its stop is in front of the marker: a letter typed at the
-visible end of `bold` is bold too. Enter or a space typed at either stop lands *outside* the pair,
-so the emphasis closes before the line breaks and `**bold **` is never written. Without the anchors
-the cursor would collapse to the arrival side of each marker, and one of the two edges would put
-typed text outside the pair.
+Opens gate to live Markdown editing like in [Obsidian Live Preview](https://obsidian.md/help/edit-and-read).
 
-`protect` keeps the delete keys off the markers: Backspace at the visible end takes the letter,
-Delete there steps over the closing marker and takes the character behind it. A caret alone cannot
-remove a pair, which is the point, and the extension owes the user another route —
-`Ctrl+B` unwrapping the word, its job anyway since only it knows what a pair spans. This demo does
-not implement it.
+Related to VS Code feature-request: [#286296 Support decorations that hide characters](https://github.com/microsoft/vscode/issues/286296).
 
-Both markers are hidden from a live parse — here one regular expression per kind, each matching a
-whole pair — so a marker that loses its partner stops matching and stays in view: the file stopped
-being valid markdown and the screen says so.
-
-A link is the other kind of thing. `[CommonMark spec](https://commonmark.org/)` is one unit,
-concealed whole with its text drawn in its place, blue and underlined the way a browser draws it.
-The drawn text predicts nothing about the url, so this is `reveal`, as in case 2: a delete key
-beside the link shows all of it and takes nothing, the next press edits what it showed, and once
-the cursor leaves, the link is drawn again over whatever it now says. The url stays reachable on
-hover.
 
 **Conceal decoration shape for this example**
 ```ts
@@ -271,7 +243,7 @@ const closingDecoration = vscode.window.createTextEditorDecorationType({
 
 const boldDecoration = vscode.window.createTextEditorDecorationType({ fontWeight: "bold" });
 
-// A link is one range drawing its own text; the drawn text predicts nothing about the url.
+// A link is one range drawing its own text
 const linkDecoration = vscode.window.createTextEditorDecorationType({
   conceal: { deletionPolicy: "reveal" },
 });
@@ -290,130 +262,82 @@ editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text,
 })));
 ```
 
-**Markers on and off**
+**1 — Markers on and off**
 
 ![Concealment off with the markers and the link as text, then on with the words styled, the markers gone and the link drawn as its text](examples/04-markup/0401-toggle.gif)
 
-**A hidden marker costs no keypress**
+**2 — A hidden marker costs no keypress**
 
-![One press carrying the cursor over a space and the hidden opening marker, back the same way, then concealment off showing four characters at one press each](examples/04-markup/0402-cursor.gif)
+![One press carrying the cursor over a space and the hidden opening marker, back the same way, then concealment off showing four characters at one press each](examples/04-markup/0402-caret.gif)
 
-**Typing at either visible edge stays inside the pair**
+**3 — Typing at either visible edge stays inside the pair**
 
 ![semi typed at the visible start of bold and face at the visible end of another, concealment off showing both words grown inside their markers](examples/04-markup/0403-typing.gif)
 
-**A space at the visible end lands outside the pair**
+**4 — A space at the visible end lands outside the pair**
 
 ![A space and a word typed at the visible end of bold, the word plain, concealment off showing the space behind the closing marker](examples/04-markup/0404-space.gif)
 
-**Enter at the visible end leaves the pair whole**
+**5 — Enter at the visible end leaves the pair whole**
 
 ![Enter at the visible end of bold moving the rest of the line down, concealment off showing the closing marker still on its line](examples/04-markup/0405-enter.gif)
 
-**No delete key reaches a marker**
+**6 — No delete key reaches a marker**
 
 ![Backspace at the visible end of bold taking the letter, Delete taking the space behind the closing marker, concealment off showing both markers untouched](examples/04-markup/0406-protect.gif)
 
-**A marker without a partner shows itself**
+**7 — A marker without a partner shows itself**
 
 ![One asterisk deleted with concealment off, concealment on leaving both halves in view, undo restoring the pair, hidden again at once](examples/04-markup/0407-orphan.gif)
 
-**A link shows itself on Backspace and hides again**
+**8 — A link shows itself on Backspace and hides again**
 
 ![Backspace after a link showing the whole link and deleting nothing, the url edited in place, the cursor leaving and the link drawn again, concealment off showing the new url](examples/04-markup/0408-link.gif)
 
+**9 — A selection is deleted as covered**
+
+![Two word selections reaching over bold and its hidden markers, Delete taking the pair whole, a word selection back to the start of another bold covering its opening marker, Backspace taking it and leaving the closing marker in view, concealment off showing both lines](examples/04-markup/0409-selection.gif)
+
 ## 5 — Gallery
 
+Small examples inspired by other extensions, editors and VS Code opened issues.
+
 **Shows:**
-- JSON keys: `"name":` as `name:` — `anchor: after` / `anchor: before` on the quotes, `deletionPolicy: protect`
+- JSON keys: `"name":` as `name:` — `anchor: after` / `anchor: before` on the quotes, `deletionPolicy: protect`.
 - F# lambda: `fun` as λ, `->` as →
 - TS arrow: `=>` as one ⇒
 - LaTeX macros: `\alpha` as α, from a table — `deletionPolicy: reveal`
-- Tag rotation: `#todo` as ⬜, `#done` as ✅, a click on the glyph rewrites the tag
+- Tag rotation: `#todo` as 🟨, `#done` as ✅, a click on the glyph rewrites the tag
 - Inline fold: a long `class` value as a `•••` chip, a click unfolds it and a chip at its start folds it again — `deletionPolicy: reveal`
 
 **Paths:**
 - Logic: [src/cases/05-gallery](src/cases/05-gallery) — [jsonKeys.ts](src/cases/05-gallery/jsonKeys.ts) · [fsharpLambda.ts](src/cases/05-gallery/fsharpLambda.ts) · [tsArrow.ts](src/cases/05-gallery/tsArrow.ts) · [latexMacros.ts](src/cases/05-gallery/latexMacros.ts) · [tagRotation.ts](src/cases/05-gallery/tagRotation.ts) · [fold.ts](src/cases/05-gallery/fold.ts)
 - Example: [examples/05-gallery](examples/05-gallery) — [config.json](examples/05-gallery/config.json) · [lambda.fs](examples/05-gallery/lambda.fs) · [arrow.ts](examples/05-gallery/arrow.ts) · [formula.tex](examples/05-gallery/formula.tex) · [todo.md](examples/05-gallery/todo.md) · [card.html](examples/05-gallery/card.html)
 
-**What it does:**
-Small examples, one file each: a regular expression, a decoration type, an example file, and
-nothing else. One recording each, concealment on throughout — what the API looks like while you
-work.
-- **JSON keys** — the quotes are grammar, so they are `protect`ed, and each is anchored to its key:
-  typing at the visible end of a key stays inside the quotes.
-- **F# lambda**, **TS arrow** — symbols drawn the moment they are typed.
-- **LaTeX macros** — `reveal`: Backspace on α shows `\alpha` and takes nothing; the next press
-  edits the macro one character at a time.
-- **Tag rotation** — a click on the glyph rewrites the tag to the other one, as does
-  `Conceal Demo: Rotate Tag` at the cursor; the rewrite is the extension's edit, since a click on
-  drawn text only puts the cursor at its edge. The recording uses the command — nothing in the
-  pipeline can move the mouse.
-- **Inline fold** — a `class` value longer than 30 characters folded to a chip. The chip predicts
-  nothing about the value, so this is `reveal` again: Backspace beside it shows the value and takes
-  nothing, the next keys edit it, and the cursor leaving folds it again. A click on the chip unfolds
-  the value, which then starts with a chip of its own — a plain `before` attachment, since
-  concealment draws over text only — and a click on that folds it again; both are the extension's
-  own bookkeeping, like the tag rewrite. A folded row is as short as it looks and the cursor cannot
-  fall into the fold.
-
-**Conceal decoration shape for this example**
-```ts
-// Every gallery example: one file, one pattern, one decoration type, and what a match draws.
-const symbol = vscode.window.createTextEditorDecorationType({ conceal: {} });
-
-export const examples: Example[] = [
-  { file: "lambda.fs", pattern: /\bfun\b|->/g, decoration: symbol, replacement: (match) => GLYPH[match[0]] },
-];
-```
-
-**JSON keys**
+**1 — JSON keys**
 
 ![A new key typed into a JSON file, its quotes vanishing at the colon, the cursor crossing the hidden quote in one press and the key growing inside its quotes](examples/05-gallery/0501-json.gif)
 
-**F# lambda**
+**2 — F# lambda**
 
 ![A new F# function typed, fun and the arrow drawn as their symbols as they are typed](examples/05-gallery/0502-fsharp.gif)
 
-**TS arrow**
+**3 — TS arrow**
 
 ![A new arrow function typed, the arrow drawn as one symbol the moment it is complete](examples/05-gallery/0503-tsarrow.gif)
 
-**LaTeX macros**
+**4 — LaTeX macros**
 
 ![A formula typed with each macro drawn as it completes, Backspace on π showing the macro, a second Backspace taking its last letter, the letter typed back and π drawn again](examples/05-gallery/0504-latex.gif)
 
-**Tag rotation**
+**5 — Tag rotation**
 
 ![A box glyph rotated to a check mark and back by the command](examples/05-gallery/0505-tags.gif)
 
-**Inline fold**
+**6 — Inline fold**
 
 ![Three folded class lists, Backspace at one showing the value and deleting nothing, a word typed into it, the cursor leaving and the value folded again](examples/05-gallery/0506-fold.gif)
 
-## Recording
+**7 — Inline fold, by click**
 
-> **DISCLAIMER**: created for my esoteric environment (WSLg). Won't work anywhere else.
-
-The GIFs are played by the extension's own recorder and photographed by
-[scripts/record.sh](scripts/record.sh) on WSLg; its header lists the requirements.
-
-```bash
-CONCEAL_DEMO_FORK=/path/to/vscode-fork CONCEAL_DEMO_WINSHOT=/path/to/winshot.ps1 \
-  ./scripts/record.sh 05         # case 5; `0501 0506` picks scenes
-```
-
-A step marked `manual` in [examples/scenes.jsonc](examples/scenes.jsonc) is filmed by hand: the
-recorder sets the scene up and sizes the window, the Windows ffmpeg films the workbench rectangle
-with the pointer in it until Enter is pressed in the terminal or the step's `timeout` (seconds)
-runs out, and the clip gets its caption like any frame. That is how the mouse scenes are made,
-since nothing in the pipeline can move the mouse. A plain run leaves those scenes out;
-`./scripts/record.sh --manual 05` records them and nothing else.
-
-A scene that shows another extension beside the API needs it installed: the pinned ones in
-[scripts/compare-extensions.txt](scripts/compare-extensions.txt) go into the recording profile unless
-`CONCEAL_DEMO_NO_COMPARE=1` is set, and every scene states with a setting whether that extension is on.
-
-Every scene is also an end-to-end test. `npm run test:fork` plays each one in the fork with nothing
-photographed and checks every step's `expect` — cursor, selection, lines, the text pasted beside —
-against what its GIF shows; see [docs/setup.md](docs/setup.md).
+![A click on the folded chip unfolding the value, a chip appearing at its start, a click on that chip folding it again](examples/05-gallery/0507-fold-click.gif)
