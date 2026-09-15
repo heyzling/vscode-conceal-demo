@@ -96,34 +96,24 @@ editor.setDecorations(doneDecoration, findRanges(editor.document, /#done\b/g));
 
 ## 2 — Dynamic replacement
 
-Shows:
+**Shows:**
 - dynamic text replacement
-- `deletionPolicy: reveal`
+- `deletionPolicy: reveal` behavior
 
+**Paths:**
+- Logic: [src/cases/02-i18n/i18n.ts](src/cases/02-i18n/i18n.ts)
+- Example: [examples/02-i18n/checkout.ts](examples/02-i18n/checkout.ts), [examples/02-i18n/comments.ts](examples/02-i18n/comments.ts)
 
-[src/cases/02-i18n/i18n.ts](src/cases/02-i18n/i18n.ts) · [examples/02-i18n/comments.ts](examples/02-i18n/comments.ts) · [examples/02-i18n/checkout.ts](examples/02-i18n/checkout.ts)
-
-This case shows ability to use conceal options to replace one text with another:
+**What it does:**
+Replaces one text with another:
 - TS code with static values underneath replaced with said values.
 - Comments in Spanish replaced with English translation
 
-Imitated with hardcoded JSON-config, but in real extension values can arrive from anywhere: a translation service, a language server, a bibliography, etc. 
+Imitated with hardcoded JSON-config, but in real extension values can arrive from anywhere: a translation service, a language server, a bibliography, etc.
 
 Here is where `deletionPolicy: reveal` works great. Often you don't want to delete the whole replacement at once like in tags example. You want to edit real text underneath. This policy automatically reveals real text on Backspace/Delete against concealed range.
 
-**Extensions today:**
-[Comment Translate](https://marketplace.visualstudio.com/items?itemName=intellsmi.comment-translate),
-701k installs.
-[i18n Ally](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally), 1.03M installs.
-[stuck brackets, an invisible cursor,
-undefined lines](https://github.com/lokalise/i18n-ally/issues/1215).
-
-| The editor does | The extension does |
-| --- | --- |
-| hides the range and draws the string given for that one range | reads the catalogue and maps what is written → what is drawn |
-| keeps the cursor out: one press crosses it, one delete takes it whole, so no projection has to be dropped near the cursor | re-applies when a catalogue changes, saved or not |
-| keeps copy, search and diff on what is really written | leaves an unanswered string visible, and hovers the original under a translation |
-
+**Conceal decoration shape for this example**
 ```ts
 // One type for every string drawn: only the replacement varies, and it travels with the range.
 const translationDecoration = vscode.window.createTextEditorDecorationType({
@@ -138,15 +128,34 @@ editor.setDecorations(translationDecoration, matches.map((match) => ({
 })));
 ```
 
+**Concealment on and off**
+
+![Concealment off with the translation keys as code, then on with the strings from the catalogue drawn in their place](examples/02-i18n/0201-toggle.gif)
+
+**Wrap works on what is visible**
+
+![A Spanish comment wrapped over three rows with concealment off, its English translation on one row with concealment on](examples/02-i18n/0202-wrap.gif)
+
+**A delete key reveals the text**
+
+![Backspace beside a drawn string showing the key and deleting nothing, a second Backspace taking a character, undo, then the cursor moving on and the string drawn again](examples/02-i18n/0203-delete.gif)
+
+**A key edited under the drawn string**
+
+![Backspace revealing the key, Ctrl+Backspace taking its last segment, a new one typed, the cursor moving on and the new string drawn](examples/02-i18n/0204-edit.gif)
+
 ## 3 — Invisible metadata
 
-Shows:
+**Shows:**
 - concealment with nothing drawn in its place
 - `anchor: lineEnd`
-- `deletionPolicy: protect`
+- `deletionPolicy: protect` behavior
 
-[src/cases/03-invisible-metadata/metadata.ts](src/cases/03-invisible-metadata/metadata.ts) · [examples/03-invisible-metadata/notes.md](examples/03-invisible-metadata/notes.md)
+**Paths:**
+- Logic: [src/cases/03-invisible-metadata/metadata.ts](src/cases/03-invisible-metadata/metadata.ts)
+- Example: [examples/03-invisible-metadata/notes.md](examples/03-invisible-metadata/notes.md)
 
+**What it does:**
 Machine data written into a file by something other than the person reading it: Obsidian block
 ids — `^a3f9c1` closing a block, `[[Note#^id]]` inside a link. Written when you copy a link to a
 block, never typed by hand.
@@ -163,18 +172,7 @@ typed text lands behind the id, or Enter carries the id down onto the new line.
 An id is also `protect`: a delete steps over it, so a Backspace at the end of a line takes the
 sentence, not the id it cannot see.
 
-**Elsewhere:** Obsidian's Live Preview draws block ids as dimmed labels and hides them only in
-Reading view; users who hide them with CSS report the cursor walking the invisible characters and
-typing landing behind the id. Logseq keeps its `id::` on a line of its own, which is the whole-line
-case this repository leaves out.
-
-| The editor does | The extension does |
-| --- | --- |
-| hides the range and draws nothing, so the line is as short as it looks | finds the ids |
-| collapses it to one cursor position, crossed in one press, never landed inside | marks them anchored and protected |
-| keeps a line break typed at the line end behind the id, and typed text in front of it | re-applies on every edit |
-| keeps save, copy, search and diff on the real text | |
-
+**Conceal decoration shape for this example**
 ```ts
 const idDecoration = vscode.window.createTextEditorDecorationType({
   conceal: { anchor: "lineEnd", deletionPolicy: "protect" },
@@ -207,14 +205,17 @@ const idDecoration = vscode.window.createTextEditorDecorationType({
 
 ## 4 — Markup
 
-Shows:
+**Shows:**
 - concealment of a pair with nothing drawn in its place
 - `anchor: after` on the opening marker, `anchor: before` on the closing one
-- `deletionPolicy: protect`
+- `deletionPolicy: protect` behavior
 - a link drawn as its text: per-range `replacement`, `deletionPolicy: reveal`
 
-[src/cases/04-markup/markup.ts](src/cases/04-markup/markup.ts) · [examples/04-markup/emphasis.md](examples/04-markup/emphasis.md)
+**Paths:**
+- Logic: [src/cases/04-markup/markup.ts](src/cases/04-markup/markup.ts)
+- Example: [examples/04-markup/emphasis.md](examples/04-markup/emphasis.md)
 
+**What it does:**
 Markdown emphasis: `**bold**`, `_italic_` and `` `code` `` read as the styled word alone. The
 oldest conceal case there is, and the one where the editor's part matters most, because the hidden
 text wraps text that is being edited.
@@ -244,17 +245,7 @@ beside the link shows all of it and takes nothing, the next press edits what it 
 the cursor leaves, the link is drawn again over whatever it now says. The url stays reachable on
 hover.
 
-**Elsewhere:** Vim's markdown conceal, Org mode's `org-hide-emphasis-markers`, Obsidian's Live
-Preview, Typora.
-
-| The editor does | The extension does |
-| --- | --- |
-| hides both markers and draws nothing, so `**bold**` reads as `bold` | finds the pairs — a parse, one regular expression per kind here |
-| one cursor stop per marker, on the inside of the pair: typing at either visible edge stays inside | styles the text between them: bold, italic, code |
-| Enter or a space at either edge lands outside the pair, so the emphasis closes first | re-applies on every edit, so an orphan marker shows itself |
-| Backspace and Delete take the visible neighbours and step over a marker | removes a pair as a command, since only it knows what the pair spans |
-| draws a link's text over the whole link, shows the link on a delete key beside it and hides it again when the cursor leaves | picks what a link draws: its text, blue, underlined, with the url on hover |
-
+**Conceal decoration shape for this example**
 ```ts
 const openingDecoration = vscode.window.createTextEditorDecorationType({
   conceal: { anchor: "after", deletionPolicy: "protect" },
@@ -319,54 +310,67 @@ editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text,
 
 ## 5 — Gallery
 
-Small examples, one file each under [src/cases/05-gallery](src/cases/05-gallery): a regular
-expression, a decoration type, an example file under [examples/05-gallery](examples/05-gallery),
-and nothing else. One recording each, concealment on throughout — what the API looks like while
-you work.
+**Shows:**
+- JSON keys: `"name":` as `name:` — `anchor: after` / `anchor: before` on the quotes, `deletionPolicy: protect`
+- F# lambda: `fun` as λ, `->` as →
+- TS arrow: `=>` as one ⇒
+- LaTeX macros: `\alpha` as α, from a table — `deletionPolicy: reveal`
+- Tag rotation: `#todo` as ⬜, `#done` as ✅, a click on the glyph rewrites the tag
+- Inline fold: a long `class` value as a `•••` chip — `deletionPolicy: reveal`
 
-**JSON keys** — `"name":` reads as `name:`. The quotes are grammar, so they are `protect`ed, and
-each is anchored to its key: typing at the visible end of a key stays inside the quotes.
-[jsonKeys.ts](src/cases/05-gallery/jsonKeys.ts) · [config.json](examples/05-gallery/config.json)
+**Paths:**
+- Logic: [src/cases/05-gallery](src/cases/05-gallery) — [jsonKeys.ts](src/cases/05-gallery/jsonKeys.ts) · [fsharpLambda.ts](src/cases/05-gallery/fsharpLambda.ts) · [tsArrow.ts](src/cases/05-gallery/tsArrow.ts) · [latexMacros.ts](src/cases/05-gallery/latexMacros.ts) · [tagRotation.ts](src/cases/05-gallery/tagRotation.ts) · [fold.ts](src/cases/05-gallery/fold.ts)
+- Example: [examples/05-gallery](examples/05-gallery) — [config.json](examples/05-gallery/config.json) · [lambda.fs](examples/05-gallery/lambda.fs) · [arrow.ts](examples/05-gallery/arrow.ts) · [formula.tex](examples/05-gallery/formula.tex) · [todo.md](examples/05-gallery/todo.md) · [card.html](examples/05-gallery/card.html)
+
+**What it does:**
+Small examples, one file each: a regular expression, a decoration type, an example file, and
+nothing else. One recording each, concealment on throughout — what the API looks like while you
+work.
+- **JSON keys** — the quotes are grammar, so they are `protect`ed, and each is anchored to its key:
+  typing at the visible end of a key stays inside the quotes.
+- **F# lambda**, **TS arrow** — symbols drawn the moment they are typed.
+- **LaTeX macros** — `reveal`: Backspace on α shows `\alpha` and takes nothing; the next press
+  edits the macro one character at a time.
+- **Tag rotation** — a click on the glyph rewrites the tag to the other one, as does
+  `Conceal Demo: Rotate Tag` at the cursor; the rewrite is the extension's edit, since a click on
+  drawn text only puts the cursor at its edge. The recording uses the command — nothing in the
+  pipeline can move the mouse.
+- **Inline fold** — a `class` value longer than 30 characters folded to a chip. The chip predicts
+  nothing about the value, so this is `reveal` again: Backspace beside it shows the value and takes
+  nothing, the next keys edit it, and the cursor leaving folds it again. A folded row is as short as
+  it looks and the cursor cannot fall into the fold.
+
+**Conceal decoration shape for this example**
+```ts
+// Every gallery example: one file, one pattern, one decoration type, and what a match draws.
+const symbol = vscode.window.createTextEditorDecorationType({ conceal: {} });
+
+export const examples: Example[] = [
+  { file: "lambda.fs", pattern: /\bfun\b|->/g, decoration: symbol, replacement: (match) => GLYPH[match[0]] },
+];
+```
+
+**JSON keys**
 
 ![A new key typed into a JSON file, its quotes vanishing at the colon, the cursor crossing the hidden quote in one press and the key growing inside its quotes](examples/05-gallery/0501-json.gif)
 
-**F# lambda** — `fun` as λ, `->` as →, drawn the moment they are typed.
-[fsharpLambda.ts](src/cases/05-gallery/fsharpLambda.ts) · [lambda.fs](examples/05-gallery/lambda.fs)
+**F# lambda**
 
 ![A new F# function typed, fun and the arrow drawn as their symbols as they are typed](examples/05-gallery/0502-fsharp.gif)
 
-**TS arrow** — `=>` as one ⇒.
-[tsArrow.ts](src/cases/05-gallery/tsArrow.ts) · [arrow.ts](examples/05-gallery/arrow.ts)
+**TS arrow**
 
 ![A new arrow function typed, the arrow drawn as one symbol the moment it is complete](examples/05-gallery/0503-tsarrow.gif)
 
-**LaTeX macros** — `\alpha` as α, from a table. `reveal`: Backspace on α shows `\alpha` and
-takes nothing; the next press edits the macro one character at a time.
-[latexMacros.ts](src/cases/05-gallery/latexMacros.ts) · [formula.tex](examples/05-gallery/formula.tex)
+**LaTeX macros**
 
 ![A formula typed with each macro drawn as it completes, Backspace on π showing the macro, a second Backspace taking its last letter, the letter typed back and π drawn again](examples/05-gallery/0504-latex.gif)
 
-**Tag rotation** — `#todo` as ⬜, `#done` as ✅. A click on the glyph rewrites the tag to the
-other one, as does `Conceal Demo: Rotate Tag` at the cursor; the rewrite is the extension's edit,
-since a click on drawn text only puts the cursor at its edge. The recording uses the command —
-nothing in the pipeline can move the mouse.
-[tagRotation.ts](src/cases/05-gallery/tagRotation.ts) · [todo.md](examples/05-gallery/todo.md)
+**Tag rotation**
 
 ![A box glyph rotated to a check mark and back by the command](examples/05-gallery/0505-tags.gif)
 
-**Inline fold** — a `class` value longer than 30 characters folded to a `•••` chip. The chip
-predicts nothing about the value, so this is `reveal` again: Backspace beside it shows the value
-and takes nothing, the next keys edit it, and the cursor leaving folds it again. A folded row is as
-short as it looks and the cursor cannot fall into the fold, the two things the CSS trick cannot do:
-[Inline Fold](https://marketplace.visualstudio.com/items?itemName=moalamri.inline-fold), 305k
-installs, and [Tailwind Fold](https://marketplace.visualstudio.com/items?itemName=stivo.tailwind-fold),
-337k, hide the characters and draw `…` — the hidden characters keep their room under word wrap
-([inline-fold#69](https://github.com/moalamri/vscode-inline-fold/discussions/69)), arrow keys walk
-through them ([inline-fold#119](https://github.com/moalamri/vscode-inline-fold/issues/119)), and
-both are unmaintained ([inline-fold#132](https://github.com/moalamri/vscode-inline-fold/discussions/132)).
-VS Code folds whole lines only: [microsoft/vscode#50840](https://github.com/microsoft/vscode/issues/50840),
-171 👍, open since 2018, answered three times with "needs the editor core".
-[fold.ts](src/cases/05-gallery/fold.ts) · [card.html](examples/05-gallery/card.html)
+**Inline fold**
 
 ![Three folded class lists, Backspace at one showing the value and deleting nothing, a word typed into it, the cursor leaving and the value folded again](examples/05-gallery/0506-fold.gif)
 
