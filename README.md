@@ -2,6 +2,8 @@
 
 A showcase of the VS Code **conceal decoration options**.
 
+> All cases implemented with regexp parsing. Real extensions should use specialized parsers instead.
+
 ## Links
 
 1. Proposal: [Concealed text — a proposed VS Code API (v4) · GitHub](https://gist.github.com/heyzling/6235fd30bda7605199963e15f12142f5)
@@ -135,6 +137,7 @@ editor.setDecorations(translationDecoration, matches.map((match) => ({
 ![A Spanish comment wrapped over three rows with concealment off, its English translation on one row with concealment on](examples/02-i18n/0202-wrap.gif)
 
 **A delete key reveals the text**
+First `Backspace` only reveals the real text. Second actually deletes it.
 
 ![Backspace beside a drawn string showing the key and deleting nothing, a second Backspace taking a character, undo, then the cursor moving on and the string drawn again](examples/02-i18n/0203-delete.gif)
 

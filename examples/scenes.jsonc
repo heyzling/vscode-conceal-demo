@@ -617,13 +617,13 @@
       "window": [1280, 620],
       "steps": [
         {
-          "caption": "Concealment OFF: real code",
+          "caption": "Concealment OFF",
           "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}],
           "expect": {"press": ["cursorRight", [7, 18], [7, 19]]}
         },
         {
-          "caption": "Concealment ON: replaced with calculated value",
+          "caption": "Concealment ON",
           "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"unchanged": true, "press": ["cursorRight", [7, 18], [7, 39]]}
@@ -637,13 +637,13 @@
       "window": [1280, 620],
       "steps": [
         {
-          "caption": "Concealment OFF: three rows",
+          "caption": "Concealment OFF",
           "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}],
           "expect": {"press": ["cursorDown", [1, 1], [1, 66]]}
         },
         {
-          "caption": "Concealment ON: one raw",
+          "caption": "Concealment ON",
           "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"unchanged": true, "press": ["cursorDown", [1, 1], [2, 1]]}
@@ -657,32 +657,32 @@
       "window": [1280, 620],
       "steps": [
         {
-          "caption": "START: The caret is near replaced string",
-          "hold": 1.8,
+          "caption": "Start",
+          "hold": 1.7,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [7, 39]}],
           "expect": {"caret": [7, 39]}
         },
         {
-          "caption": "Backspace: nothing is deleted, real text revealed",
-          "hold": 2.0,
+          "caption": "Backspace 1: reveal",
+          "hold": 1.7,
           "do": [{"command": "deleteLeft"}],
           "expect": {"unchanged": true, "caret": [7, 39]}
         },
         {
-          "caption": "Backspace: now it works as usual",
-          "hold": 2.0,
+          "caption": "Backspace 2: delete",
+          "hold": 1.7,
           "do": [{"command": "deleteLeft", "times": 1}],
           "expect": {"lines": {"7": "  const lines = [t(\"account.greeting\"];"}, "caret": [7, 38]}
         },
         {
-          "caption": "Ctrl + Z: text is still real",
-          "hold": 2.5,
+          "caption": "Ctrl + Z",
+          "hold": 1.0,
           "do": [{"command": "undo"}],
           "expect": {"lines": {"7": "  const lines = [t(\"account.greeting\")];"}, "caret": [7, 39]}
         },
         {
-          "caption": "→ →: replaced again",
-          "hold": 1.7,
+          "caption": "→ →",
+          "hold": 1.0,
           "live": 0.45,
           "do": [{"command": "cursorRight", "times": 2}],
           "expect": [{"caret": [7, 40]}, {"caret": [7, 41], "press": ["cursorRight", [7, 18], [7, 39]]}]
@@ -696,14 +696,14 @@
       "window": [1280, 620],
       "steps": [
         {
-          "caption": "START: The caret is near replaced string",
-          "hold": 1.8,
+          "caption": "Start",
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [8, 47]}],
           "expect": {"caret": [8, 47]}
         },
         {
-          "caption": "Backspace: real text revealed, nothing deleted",
-          "hold": 2.0,
+          "caption": "Backspace",
+          "hold": 1.2,
           "do": [{"command": "deleteLeft"}],
           "expect": {"unchanged": true, "caret": [8, 47]}
         },
@@ -722,16 +722,16 @@
           "expect": {"lines": {"8": "  lines.push(itemCount === 0 ? t(\"cart.\") : t(\"cart.checkout\"));"}, "caret": [8, 40]}
         },
         {
-          "caption": "new key",
-          "hold": 2.5,
+          "caption": "checkout",
+          "hold": 1.0,
           "live": 0.1,
           "do": [{"type": "checkout"}],
           "expect": {"lines": {"8": "  lines.push(itemCount === 0 ? t(\"cart.checkout\") : t(\"cart.checkout\"));"}, "caret": [8, 48]}
         },
         {
           "caption": "→ → →: the new string is drawn",
-          "hold": 2.0,
-          "live": 0.45,
+          "hold": 1.5,
+          "live": 0.3,
           "do": [{"command": "cursorRight", "times": 3}],
           "expect": [{"caret": [8, 49]}, {"caret": [8, 50]}, {"caret": [8, 51], "press": ["cursorRight", [8, 32], [8, 50]]}]
         }
@@ -745,13 +745,13 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Concealment OFF: the block ids are real text",
+          "caption": "Concealment OFF",
           "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}],
           "expect": {"press": ["cursorRight", [4, 56], [4, 57]]}
         },
         {
-          "caption": "Concealment ON: nothing is drawn in their place",
+          "caption": "Concealment ON",
           "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"unchanged": true, "press": ["cursorRight", [4, 56], [5, 1]]}
@@ -765,7 +765,7 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "The caret before a hidden id",
+          "caption": "Start: before the hidden id",
           "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [8, 49]}],
           "expect": {"caret": [8, 49]}
@@ -778,14 +778,14 @@
           "expect": [{"caret": [8, 58]}, {"caret": [8, 59]}]
         },
         {
-          "caption": "← ←: back the same way",
+          "caption": "← ←",
           "hold": 1.5,
           "live": 0.5,
           "do": [{"command": "cursorLeft", "times": 2}],
           "expect": [{"caret": [8, 58]}, {"caret": [8, 49]}]
         },
         {
-          "caption": "Concealment OFF: eight characters, one press each way",
+          "caption": "Concealment OFF",
           "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"caret": [8, 49]}
@@ -799,7 +799,7 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "The caret at the end of the line",
+          "caption": "Start: at the line end",
           "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 64]}],
           "expect": {"caret": [4, 56]}
@@ -811,13 +811,13 @@
           "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it ^a3f9c1"}}
         },
         {
-          "caption": "Backspace: and the letter before it",
+          "caption": "Backspace",
           "hold": 1.5,
           "do": [{"command": "deleteLeft"}],
           "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not i ^a3f9c1"}}
         },
         {
-          "caption": "Concealment OFF: the id is untouched",
+          "caption": "Concealment OFF",
           "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not i ^a3f9c1"}}
@@ -831,20 +831,20 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "The caret at the end of the line",
+          "caption": "Start: at the line end",
           "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 56]}],
           "expect": {"caret": [4, 56]}
         },
         {
-          "caption": "a word: it lands in front of the id",
+          "caption": "Sadly.",
           "hold": 1.8,
           "live": 0.15,
           "do": [{"type": " Sadly."}],
           "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it. Sadly. ^a3f9c1"}, "caret": [4, 63]}
         },
         {
-          "caption": "Concealment OFF: the id still closes the line",
+          "caption": "Concealment OFF",
           "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it. Sadly. ^a3f9c1"}}
@@ -858,20 +858,20 @@
       "window": [1280, 570],
       "steps": [
         {
-          "caption": "The caret at the end of the line",
+          "caption": "Start: at the line end",
           "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 56]}],
           "expect": {"caret": [4, 56]}
         },
         {
-          "caption": "Enter, Enter: two new lines open below",
+          "caption": "Enter, Enter",
           "hold": 1.5,
           "live": 0.6,
           "do": [{"type": "\n\n"}],
           "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it. ^a3f9c1", "5": "", "6": ""}, "caret": [6, 1]}
         },
         {
-          "caption": "Concealment OFF: the id stays on its line",
+          "caption": "Concealment OFF",
           "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"4": "it is read as \"scale is all you need\", which is not it. ^a3f9c1", "5": "", "6": ""}}
@@ -885,30 +885,30 @@
       "window": [1280, 560],
       "steps": [
         {
-          "caption": "Select the paragraph with a hidden id",
+          "caption": "Copy",
           "hold": 1.1,
           "live": 0.35,
           "do": [{"setting": "editor.wordWrapColumn", "value": 30}, {"select": [3, 1, 5, 1]}],
           "expect": {"selection": [3, 1, 5, 1]}
         },
         {
-          "caption": "Open an empty tab beside it",
+          "caption": "",
           "hold": 0.85,
           "do": [{"copy": true}, {"openBeside": true}]
         },
         {
-          "caption": "Copy whole lines: the id comes along",
+          "caption": "Paste",
           "hold": 1.8,
           "do": [{"paste": true}],
           "expect": {"beside": "Sutton's \"bitter lesson\" keeps coming back in a weaker form:\nit is read as \"scale is all you need\", which is not it. ^a3f9c1\n"}
         },
         {
-          "caption": "Close the tab",
+          "caption": "",
           "hold": 0.85,
           "do": [{"closeBeside": true}]
         },
         {
-          "caption": "Put the caret before not",
+          "caption": "",
           "hold": 1.1,
           "do": [{"caret": [4, 49]}],
           "expect": {"caret": [4, 49]}
@@ -920,23 +920,23 @@
           "expect": {"selection": [4, 49, 4, 56]}
         },
         {
-          "caption": "Open an empty tab beside it",
+          "caption": "",
           "hold": 0.85,
           "do": [{"copy": true}, {"openBeside": true}]
         },
         {
-          "caption": "Copy to the line end: the id stays behind",
+          "caption": "",
           "hold": 1.8,
           "do": [{"paste": true}],
           "expect": {"beside": "not it."}
         },
         {
-          "caption": "Close the tab",
+          "caption": "",
           "hold": 0.85,
           "do": [{"closeBeside": true}]
         },
         {
-          "caption": "The caret before the hidden ref",
+          "caption": "",
           "hold": 1.1,
           "do": [{"caret": [8, 49]}],
           "expect": {"caret": [8, 49]}
@@ -948,12 +948,12 @@
           "expect": {"selection": [8, 49, 8, 57]}
         },
         {
-          "caption": "Open an empty tab beside it",
+          "caption": "",
           "hold": 0.85,
           "do": [{"copy": true}, {"openBeside": true}]
         },
         {
-          "caption": "Copy the ref alone: also the real text",
+          "caption": "",
           "hold": 1.8,
           "do": [{"paste": true}],
           "expect": {"beside": "#^c05b31"}
@@ -967,13 +967,13 @@
       "window": [1280, 440],
       "steps": [
         {
-          "caption": "Concealment OFF: the markers are real text",
+          "caption": "Concealment OFF",
           "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}],
           "expect": {"press": ["cursorRight", [3, 4], [3, 5]]}
         },
         {
-          "caption": "Concealment ON: the markers are gone, the link is its text",
+          "caption": "Concealment ON",
           "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"unchanged": true, "press": [["cursorRight", [3, 4], [3, 7]], ["cursorRight", [5, 30], [5, 72]]]}
@@ -987,7 +987,7 @@
       "window": [1280, 440],
       "steps": [
         {
-          "caption": "The caret after Use",
+          "caption": "Start: after Use",
           "hold": 1.1,
           "do": [{"caret": [3, 4]}],
           "expect": {"caret": [3, 4]}
@@ -1000,14 +1000,14 @@
           "expect": [{"caret": [3, 7]}, {"caret": [3, 8]}]
         },
         {
-          "caption": "← ←: back the same way",
+          "caption": "← ←",
           "hold": 1.5,
           "live": 0.5,
           "do": [{"command": "cursorLeft", "times": 2}],
           "expect": [{"caret": [3, 7]}, {"caret": [3, 4]}]
         },
         {
-          "caption": "Concealment OFF: four characters, one press each",
+          "caption": "Concealment OFF",
           "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"caret": [3, 4]}
@@ -1021,33 +1021,33 @@
       "window": [1280, 440],
       "steps": [
         {
-          "caption": "The caret at the visible start of bold",
+          "caption": "Start: at the visible start of bold",
           "hold": 1.1,
           "do": [{"caret": [3, 7]}],
           "expect": {"caret": [3, 7]}
         },
         {
-          "caption": "at the start: the word grows, still bold",
+          "caption": "semi",
           "hold": 1.5,
           "live": 0.15,
           "do": [{"type": "semi"}],
           "expect": {"lines": {"3": "Use **semibold** for a term being defined and _italic_ for a title."}, "caret": [3, 11], "press": ["cursorRight", [3, 4], [3, 7]]}
         },
         {
-          "caption": "The caret at the visible end of the other bold",
+          "caption": "",
           "hold": 1.1,
           "do": [{"caret": [4, 47]}],
           "expect": {"caret": [4, 47]}
         },
         {
-          "caption": "at the end: the same",
+          "caption": "face",
           "hold": 1.5,
           "live": 0.15,
           "do": [{"type": "face"}],
           "expect": {"lines": {"4": "Anything you type goes in `code`. Never **boldface** a whole sentence."}, "caret": [4, 51], "press": ["cursorRight", [4, 40], [4, 43]]}
         },
         {
-          "caption": "Concealment OFF: both words grew inside their markers",
+          "caption": "Concealment OFF",
           "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"3": "Use **semibold** for a term being defined and _italic_ for a title.", "4": "Anything you type goes in `code`. Never **boldface** a whole sentence."}}
@@ -1061,20 +1061,20 @@
       "window": [1280, 440],
       "steps": [
         {
-          "caption": "The caret at the visible end of bold",
+          "caption": "Start: at the visible end of bold",
           "hold": 1.1,
           "do": [{"caret": [3, 11]}],
           "expect": {"caret": [3, 11]}
         },
         {
-          "caption": "Space, then a word: the pair closes first, the word is plain",
+          "caption": "Space, text",
           "hold": 1.8,
           "live": 0.15,
           "do": [{"type": " text"}],
           "expect": {"lines": {"3": "Use **bold** text for a term being defined and _italic_ for a title."}, "caret": [3, 18], "press": ["cursorRight", [3, 11], [3, 14]]}
         },
         {
-          "caption": "Concealment OFF: the space went behind the closing **",
+          "caption": "Concealment OFF",
           "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"3": "Use **bold** text for a term being defined and _italic_ for a title."}}
@@ -1088,19 +1088,19 @@
       "window": [1280, 480],
       "steps": [
         {
-          "caption": "The caret at the visible end of bold",
+          "caption": "Start: at the visible end of bold",
           "hold": 1.1,
           "do": [{"caret": [3, 11]}],
           "expect": {"caret": [3, 11]}
         },
         {
-          "caption": "Enter: the rest of the line moves down",
+          "caption": "Enter",
           "hold": 1.5,
           "do": [{"type": "\n"}],
           "expect": {"lines": {"3": "Use **bold**", "4": " for a term being defined and _italic_ for a title."}, "caret": [4, 1], "press": ["cursorRight", [3, 11], [4, 1]]}
         },
         {
-          "caption": "Concealment OFF: the closing ** stayed on its line",
+          "caption": "Concealment OFF",
           "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"3": "Use **bold**", "4": " for a term being defined and _italic_ for a title."}}
@@ -1114,7 +1114,7 @@
       "window": [1280, 440],
       "steps": [
         {
-          "caption": "The caret at the visible end of bold",
+          "caption": "Start: at the visible end of bold",
           "hold": 1.1,
           "do": [{"caret": [3, 11]}],
           "expect": {"caret": [3, 11]}
@@ -1132,7 +1132,7 @@
           "expect": {"lines": {"3": "Use **bol**for a term being defined and _italic_ for a title."}, "caret": [3, 10], "press": ["cursorRight", [3, 10], [3, 13]]}
         },
         {
-          "caption": "Concealment OFF: both markers untouched",
+          "caption": "Concealment OFF",
           "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"3": "Use **bol**for a term being defined and _italic_ for a title."}}
@@ -1146,25 +1146,25 @@
       "window": [1280, 440],
       "steps": [
         {
-          "caption": "Concealment OFF, the caret before the opening **",
+          "caption": "Concealment OFF",
           "hold": 1.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [3, 5]}],
           "expect": {"caret": [3, 5]}
         },
         {
-          "caption": "Delete one asterisk, as another tool might",
+          "caption": "Delete",
           "hold": 1.5,
           "do": [{"command": "deleteRight"}],
           "expect": {"lines": {"3": "Use *bold** for a term being defined and _italic_ for a title."}}
         },
         {
-          "caption": "Concealment ON: the pair is broken, so both halves stay in view",
+          "caption": "Concealment ON: a broken pair stays in view",
           "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"caret": [3, 5], "press": ["cursorRight", [3, 5], [3, 6]]}
         },
         {
-          "caption": "Ctrl + Z: a pair again, hidden at once",
+          "caption": "Ctrl + Z",
           "hold": 1.8,
           "do": [{"command": "undo"}],
           "expect": {"lines": {"3": "Use **bold** for a term being defined and _italic_ for a title."}, "press": ["cursorRight", [3, 4], [3, 7]]}
@@ -1178,39 +1178,39 @@
       "window": [1280, 440],
       "steps": [
         {
-          "caption": "The caret after the link",
+          "caption": "Start: after the link",
           "hold": 1.1,
           "do": [{"caret": [5, 72]}],
           "expect": {"caret": [5, 72]}
         },
         {
-          "caption": "Backspace: the whole link shows itself, nothing is deleted",
+          "caption": "Backspace: real text revealed, nothing deleted",
           "hold": 1.8,
           "do": [{"command": "deleteLeft"}],
           "expect": {"unchanged": true, "caret": [5, 72], "press": ["cursorRight", [5, 30], [5, 31]]}
         },
         {
-          "caption": "←: before the closing bracket",
+          "caption": "←",
           "hold": 1.1,
           "do": [{"command": "cursorLeft"}],
           "expect": {"caret": [5, 71]}
         },
         {
-          "caption": "Type: the url is edited in place",
+          "caption": "spec/",
           "hold": 1.5,
           "live": 0.15,
           "do": [{"type": "spec/"}],
           "expect": {"lines": {"5": "Cite the source with a link: [CommonMark spec](https://commonmark.org/spec/)."}, "caret": [5, 76]}
         },
         {
-          "caption": "→ →: the caret leaves, the link is drawn again",
+          "caption": "→ →: drawn again",
           "hold": 1.8,
           "live": 0.5,
           "do": [{"command": "cursorRight", "times": 2}],
           "expect": [{"caret": [5, 77]}, {"caret": [5, 78], "press": ["cursorRight", [5, 30], [5, 77]]}]
         },
         {
-          "caption": "Concealment OFF: the url changed, the text did not",
+          "caption": "Concealment OFF",
           "hold": 2.1,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"5": "Cite the source with a link: [CommonMark spec](https://commonmark.org/spec/)."}}
@@ -1224,7 +1224,7 @@
       "window": [1280, 440],
       "steps": [
         {
-          "caption": "The caret at the end of a line",
+          "caption": "Start: at the line end",
           "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.autoClosingQuotes", "value": "never"}, {"caret": [3, 22]}],
           "expect": {"caret": [3, 22]}
@@ -1237,7 +1237,7 @@
           "expect": {"lines": {"4": "  \"author\": \"heyzling\","}, "caret": [4, 24], "press": ["cursorRight", [4, 2], [4, 4]]}
         },
         {
-          "caption": "The caret after the colon",
+          "caption": "",
           "hold": 1.1,
           "do": [{"caret": [4, 12]}],
           "expect": {"caret": [4, 12]}
@@ -1249,7 +1249,7 @@
           "expect": {"caret": [4, 10]}
         },
         {
-          "caption": "Type: the key grows inside its quotes",
+          "caption": "s",
           "hold": 2.1,
           "live": 0.3,
           "do": [{"type": "s"}],
@@ -1264,7 +1264,7 @@
       "window": [1280, 400],
       "steps": [
         {
-          "caption": "The caret at the end of the line",
+          "caption": "Start: at the line end",
           "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [2, 25]}],
           "expect": {"caret": [2, 25]}
@@ -1285,7 +1285,7 @@
       "window": [1280, 400],
       "steps": [
         {
-          "caption": "The caret at the end of the line",
+          "caption": "Start: at the line end",
           "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [2, 34]}],
           "expect": {"caret": [2, 34]}
@@ -1306,7 +1306,7 @@
       "window": [1280, 400],
       "steps": [
         {
-          "caption": "The caret at the end of the line",
+          "caption": "Start: at the line end",
           "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [2, 24]}],
           "expect": {"caret": [2, 24]}
@@ -1319,32 +1319,32 @@
           "expect": {"lines": {"3": "$\\gamma \\leq \\pi$"}, "caret": [3, 18], "press": ["cursorRight", [3, 2], [3, 8]]}
         },
         {
-          "caption": "←: the caret on the right of π",
+          "caption": "←",
           "hold": 1.1,
           "do": [{"command": "cursorLeft"}],
           "expect": {"caret": [3, 17]}
         },
         {
-          "caption": "Backspace: the macro shows itself, nothing is deleted",
+          "caption": "Backspace: real text revealed, nothing deleted",
           "hold": 1.8,
           "do": [{"command": "deleteLeft"}],
           "expect": {"unchanged": true, "caret": [3, 17], "press": ["cursorRight", [3, 14], [3, 15]]}
         },
         {
-          "caption": "Backspace: now one real character goes",
+          "caption": "Backspace",
           "hold": 1.5,
           "do": [{"command": "deleteLeft"}],
           "expect": {"lines": {"3": "$\\gamma \\leq \\p$"}, "caret": [3, 16]}
         },
         {
-          "caption": "the letter back",
+          "caption": "i",
           "hold": 1.5,
           "live": 0.3,
           "do": [{"type": "i"}],
           "expect": {"lines": {"3": "$\\gamma \\leq \\pi$"}, "caret": [3, 17]}
         },
         {
-          "caption": "→: the caret leaves, π is drawn again",
+          "caption": "→: drawn again",
           "hold": 2.1,
           "do": [{"command": "cursorRight"}],
           "expect": {"caret": [3, 18], "press": ["cursorRight", [3, 14], [3, 17]]}
@@ -1358,19 +1358,19 @@
       "window": [1280, 440],
       "steps": [
         {
-          "caption": "The caret at ⬜, a #todo drawn as a box",
+          "caption": "Start: after ⬜, the #todo glyph",
           "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [3, 8]}],
           "expect": {"caret": [3, 8]}
         },
         {
-          "caption": "Rotate Tag — a click on the glyph does the same: #todo becomes #done",
+          "caption": "Rotate Tag: #todo becomes #done",
           "hold": 1.8,
           "do": [{"command": "conceal-demo.rotateTag"}],
           "expect": {"lines": {"3": "- #done Write the gallery"}, "press": ["cursorRight", [3, 3], [3, 8]]}
         },
         {
-          "caption": "Again: back to #todo",
+          "caption": "Rotate Tag: back to #todo",
           "hold": 2.1,
           "do": [{"command": "conceal-demo.rotateTag"}],
           "expect": {"lines": {"3": "- #todo Write the gallery"}, "press": ["cursorRight", [3, 3], [3, 8]]}
@@ -1384,26 +1384,26 @@
       "window": [1280, 560],
       "steps": [
         {
-          "caption": "Three class lists, each folded to •••; the caret at the right of one",
+          "caption": "Start: after •••, a folded class list",
           "hold": 1.1,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [5, 64]}],
           "expect": {"caret": [5, 64]}
         },
         {
-          "caption": "Backspace: the value shows itself, nothing is deleted",
+          "caption": "Backspace: real text revealed, nothing deleted",
           "hold": 1.8,
           "do": [{"command": "deleteLeft"}],
           "expect": {"unchanged": true, "caret": [5, 64], "press": ["cursorRight", [5, 15], [5, 16]]}
         },
         {
-          "caption": "Type: the value is edited in place",
+          "caption": "italic",
           "hold": 1.5,
           "live": 0.15,
           "do": [{"type": " italic"}],
           "expect": {"lines": {"5": "    <p class=\"label truncate text-slate-700 dark:text-slate-200 italic\">Demo</p>"}, "caret": [5, 71]}
         },
         {
-          "caption": "→ →: the caret leaves, folded again",
+          "caption": "→ →: folded again",
           "hold": 2.1,
           "live": 0.5,
           "do": [{"command": "cursorRight", "times": 2}],
