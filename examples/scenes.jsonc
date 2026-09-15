@@ -1269,6 +1269,57 @@
       ]
     },
     {
+      "id": "0409-selection",
+      "title": "Markup — a selection is deleted as covered",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 440],
+      "steps": [
+        {
+          "caption": "Start",
+          "hold": 1.2,
+          "do": [{"caret": [3, 4]}],
+          "expect": {"caret": [3, 4]}
+        },
+        {
+          "caption": "Ctrl + Shift + →, twice",
+          "hold": 1.2,
+          "live": 0.5,
+          "do": [{"command": "cursorWordEndRightSelect", "times": 2}],
+          "expect": [{"selection": [3, 4, 3, 7]}, {"selection": [3, 4, 3, 13]}]
+        },
+        {
+          "caption": "Delete",
+          "hold": 1.5,
+          "do": [{"command": "deleteRight"}],
+          "expect": {"lines": {"3": "Use for a term being defined and _italic_ for a title."}, "caret": [3, 4], "press": ["cursorRight", [3, 4], [3, 5]]}
+        },
+        {
+          "caption": "",
+          "hold": 1.1,
+          "do": [{"caret": [4, 45]}],
+          "expect": {"caret": [4, 45]}
+        },
+        {
+          "caption": "Ctrl + Shift + ←",
+          "hold": 1.2,
+          "do": [{"command": "cursorWordLeftSelect"}],
+          "expect": {"selection": [4, 45, 4, 41]}
+        },
+        {
+          "caption": "Backspace",
+          "hold": 1.5,
+          "do": [{"command": "deleteLeft"}],
+          "expect": {"lines": {"4": "Anything you type goes in `code`. Never ld** a whole sentence."}, "caret": [4, 41], "press": ["cursorRight", [4, 43], [4, 44]]}
+        },
+        {
+          "caption": "Concealment OFF",
+          "hold": 1.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}],
+          "expect": {"lines": {"3": "Use for a term being defined and _italic_ for a title.", "4": "Anything you type goes in `code`. Never ld** a whole sentence."}}
+        }
+      ]
+    },
+    {
       "id": "0501-json",
       "title": "Gallery — JSON keys without their quotes",
       "example": "05-gallery/config.json",
