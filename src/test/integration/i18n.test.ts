@@ -2,6 +2,7 @@ import * as assert from "node:assert";
 import * as path from "node:path";
 import * as vscode from "vscode";
 import { substitution } from "../../cases/02-i18n/i18n";
+import { concealAvailable } from "./conceal";
 
 /**
  * Case 2, the dynamic replacement: what is drawn comes from a file outside the source, and an edit
@@ -14,23 +15,6 @@ import { substitution } from "../../cases/02-i18n/i18n";
 const SOURCE = "02-i18n/checkout.ts";
 const COMMENTS = "02-i18n/comments.ts";
 const CATALOGUE = "02-i18n/messages.en.json";
-
-/** Two steps, because one cannot tell the two failures apart: a build without the feature has no
- * default for the setting, and a build with it throws for an extension that was not granted it. */
-function concealAvailable(): boolean {
-  if (vscode.workspace.getConfiguration().inspect<boolean>("editor.conceal.enabled")?.defaultValue === undefined) {
-    return false;
-  }
-  let probe: vscode.TextEditorDecorationType | undefined;
-  try {
-    probe = vscode.window.createTextEditorDecorationType({ conceal: {} });
-    return true;
-  } catch {
-    return false;
-  } finally {
-    probe?.dispose();
-  }
-}
 
 suite("i18n", () => {
   let catalogue: vscode.TextDocument;
@@ -105,11 +89,11 @@ suite("i18n", () => {
   test("draws a comment in the language the catalogue answers with", async () => {
     const editor = await open(COMMENTS);
     assert.deepStrictEqual(drawn(editor.document), [
-      "Cart utilities: adds up the item prices in cents, applies the discount to the total and always returns an integer, because rounding each line separately accumulates errors",
+      "Cart helpers: sums in cents, discount on the total, integers",
       "Prices in cents, always integers",
       "Add up the cart and apply the discount",
       "Round to the nearest cent",
-      "The discount applies to the total, never to a single line: rounding would change the result",
+      "The discount applies to the total, never to a single line",
     ]);
   });
 

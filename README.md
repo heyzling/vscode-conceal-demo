@@ -224,6 +224,10 @@ const idDecoration = vscode.window.createTextEditorDecorationType({
 
 ![Two Enters at the end of a line opening two empty lines below it, concealment off showing the id still on the line above](examples/03-invisible-metadata/0305-enter.gif)
 
+**What the clipboard carries**
+
+![A paragraph, a selection to the line end, then the hidden ref alone pasted into a tab beside: the id comes with whole lines and not with the text before it, the ref as its real text](examples/03-invisible-metadata/0306-copy.gif)
+
 ## 4 — Markup
 
 Shows:
@@ -399,7 +403,7 @@ CONCEAL_DEMO_FORK=/path/to/vscode-fork CONCEAL_DEMO_WINSHOT=/path/to/winshot.ps1
   ./scripts/record.sh 05         # case 5; `0501 0506` picks scenes
 ```
 
-A step marked `manual` in [examples/scenes.json](examples/scenes.json) is filmed by hand: the
+A step marked `manual` in [examples/scenes.jsonc](examples/scenes.jsonc) is filmed by hand: the
 recorder sets the scene up and sizes the window, the Windows ffmpeg films the workbench rectangle
 with the pointer in it until Enter is pressed in the terminal, and the clip gets its caption like
 any frame. That is how the mouse scenes are made, since nothing in the pipeline can move the mouse.
@@ -407,3 +411,7 @@ any frame. That is how the mouse scenes are made, since nothing in the pipeline 
 A scene that shows another extension beside the API needs it installed: the pinned ones in
 [scripts/compare-extensions.txt](scripts/compare-extensions.txt) go into the recording profile unless
 `CONCEAL_DEMO_NO_COMPARE=1` is set, and every scene states with a setting whether that extension is on.
+
+Every scene is also an end-to-end test. `npm run test:fork` plays each one in the fork with nothing
+photographed and checks every step's `expect` — caret, selection, lines, the text pasted beside —
+against what its GIF shows; see [docs/setup.md](docs/setup.md).

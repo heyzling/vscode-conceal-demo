@@ -34,6 +34,26 @@ export type Action =
   /** Wait, in milliseconds. */
   | { wait: number };
 
+/** What a frame shows, asserted by the e2e suite and ignored here. Lines and columns are 1-based. */
+export interface Expect {
+  /** The caret, or every caret when there are several. */
+  caret?: [number, number] | [number, number][];
+  /** The selection, anchor to active. */
+  selection?: [number, number, number, number];
+  /** Line numbers to the text they hold. */
+  lines?: Record<string, string>;
+  /** The text of the untitled document opened beside the example. */
+  beside?: string;
+  /** If true, the step left the example as it was. */
+  unchanged?: boolean;
+  /** A cursor command pressed with the caret at a position, and where the caret lands; the caret is
+   * put back after. One → crossing a range whole is the model's own proof that it is concealed. */
+  press?: Probe | Probe[];
+}
+
+/** `[command, from, to]`, positions 1-based. */
+export type Probe = [string, [number, number], [number, number]];
+
 /** One frame of the GIF: what to do, and the caption under it. */
 export interface Step {
   caption?: string;
@@ -46,6 +66,8 @@ export interface Step {
   /** If true, the frame is a clip filmed by hand: the script records until it is told to stop. */
   manual?: boolean;
   do?: Action[];
+  /** What the step's frame shows; a list is one per frame of a live step, the last for the final one. */
+  expect?: Expect | Expect[];
 }
 
 export interface Scene {
@@ -66,6 +88,9 @@ export interface Script {
 
 /** Emits a frame of the current state, between the keystrokes of a live step. */
 type Live = (() => Promise<void>) | undefined;
+
+/** Called once a frame is ready: after every step, and between the keystrokes of a live step. */
+export type Frame = (step: Step, live: boolean) => Promise<void>;
 
 const DEFAULT_SETTLE_MS = 450;
 const DEFAULT_HOLD = 2.4;
@@ -126,8 +151,9 @@ function editorState(): string {
   return `${editor.document.version} ${selections.join(",")}`;
 }
 
-/** Runs a command in the focused editor and returns once its effect has reached the extension host. */
-async function press(command: string, args: unknown[] = []): Promise<void> {
+/** Runs a command in the focused editor and returns once its effect has reached the extension host.
+ * With `foreground`, a keystroke that changed nothing in a window without the foreground is an error. */
+export async function press(command: string, args: unknown[] = [], foreground = true): Promise<void> {
   await vscode.commands.executeCommand("workbench.action.focusActiveEditorGroup");
   const before = editorState();
   await vscode.commands.executeCommand(command, ...args);
@@ -139,7 +165,7 @@ async function press(command: string, args: unknown[] = []): Promise<void> {
     if (Date.now() > deadline) {
       // A delete that reveals a concealed range takes nothing and moves nothing either, so the
       // window's own focus is what tells that from a keystroke the desktop swallowed.
-      if (vscode.window.state.focused) {
+      if (!foreground || vscode.window.state.focused) {
         return;
       }
       throw new Error(`${command} changed nothing (${before}); the recorded window must hold the foreground`);
@@ -159,7 +185,7 @@ function setSelection(editor: vscode.TextEditor, selection: vscode.Selection): v
 }
 
 /** Grows a selection from its anchor one Shift+arrow press at a time, with a frame before each. */
-async function selectByKeys(range: [number, number, number, number], live: () => Promise<void>): Promise<void> {
+async function selectByKeys(range: [number, number, number, number], live: () => Promise<void>, foreground: boolean): Promise<void> {
   const [line, column, toLine, toColumn] = range;
   const editor = active();
   setSelection(editor, new vscode.Selection(line - 1, column - 1, line - 1, column - 1));
@@ -188,12 +214,12 @@ async function selectByKeys(range: [number, number, number, number], live: () =>
       }
     }
     await live();
-    await press(key);
+    await press(key, [], foreground);
   }
   throw new Error(`the selection did not reach ${toLine}:${toColumn}`);
 }
 
-async function perform(action: Action, settings: Settings, live: Live): Promise<void> {
+async function perform(action: Action, settings: Settings, live: Live, foreground = true): Promise<void> {
   if ("open" in action) {
     const uri = vscode.Uri.joinPath(workspaceRoot(), action.open);
     const document = await vscode.workspace.openTextDocument(uri);
@@ -203,7 +229,7 @@ async function perform(action: Action, settings: Settings, live: Live): Promise<
     setSelection(active(), new vscode.Selection(line - 1, column - 1, line - 1, column - 1));
   } else if ("select" in action) {
     if (live) {
-      await selectByKeys(action.select, live);
+      await selectByKeys(action.select, live, foreground);
     } else {
       const [line, column, toLine, toColumn] = action.select;
       setSelection(active(), new vscode.Selection(line - 1, column - 1, toLine - 1, toColumn - 1));
@@ -221,7 +247,7 @@ async function perform(action: Action, settings: Settings, live: Live): Promise<
       if (count > 0 && live) {
         await live();
       }
-      await press(action.command, action.args);
+      await press(action.command, action.args, foreground);
     }
   } else if ("setting" in action) {
     await settings.set(action.setting, action.value);
@@ -308,14 +334,14 @@ async function frame(dir: string, name: string, caption: string, hold: number, m
   }
 }
 
-async function play(dir: string, scene: Scene, settleMs: number): Promise<void> {
+/** Plays one scene, handing every finished frame to `frame`, and puts the editor back as it was.
+ * `foreground` is whether a keystroke that changed nothing counts as swallowed by the desktop. */
+export async function play(scene: Scene, settleMs: number, frame: Frame, foreground = true): Promise<void> {
   await bounded(reset, `${scene.id}: reset`);
   const settings = new Settings();
-  let frames = 0;
-  const snap = async (caption: string, hold: number, manual = false): Promise<void> => {
+  const snap = async (step: Step, live: boolean): Promise<void> => {
     await delay(settleMs);
-    await frame(dir, `${scene.id}-${String(frames).padStart(3, "0")}`, caption, hold, manual);
-    frames += 1;
+    await frame(step, live);
   };
   try {
     await perform({ open: scene.example }, settings, undefined);
@@ -323,17 +349,15 @@ async function play(dir: string, scene: Scene, settleMs: number): Promise<void> 
       if (step.skip) {
         continue;
       }
-      const caption = step.caption ?? "";
-      const liveHold = step.live;
-      const live: Live = liveHold === undefined ? undefined : () => snap(caption, liveHold);
+      const live: Live = step.live === undefined ? undefined : () => snap(step, true);
       await vscode.commands.executeCommand("workbench.action.focusActiveEditorGroup");
       for (const [index, action] of (step.do ?? []).entries()) {
         if (index > 0 && live) {
           await live();
         }
-        await perform(action, settings, live);
+        await perform(action, settings, live, foreground);
       }
-      await snap(caption, step.hold ?? DEFAULT_HOLD, step.manual);
+      await snap(step, false);
     }
   } finally {
     await bounded(reset, `${scene.id}: reset`);
@@ -351,7 +375,13 @@ async function record(dir: string): Promise<void> {
   let error: string | null = null;
   try {
     for (const scene of script.scenes) {
-      await play(dir, scene, script.settleMs ?? DEFAULT_SETTLE_MS);
+      let frames = 0;
+      await play(scene, script.settleMs ?? DEFAULT_SETTLE_MS, (step, live) => {
+        const name = `${scene.id}-${String(frames).padStart(3, "0")}`;
+        frames += 1;
+        const hold = (live ? step.live : step.hold) ?? DEFAULT_HOLD;
+        return frame(dir, name, step.caption ?? "", hold, !live && step.manual);
+      });
     }
   } catch (caught) {
     error = caught instanceof Error ? caught.message : String(caught);
