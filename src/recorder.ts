@@ -65,6 +65,8 @@ export interface Step {
   skip?: boolean;
   /** If true, the frame is a clip filmed by hand: the script records until it is told to stop. */
   manual?: boolean;
+  /** Seconds after which a clip filmed by hand stops on its own. Without it, on Enter only. */
+  timeout?: number;
   do?: Action[];
   /** What the step's frame shows; a list is one per frame of a live step, the last for the final one. */
   expect?: Expect | Expect[];
@@ -322,8 +324,8 @@ async function bounded(work: () => Promise<void>, what: string): Promise<void> {
 }
 
 /** Announces a finished frame and waits for its capture. */
-async function frame(dir: string, name: string, caption: string, hold: number, manual = false): Promise<void> {
-  fs.writeFileSync(path.join(dir, `${name}.json`), JSON.stringify({ name, caption, hold, manual }));
+async function frame(dir: string, name: string, caption: string, hold: number, manual = false, timeout?: number): Promise<void> {
+  fs.writeFileSync(path.join(dir, `${name}.json`), JSON.stringify({ name, caption, hold, manual, timeout }));
   const taken = path.join(dir, `${name}.taken`);
   const deadline = Date.now() + (manual ? MANUAL_TIMEOUT_MS : FRAME_TIMEOUT_MS);
   while (!fs.existsSync(taken)) {
@@ -380,7 +382,7 @@ async function record(dir: string): Promise<void> {
         const name = `${scene.id}-${String(frames).padStart(3, "0")}`;
         frames += 1;
         const hold = (live ? step.live : step.hold) ?? DEFAULT_HOLD;
-        return frame(dir, name, step.caption ?? "", hold, !live && step.manual);
+        return frame(dir, name, step.caption ?? "", hold, !live && step.manual, step.timeout);
       });
     }
   } catch (caught) {

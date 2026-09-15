@@ -7,7 +7,8 @@
 import * as vscode from "vscode";
 import type { Example } from "./example";
 
-const GLYPH: Record<string, string> = { "#todo": "⬜", "#done": "✅" };
+const GLYPH: Record<string, string> = { "#todo": "🟨", "#done": "✅" };
+// const GLYPH: Record<string, string> = { "#todo": "⬜", "#done": "✅" };
 const NEXT: Record<string, string> = { "#todo": "#done", "#done": "#todo" };
 const TAG = /#(?:todo|done)\b/g;
 const FILE = "todo.md";

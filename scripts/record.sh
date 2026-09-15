@@ -11,14 +11,16 @@
 #   ./scripts/record.sh 01                   # every scene of case 01 — examples/01-*
 #   ./scripts/record.sh 0101 0102            # only those two scenes
 #   ./scripts/record.sh 01-tags              # a folder, spelled out
+#   ./scripts/record.sh --manual 05          # the scenes filmed by hand instead, here those of case 05
 #   CONCEAL_DEMO_SCENES=/tmp/probe.json ./scripts/record.sh 99   # another scene file, for probes
 #   CONCEAL_DEMO_NO_COMPARE=1 ./scripts/record.sh 01           # without the extensions compared against
 #
 # A step marked `manual` in scenes.jsonc is a clip filmed by hand: the recorder sets the scene up,
 # this script films the workbench rectangle — pointer included — with the Windows ffmpeg until
-# Enter is pressed here, and the clip gets its caption like any frame. For a mouse scene, since
-# nothing here can move the mouse. CONCEAL_DEMO_CLIP_SECONDS stops the filming by itself instead,
-# for an unattended check of the pipeline.
+# Enter is pressed here or the step's `timeout` (seconds) runs out, and the clip gets its caption
+# like any frame. For a mouse scene, since nothing here can move the mouse. Such scenes are left out
+# unless --manual is given, which records them and nothing else. CONCEAL_DEMO_CLIP_SECONDS is the
+# timeout for every step, for an unattended check of the pipeline.
 #
 # The window is raised to the foreground for every frame, so a run owns the desktop's focus while
 # it lasts — an editor command only reaches an editor whose window has focus.
@@ -52,9 +54,6 @@ CAPTION_HEIGHT=84
 CAPTION_SIZE=27
 FONT="${CONCEAL_DEMO_FONT:-/usr/share/fonts/adwaita-mono-fonts/AdwaitaMono-Bold.ttf}"
 FPS=10
-# Where the window is put on the desktop; a clip filmed by hand is cut from the screen there.
-WIN_X=80
-WIN_Y=60
 WIN_FFMPEG="${CONCEAL_DEMO_FFMPEG_WIN:-ffmpeg.exe}"
 CLIP_SECONDS="${CONCEAL_DEMO_CLIP_SECONDS:-}"
 
@@ -67,6 +66,15 @@ command -v ffmpeg >/dev/null || die "ffmpeg is not installed — dnf install ffm
 rm -rf "$WORK"
 mkdir -p "$RDV" "$RAW" "$CAPTIONED"
 
+MANUAL=0
+args=()
+for arg in "$@"; do
+	case "$arg" in
+		--manual) MANUAL=1 ;;
+		*) args+=("$arg") ;;
+	esac
+done
+
 # Pick the scenes asked for, and hand the recorder only those.
 #
 # An argument is a prefix, not a substring, because the numbering is a hierarchy: the first two
@@ -74,9 +82,10 @@ mkdir -p "$RDV" "$RAW" "$CAPTIONED"
 # "every id with 07 in it" — which would drag in 0107. A folder name works too, for the cases worth
 # spelling.
 # CONCEAL_DEMO_SCENES names another scene file, for probes that are not meant for the README.
-python3 - "${CONCEAL_DEMO_SCENES:-$REPO/examples/scenes.jsonc}" "$RDV/scenes.jsonc" "$@" <<'PY'
+python3 - "${CONCEAL_DEMO_SCENES:-$REPO/examples/scenes.jsonc}" "$RDV/scenes.jsonc" "$MANUAL" "${args[@]}" <<'PY'
 import json, re, sys
-source, target, *wanted = sys.argv[1:]
+source, target, manual, *wanted = sys.argv[1:]
+manual = manual == "1"
 
 
 def plain(text):
@@ -94,10 +103,16 @@ def asked_for(scene):
     return any(scene["id"].startswith(w) or folder.startswith(w) for w in wanted)
 
 
-if wanted:
-    script["scenes"] = [s for s in script["scenes"] if asked_for(s)]
-    if not script["scenes"]:
-        sys.exit(f"no scene id or folder starts with any of {wanted}")
+def by_hand(scene):
+    return any(step.get("manual") for step in scene["steps"])
+
+
+chosen = [s for s in script["scenes"] if not wanted or asked_for(s)]
+if not chosen:
+    sys.exit(f"no scene id or folder starts with any of {wanted}")
+script["scenes"] = [s for s in chosen if by_hand(s) == manual]
+if not script["scenes"]:
+    sys.exit("none of these scenes is filmed by hand" if manual else "these scenes are all filmed by hand — pass --manual")
 json.dump(script, open(target, "w"))
 print(" ".join(s["id"] for s in script["scenes"]))
 PY
@@ -196,10 +211,13 @@ echo "recording window $HWND"
 # WSLg windows are real Win32 windows, so they resize like any other. A scene declares its own
 # height because the alternative is a GIF that is two thirds empty editor: a nine-line file and a
 # forty-line file have nothing to say to each other about how tall the picture should be.
+#
+# Resized where it is, never moved: the Linux side keeps the origin it opened with, and after a
+# move every click lands as far from the pointer as the window went.
 move_window() {
 	powershell.exe -NoProfile -Command "
-	  Add-Type -Namespace W -Name U -MemberDefinition '[DllImport(\"user32.dll\")] public static extern bool MoveWindow(IntPtr h,int x,int y,int w,int t,bool r);';
-	  [void][W.U]::MoveWindow([IntPtr]$HWND, $WIN_X, $WIN_Y, $1, $2, \$true)" >/dev/null
+	  Add-Type -Namespace W -Name U -MemberDefinition '[DllImport(\"user32.dll\")] public static extern bool SetWindowPos(IntPtr h,IntPtr a,int x,int y,int w,int t,uint f);';
+	  [void][W.U]::SetWindowPos([IntPtr]$HWND, [IntPtr]::Zero, 0, 0, $1, $2, 0x16)" >/dev/null
 	sleep 1.2
 	local found
 	found="$(find_window)"
@@ -244,6 +262,13 @@ focus_window() {
 	powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(wslpath -w "$WORK/focus.ps1")" -Hwnd "$HWND" >/dev/null 2>&1 || true
 }
 
+# The window's top-left corner on the desktop, "x y".
+window_origin() {
+	powershell.exe -NoProfile -Command "
+	  Add-Type -Namespace W -Name R -MemberDefinition '[StructLayout(LayoutKind.Sequential)] public struct RECT { public int L, T, R, B; } [DllImport(\"user32.dll\")] public static extern bool GetWindowRect(IntPtr h, out RECT r);';
+	  \$r = New-Object W.R+RECT; [void][W.R]::GetWindowRect([IntPtr]$HWND, [ref]\$r); \"\$(\$r.L) \$(\$r.T)\"" | tr -d '\r'
+}
+
 # One picture, retrying against a freshly resolved handle — see find_window.
 capture_frame() {
 	focus_window
@@ -257,24 +282,28 @@ capture_frame() {
 }
 
 # A clip filmed by hand: the desktop rectangle the workbench is drawn in, pointer included, until
-# Enter is pressed here. The Windows ffmpeg does the filming because only a Windows process sees
-# the desktop; it reads its "q" from a pipe held open from this side.
+# Enter is pressed here or the seconds given run out. The Windows ffmpeg does the filming because
+# only a Windows process sees the desktop; it reads its "q" from a pipe held open from this side.
 record_clip() {
-	local out="$1" w="$2" h="$3" fifo="$WORK/clip.stdin" ffmpeg_pid
+	local out="$1" w="$2" h="$3" seconds="${4:-$CLIP_SECONDS}" fifo="$WORK/clip.stdin" ffmpeg_pid x y
 	command -v "$WIN_FFMPEG" >/dev/null || die "no $WIN_FFMPEG to film a clip with — set CONCEAL_DEMO_FFMPEG_WIN"
+	read -r x y < <(window_origin)
+	x=$(( x + BORDER_X ))
+	y=$(( y + BORDER_Y ))
 	rm -f "$fifo"
 	mkfifo "$fifo"
 	exec 3<>"$fifo"
 	"$WIN_FFMPEG" -hide_banner -loglevel error -y -f gdigrab -framerate "$FPS" -draw_mouse 1 \
-		-offset_x $(( WIN_X + BORDER_X )) -offset_y $(( WIN_Y + BORDER_Y )) -video_size "${w}x${h}" -i desktop \
+		-offset_x "$x" -offset_y "$y" -video_size "${w}x${h}" -i desktop \
 		-c:v ffv1 "$(wslpath -w "$out")" <"$fifo" &
 	ffmpeg_pid=$!
 	focus_window
-	if [[ -n "$CLIP_SECONDS" ]]; then
-		sleep "$CLIP_SECONDS"
+	if ( : </dev/tty ) 2>/dev/null; then
+		echo "filming $(basename "$out" .mkv) at $x,$y,$w,$h: act in the editor window, then press Enter here${seconds:+ or wait ${seconds}s} to stop" >&2
+		read -r ${seconds:+-t "$seconds"} </dev/tty || true
 	else
-		echo "filming $(basename "$out" .mkv) at $(( WIN_X + BORDER_X )),$(( WIN_Y + BORDER_Y )),$w,$h: act in the editor window, then press Enter here to stop" >&2
-		read -r </dev/tty
+		[[ -n "$seconds" ]] || die "no terminal to press Enter in — give the step a timeout"
+		sleep "$seconds"
 	fi
 	echo q >&3
 	wait "$ffmpeg_pid" || die "the clip was not written"
@@ -330,7 +359,7 @@ print(*(window or [sys.argv[3], sys.argv[4]]))' "$RDV/scenes.jsonc" "$scene" "$W
 			current_scene="$scene"
 		fi
 		if [[ "$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("manual") or "")' "$ready")" == "True" ]]; then
-			record_clip "$RAW/$name.mkv" "$w" "$h"
+			record_clip "$RAW/$name.mkv" "$w" "$h" "$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("timeout") or "")' "$ready")"
 		else
 			capture_frame "$RAW/$name.png"
 		fi

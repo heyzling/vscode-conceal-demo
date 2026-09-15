@@ -2,13 +2,17 @@
 
 A showcase of the VS Code **conceal decoration options**.
 
-> All cases implemented with regexp parsing. Real extensions should use specialized parsers instead.
-
 ## Links
 
 1. Proposal: [Concealed text — a proposed VS Code API (v4) · GitHub](https://gist.github.com/heyzling/6235fd30bda7605199963e15f12142f5)
 1. Implementation: [VS Code Fork conceal-1.135 branch](https://github.com/heyzling/vscode/tree/concealed-text-1.135)
 1. 2023, motivating request, still open, Backlog, 60 👍: [#171074 Feature request: prettify symbols mode](https://github.com/microsoft/vscode/issues/171074)
+
+## Implementation
+
+Every case implementation lives in separate folder in `src/cases/00-my/*.ts`. It works only in in file in the corresponding `examples/00-my` dir.
+
+All cases parsing implemented with regexp. Real extensions should use specialized parsers instead.
 
 
 ## Run
@@ -19,6 +23,7 @@ CONCEAL_DEMO_FORK=/path/to/vscode-fork ./scripts/dev.sh   # opens examples/ in t
 ```
 
 ON/OFF concealment via command: `Conceal Demo: Toggle Concealment`.
+
 
 ## 1 — Tags
 
@@ -238,8 +243,8 @@ the cursor would collapse to the arrival side of each marker, and one of the two
 typed text outside the pair.
 
 `protect` keeps the delete keys off the markers: Backspace at the visible end takes the letter,
-Delete there steps over the closing marker and takes the character behind it. That makes a pair
-unremovable by ordinary editing, which is the point, and the extension owes the user another route —
+Delete there steps over the closing marker and takes the character behind it. A caret alone cannot
+remove a pair, which is the point, and the extension owes the user another route —
 `Ctrl+B` unwrapping the word, its job anyway since only it knows what a pair spans. This demo does
 not implement it.
 
@@ -325,7 +330,7 @@ editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text,
 - TS arrow: `=>` as one ⇒
 - LaTeX macros: `\alpha` as α, from a table — `deletionPolicy: reveal`
 - Tag rotation: `#todo` as ⬜, `#done` as ✅, a click on the glyph rewrites the tag
-- Inline fold: a long `class` value as a `•••` chip — `deletionPolicy: reveal`
+- Inline fold: a long `class` value as a `•••` chip, a click folds and unfolds it — `deletionPolicy: reveal`
 
 **Paths:**
 - Logic: [src/cases/05-gallery](src/cases/05-gallery) — [jsonKeys.ts](src/cases/05-gallery/jsonKeys.ts) · [fsharpLambda.ts](src/cases/05-gallery/fsharpLambda.ts) · [tsArrow.ts](src/cases/05-gallery/tsArrow.ts) · [latexMacros.ts](src/cases/05-gallery/latexMacros.ts) · [tagRotation.ts](src/cases/05-gallery/tagRotation.ts) · [fold.ts](src/cases/05-gallery/fold.ts)
@@ -346,8 +351,9 @@ work.
   pipeline can move the mouse.
 - **Inline fold** — a `class` value longer than 30 characters folded to a chip. The chip predicts
   nothing about the value, so this is `reveal` again: Backspace beside it shows the value and takes
-  nothing, the next keys edit it, and the cursor leaving folds it again. A folded row is as short as
-  it looks and the cursor cannot fall into the fold.
+  nothing, the next keys edit it, and the cursor leaving folds it again. A click on the chip unfolds
+  the value and a click on the value folds it, the extension's own bookkeeping like the tag rewrite.
+  A folded row is as short as it looks and the cursor cannot fall into the fold.
 
 **Conceal decoration shape for this example**
 ```ts
@@ -397,8 +403,10 @@ CONCEAL_DEMO_FORK=/path/to/vscode-fork CONCEAL_DEMO_WINSHOT=/path/to/winshot.ps1
 
 A step marked `manual` in [examples/scenes.jsonc](examples/scenes.jsonc) is filmed by hand: the
 recorder sets the scene up and sizes the window, the Windows ffmpeg films the workbench rectangle
-with the pointer in it until Enter is pressed in the terminal, and the clip gets its caption like
-any frame. That is how the mouse scenes are made, since nothing in the pipeline can move the mouse.
+with the pointer in it until Enter is pressed in the terminal or the step's `timeout` (seconds)
+runs out, and the clip gets its caption like any frame. That is how the mouse scenes are made,
+since nothing in the pipeline can move the mouse. A plain run leaves those scenes out;
+`./scripts/record.sh --manual 05` records them and nothing else.
 
 A scene that shows another extension beside the API needs it installed: the pinned ones in
 [scripts/compare-extensions.txt](scripts/compare-extensions.txt) go into the recording profile unless

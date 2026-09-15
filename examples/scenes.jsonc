@@ -148,7 +148,7 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Start: after glyph",
+          "caption": "Start",
           "hold": 1.0,
           "do": [{"caret": [8, 8]}],
           "expect": {"caret": [8, 8]}
@@ -521,7 +521,7 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Start: level with the chip's end",
+          "caption": "Start",
           "hold": 1.0,
           "do": [{"caret": [8, 12]}],
           "expect": {"caret": [8, 12]}
@@ -766,7 +766,7 @@
       "steps": [
         {
           "caption": "Start",
-          "hold": 1.1,
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [8, 49]}],
           "expect": {"caret": [8, 49]}
         },
@@ -786,7 +786,7 @@
         },
         {
           "caption": "Concealment OFF",
-          "hold": 2.1,
+          "hold": 1.5,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"caret": [8, 49]}
         }
@@ -879,7 +879,7 @@
       "window": [1280, 570],
       "steps": [
         {
-          "caption": "Start: at the line end",
+          "caption": "Start",
           "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [4, 56]}],
           "expect": {"caret": [4, 56]}
@@ -907,7 +907,7 @@
       "steps": [
         {
           "caption": "Copy",
-          "hold": 1.1,
+          "hold": 1.2,
           "live": 0.35,
           "do": [{"setting": "editor.wordWrapColumn", "value": 30}, {"select": [3, 1, 5, 1]}],
           "expect": {"selection": [3, 1, 5, 1]}
@@ -966,7 +966,7 @@
       "steps": [
         {
           "caption": "",
-          "hold": 1.1,
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [8, 57]}],
           "expect": {"caret": [8, 57]}
         },
@@ -1172,7 +1172,7 @@
       "steps": [
         {
           "caption": "Start",
-          "hold": 1.1,
+          "hold": 1.2,
           "do": [{"caret": [3, 11]}],
           "expect": {"caret": [3, 11]}
         },
@@ -1275,13 +1275,13 @@
       "window": [1280, 440],
       "steps": [
         {
-          "caption": "Start: at the line end",
-          "hold": 1.1,
+          "caption": "Start",
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.autoClosingQuotes", "value": "never"}, {"caret": [3, 22]}],
           "expect": {"caret": [3, 22]}
         },
         {
-          "caption": "Enter, then a new key: its quotes vanish at the colon",
+          "caption": "",
           "hold": 1.5,
           "live": 0.12,
           "do": [{"type": "\n\"author\": \"heyzling\","}],
@@ -1294,14 +1294,14 @@
           "expect": {"caret": [4, 12]}
         },
         {
-          "caption": "←: through the hidden quote in one press",
+          "caption": "",
           "hold": 1.5,
           "do": [{"command": "cursorLeft"}],
           "expect": {"caret": [4, 10]}
         },
         {
-          "caption": "s",
-          "hold": 2.1,
+          "caption": "",
+          "hold": 1.5,
           "live": 0.3,
           "do": [{"type": "s"}],
           "expect": {"lines": {"4": "  \"authors\": \"heyzling\","}, "caret": [4, 11], "press": ["cursorRight", [4, 2], [4, 4]]}
@@ -1315,14 +1315,14 @@
       "window": [1280, 400],
       "steps": [
         {
-          "caption": "Start: at the line end",
-          "hold": 1.1,
+          "caption": "Start",
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [2, 25]}],
           "expect": {"caret": [2, 25]}
         },
         {
-          "caption": "Enter, then a new function: fun and -> are drawn as you type",
-          "hold": 2.1,
+          "caption": "",
+          "hold": 1.5,
           "live": 0.12,
           "do": [{"type": "\nlet double = fun x -> x * 2"}],
           "expect": {"lines": {"3": "let double = fun x -> x * 2"}, "caret": [3, 28], "press": [["cursorRight", [3, 14], [3, 17]], ["cursorRight", [3, 20], [3, 22]]]}
@@ -1336,14 +1336,14 @@
       "window": [1280, 400],
       "steps": [
         {
-          "caption": "Start: at the line end",
-          "hold": 1.1,
+          "caption": "Start",
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [2, 34]}],
           "expect": {"caret": [2, 34]}
         },
         {
-          "caption": "Enter, then a new function: => is drawn as you type",
-          "hold": 2.1,
+          "caption": "",
+          "hold": 1.5,
           "live": 0.12,
           "do": [{"type": "\nconst double = (x: number) => x * 2;"}],
           "expect": {"lines": {"3": "const double = (x: number) => x * 2;"}, "caret": [3, 37], "press": ["cursorRight", [3, 28], [3, 30]]}
@@ -1357,13 +1357,13 @@
       "window": [1280, 400],
       "steps": [
         {
-          "caption": "Start: at the line end",
-          "hold": 1.1,
+          "caption": "Start",
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [2, 24]}],
           "expect": {"caret": [2, 24]}
         },
         {
-          "caption": "Enter, then a formula: each macro is drawn as it completes",
+          "caption": "",
           "hold": 1.8,
           "live": 0.12,
           "do": [{"type": "\n$\\gamma \\leq \\pi$"}],
@@ -1371,32 +1371,32 @@
         },
         {
           "caption": "←",
-          "hold": 1.1,
+          "hold": 1.2,
           "do": [{"command": "cursorLeft"}],
           "expect": {"caret": [3, 17]}
         },
         {
-          "caption": "Backspace: real text revealed, nothing deleted",
+          "caption": "",
           "hold": 1.8,
           "do": [{"command": "deleteLeft"}],
           "expect": {"unchanged": true, "caret": [3, 17], "press": ["cursorRight", [3, 14], [3, 15]]}
         },
         {
-          "caption": "Backspace",
+          "caption": "",
           "hold": 1.5,
           "do": [{"command": "deleteLeft"}],
           "expect": {"lines": {"3": "$\\gamma \\leq \\p$"}, "caret": [3, 16]}
         },
         {
-          "caption": "i",
+          "caption": "",
           "hold": 1.5,
           "live": 0.3,
           "do": [{"type": "i"}],
           "expect": {"lines": {"3": "$\\gamma \\leq \\pi$"}, "caret": [3, 17]}
         },
         {
-          "caption": "→: drawn again",
-          "hold": 2.1,
+          "caption": "",
+          "hold": 1.5,
           "do": [{"command": "cursorRight"}],
           "expect": {"caret": [3, 18], "press": ["cursorRight", [3, 14], [3, 17]]}
         }
@@ -1409,23 +1409,29 @@
       "window": [1280, 440],
       "steps": [
         {
-          "caption": "Start: after ⬜, the #todo glyph",
-          "hold": 1.1,
-          "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [3, 8]}],
-          "expect": {"caret": [3, 8]}
-        },
-        {
-          "caption": "Rotate Tag: #todo becomes #done",
-          "hold": 1.8,
-          "do": [{"command": "conceal-demo.rotateTag"}],
-          "expect": {"lines": {"3": "- #done Write the gallery"}, "press": ["cursorRight", [3, 3], [3, 8]]}
-        },
-        {
-          "caption": "Rotate Tag: back to #todo",
-          "hold": 2.1,
-          "do": [{"command": "conceal-demo.rotateTag"}],
-          "expect": {"lines": {"3": "- #todo Write the gallery"}, "press": ["cursorRight", [3, 3], [3, 8]]}
+          "manual": true,
+          "timeout": 5,
+          "caption": "click into a tag: caret lands beside it",
+          "do": [ /* optional setup, e.g. toggle/cursor moves */ ]
         }
+        // {
+        //   "caption": "Start",
+        //   "hold": 1.2,
+        //   "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [3, 8]}],
+        //   "expect": {"caret": [3, 8]}
+        // },
+        // {
+        //   "caption": "",
+        //   "hold": 1.8,
+        //   "do": [{"command": "conceal-demo.rotateTag"}],
+        //   "expect": {"lines": {"3": "- #done Write the gallery"}, "press": ["cursorRight", [3, 3], [3, 8]]}
+        // },
+        // {
+        //   "caption": "",
+        //   "hold": 1.5,
+        //   "do": [{"command": "conceal-demo.rotateTag"}],
+        //   "expect": {"lines": {"3": "- #todo Write the gallery"}, "press": ["cursorRight", [3, 3], [3, 8]]}
+        // }
       ]
     },
     {
@@ -1435,30 +1441,49 @@
       "window": [1280, 560],
       "steps": [
         {
-          "caption": "Start: after •••, a folded class list",
-          "hold": 1.1,
+          "caption": "Start",
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"caret": [5, 64]}],
           "expect": {"caret": [5, 64]}
         },
         {
-          "caption": "Backspace: real text revealed, nothing deleted",
+          "caption": "",
           "hold": 1.8,
           "do": [{"command": "deleteLeft"}],
           "expect": {"unchanged": true, "caret": [5, 64], "press": ["cursorRight", [5, 15], [5, 16]]}
         },
         {
-          "caption": "italic",
+          "caption": "",
           "hold": 1.5,
           "live": 0.15,
           "do": [{"type": " italic"}],
           "expect": {"lines": {"5": "    <p class=\"label truncate text-slate-700 dark:text-slate-200 italic\">Demo</p>"}, "caret": [5, 71]}
         },
         {
-          "caption": "→ →: folded again",
-          "hold": 2.1,
+          "caption": "",
+          "hold": 1.5,
           "live": 0.5,
           "do": [{"command": "cursorRight", "times": 2}],
           "expect": [{"caret": [5, 72]}, {"caret": [5, 73], "press": ["cursorRight", [5, 15], [5, 71]]}]
+        }
+      ]
+    },
+    {
+      "id": "0507-fold-click",
+      "title": "Gallery — a fold opened and closed by click",
+      "example": "05-gallery/card.html",
+      "window": [1280, 560],
+      "steps": [
+        {
+          "manual": true,
+          "timeout": 5,
+          "caption": "click the chip: the value unfolds",
+          "do": [{"setting": "editor.wordWrapColumn", "value": 70}]
+        },
+        {
+          "manual": true,
+          "timeout": 5,
+          "caption": "click the value: folded again"
         }
       ]
     }
