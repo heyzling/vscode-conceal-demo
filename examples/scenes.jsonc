@@ -8,14 +8,14 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Concealment OFF: the tags are real text",
-          "hold": 1.7,
+          "caption": "Concealment OFF",
+          "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}],
           "expect": {"press": ["cursorRight", [8, 3], [8, 4]]}
         },
         {
-          "caption": "Concealment ON: #done and #bug drawn as glyphs",
-          "hold": 1.7,
+          "caption": "Concealment ON",
+          "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"unchanged": true, "press": ["cursorRight", [8, 3], [8, 8]]}
         }
@@ -33,8 +33,8 @@
           "do": [{"caret": [1, 1]}]
         },
         {
-          "caption": "Ctrl + F: finds done under the glyph",
-          "hold": 2.5,
+          "caption": "Ctrl + F",
+          "hold": 1.5,
           "do": [
             {"command": "editor.actions.findWithArgs", "args": [{"searchString": "done"}]},
             {"command": "editor.action.nextMatchFindAction"}
@@ -42,8 +42,8 @@
           "expect": {"selection": [8, 3, 8, 8]}
         },
         {
-          "caption": "Concealment OFF: the match is on the real text",
-          "hold": 2.5,
+          "caption": "Concealment OFF",
+          "hold": 1.7,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"selection": [8, 3, 8, 8]}
         },
@@ -53,8 +53,8 @@
           "do": [{"setting": "editor.conceal.enabled", "value": true}]
         },
         {
-          "caption": "Ctrl + F: finds bug under the chip",
-          "hold": 2.5,
+          "caption": "Ctrl + F",
+          "hold": 1.5,
           "do": [
             {"command": "editor.actions.findWithArgs", "args": [{"searchString": "bug"}]},
             {"command": "editor.action.nextMatchFindAction"}
@@ -62,8 +62,8 @@
           "expect": {"selection": [9, 3, 9, 7]}
         },
         {
-          "caption": "Concealment OFF: the match is on the real text",
-          "hold": 2.5,
+          "caption": "Concealment OFF",
+          "hold": 1.7,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"selection": [9, 3, 9, 7]}
         }
@@ -76,66 +76,66 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Select and copy the lines with glyphs",
-          "hold": 1.2,
+          "caption": "Copy",
+          "hold": 1.0,
           "live": 0.35,
           "do": [{"select": [8, 1, 9, 22]}],
           "expect": {"selection": [8, 1, 9, 22]}
         },
         {
-          "caption": "Open an empty tab beside it",
-          "hold": 1.2,
+          "caption": "",
+          "hold": 0.8,
           "do": [{"copy": true}, {"openBeside": true}]
         },
         {
-          "caption": "Copy preserves the original text",
-          "hold": 2.7,
+          "caption": "Paste",
+          "hold": 1.7,
           "do": [{"paste": true}],
           "expect": {"beside": "- #done Ship the fork\n- #bug Fix the gutter"}
         },
         {
-          "caption": "Close the tab",
+          "caption": "",
           "hold": 1.2,
           "do": [{"closeBeside": true}]
         },
         {
-          "caption": "Select only the #done glyph",
+          "caption": "",
           "hold": 1.2,
           "live": 0.35,
           "do": [{"select": [8, 3, 8, 8]}],
           "expect": {"selection": [8, 3, 8, 8]}
         },
         {
-          "caption": "Open an empty tab beside it",
+          "caption": "",
           "hold": 1.2,
           "do": [{"copy": true}, {"openBeside": true}]
         },
         {
-          "caption": "Copy the glyph alone: also the original text",
-          "hold": 2.7,
+          "caption": "",
+          "hold": 1.7,
           "do": [{"paste": true}],
           "expect": {"beside": "#done"}
         },
         {
-          "caption": "Close the tab",
+          "caption": "",
           "hold": 1.2,
           "do": [{"closeBeside": true}]
         },
         {
-          "caption": "Select only the #bug chip",
+          "caption": "",
           "hold": 1.2,
           "live": 0.35,
           "do": [{"select": [9, 3, 9, 7]}],
           "expect": {"selection": [9, 3, 9, 7]}
         },
         {
-          "caption": "Open an empty tab beside it",
+          "caption": "",
           "hold": 1.2,
           "do": [{"copy": true}, {"openBeside": true}]
         },
         {
-          "caption": "Copy the chip alone: also the original text",
-          "hold": 2.7,
+          "caption": "",
+          "hold": 1.7,
           "do": [{"paste": true}],
           "expect": {"beside": "#bug"}
         }
@@ -148,100 +148,100 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Put the caret at the right of the glyph",
-          "hold": 1.6,
+          "caption": "Start: after glyph",
+          "hold": 1.0,
           "do": [{"caret": [8, 8]}],
           "expect": {"caret": [8, 8]}
         },
         {
-          "caption": "Put the caret after Ship",
-          "hold": 1.6,
+          "caption": "",
+          "hold": 1.0,
           "skip": true,
           "do": [{"caret": [8, 13]}]
         },
         {
-          "caption": "Move left to the glyph",
-          "hold": 1.5,
+          "caption": "",
+          "hold": 1.0,
           "live": 0.27,
           "skip": true,
           "do": [{"command": "cursorLeft", "times": 5}]
         },
         {
-          "caption": "←: crosses the whole glyph",
-          "hold": 2.2,
+          "caption": "←",
+          "hold": 1.0,
           "do": [{"command": "cursorLeft"}],
           "expect": {"caret": [8, 3]}
         },
         {
-          "caption": "→: goes back",
-          "hold": 2.2,
+          "caption": "→",
+          "hold": 1.0,
           "do": [{"command": "cursorRight"}],
           "expect": {"caret": [8, 8]}
         },
         {
-          "caption": "Ctrl + ←: A word jump also works",
-          "hold": 2.2,
+          "caption": "Ctrl + ←",
+          "hold": 1.0,
           "do": [{"command": "cursorWordLeft"}],
           "expect": {"caret": [8, 3]}
         },
         {
-          "caption": "Ctrl + →: A word jump back",
-          "hold": 2.2,
+          "caption": "Ctrl + →",
+          "hold": 1.0,
           "do": [{"command": "cursorWordRight"}],
           "expect": {"caret": [8, 8]}
         },
         {
-          "caption": "Concealment OFF: the caret stays where it was",
-          "hold": 2.2,
+          "caption": "Concealment OFF",
+          "hold": 1.0,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"caret": [8, 8]}
         },
         {
-          "caption": "Now the caret walks #done letter by letter",
-          "hold": 2.7,
+          "caption": "Walk letter by letter",
+          "hold": 1.7,
           "live": 0.27,
           "do": [{"command": "cursorLeft", "times": 5}],
           "expect": {"caret": [8, 3]}
         },
         {
-          "caption": "Concealment ON, the caret at the right of the chip",
-          "hold": 1.6,
+          "caption": "Concealment ON",
+          "hold": 1.0,
           "do": [{"setting": "editor.conceal.enabled", "value": true}, {"caret": [9, 7]}],
           "expect": {"caret": [9, 7]}
         },
         {
-          "caption": "←: crosses the whole chip",
-          "hold": 2.2,
+          "caption": "←",
+          "hold": 1.0,
           "do": [{"command": "cursorLeft"}],
           "expect": {"caret": [9, 3]}
         },
         {
-          "caption": "→: goes back",
-          "hold": 2.2,
+          "caption": "→",
+          "hold": 1.0,
           "do": [{"command": "cursorRight"}],
           "expect": {"caret": [9, 7]}
         },
         {
-          "caption": "Ctrl + ←: A word jump also works",
-          "hold": 2.2,
+          "caption": "Ctrl + ←",
+          "hold": 1.0,
           "do": [{"command": "cursorWordLeft"}],
           "expect": {"caret": [9, 3]}
         },
         {
-          "caption": "Ctrl + →: A word jump back",
-          "hold": 2.2,
+          "caption": "Ctrl + →",
+          "hold": 1.0,
           "do": [{"command": "cursorWordRight"}],
           "expect": {"caret": [9, 7]}
         },
         {
-          "caption": "Concealment OFF: the caret stays where it was",
-          "hold": 2.2,
+          "caption": "Concealment OFF",
+          "hold": 1.0,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"caret": [9, 7]}
         },
         {
-          "caption": "Now the caret walks #bug letter by letter",
-          "hold": 2.7,
+          "caption": "Walk letter by letter",
+          "hold": 1.7,
           "live": 0.27,
           "do": [{"command": "cursorLeft", "times": 4}],
           "expect": {"caret": [9, 3]}
@@ -255,54 +255,54 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Concealment OFF: the tags are real text",
-          "hold": 1.6,
+          "caption": "Concealment OFF",
+          "hold": 1.0,
           "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [8, 8]}],
           "expect": {"caret": [8, 8]}
         },
         {
-          "caption": "Concealment OFF: the tags are real text",
-          "hold": 1.6,
+          "caption": "",
+          "hold": 0.8,
           "skip": true,
           "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [8, 13]}]
         },
         {
-          "caption": "Move into the middle of #done",
-          "hold": 1.5,
+          "caption": "",
+          "hold": 1.0,
           "live": 0.27,
           "skip": true,
           "do": [{"command": "cursorLeft", "times": 7}]
         },
         {
-          "caption": "Move into the middle of #done",
-          "hold": 1.5,
+          "caption": "← ←",
+          "hold": 1.0,
           "live": 0.27,
           "do": [{"command": "cursorLeft", "times": 2}],
           "expect": {"caret": [8, 6]}
         },
         {
-          "caption": "Concealment ON: a caret inside the range is pushed out",
-          "hold": 2.5,
+          "caption": "Concealment ON: cursor is pushed out",
+          "hold": 2.0,
           // The push is drawn: the model caret stays inside until its next move, which starts from the end.
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"press": ["cursorRight", [8, 6], [8, 9]]}
         },
         {
-          "caption": "Concealment OFF, the caret at the right of #bug",
-          "hold": 1.6,
+          "caption": "Concealment OFF",
+          "hold": 0.8,
           "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [9, 7]}],
           "expect": {"caret": [9, 7]}
         },
         {
-          "caption": "Move into the middle of #bug",
-          "hold": 1.5,
+          "caption": "← ←",
+          "hold": 1.0,
           "live": 0.27,
           "do": [{"command": "cursorLeft", "times": 2}],
           "expect": {"caret": [9, 5]}
         },
         {
-          "caption": "Concealment ON: a caret inside the range is pushed out",
-          "hold": 2.5,
+          "caption": "Concealment ON: cursor is pushed out",
+          "hold": 2.0,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"press": ["cursorRight", [9, 5], [9, 8]]}
         }
@@ -315,135 +315,135 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Put the caret at the right of the glyph",
-          "hold": 1.6,
+          "caption": "",
+          "hold": 0.8,
           "do": [{"caret": [8, 8]}],
           "expect": {"caret": [8, 8]}
         },
         {
-          "caption": "Put the caret after Ship",
-          "hold": 1.6,
+          "caption": "",
+          "hold": 0.8,
           "skip": true,
           "do": [{"caret": [8, 13]}]
         },
         {
-          "caption": "Move left to the glyph",
-          "hold": 1.5,
+          "caption": "",
+          "hold": 1.0,
           "live": 0.27,
           "skip": true,
           "do": [{"command": "cursorLeft", "times": 5}]
         },
         {
-          "caption": "Backspace deletes the whole glyph in one press",
-          "hold": 2.5,
+          "caption": "Backspace",
+          "hold": 1.5,
           "do": [{"command": "deleteLeft"}],
           "expect": {"lines": {"8": "-  Ship the fork"}, "caret": [8, 3]}
         },
         {
-          "caption": "Concealment OFF: #done is gone from the file",
-          "hold": 2.5,
+          "caption": "Concealment OFF",
+          "hold": 1.7,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"8": "-  Ship the fork"}}
         },
         {
-          "caption": "Ctrl + Z: Undo brings #done back in one step",
-          "hold": 2.5,
+          "caption": "Ctrl + Z",
+          "hold": 1.5,
           "do": [{"command": "undo"}],
           "expect": {"lines": {"8": "- #done Ship the fork"}}
         },
         {
-          "caption": "Concealment ON: the glyph is back",
-          "hold": 2.2,
+          "caption": "Concealment ON",
+          "hold": 1.0,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"press": ["cursorRight", [8, 3], [8, 8]]}
         },
         {
-          "caption": "Ctrl + Backspace: takes the glyph as one word",
-          "hold": 2.5,
+          "caption": "Ctrl + Backspace",
+          "hold": 1.5,
           "do": [{"command": "deleteWordLeft"}],
           "expect": {"lines": {"8": "-  Ship the fork"}}
         },
         {
-          "caption": "Ctrl + Z: back again",
-          "hold": 2.5,
+          "caption": "Ctrl + Z",
+          "hold": 1.5,
           "do": [{"command": "undo"}],
           "expect": {"lines": {"8": "- #done Ship the fork"}}
         },
         {
-          "caption": "←: to the left of the glyph",
-          "hold": 2.2,
+          "caption": "←",
+          "hold": 1.0,
           "do": [{"command": "cursorLeft"}],
           "expect": {"caret": [8, 3]}
         },
         {
-          "caption": "Ctrl + Delete: takes the glyph as one word, forward",
-          "hold": 2.5,
+          "caption": "Ctrl + Delete",
+          "hold": 1.5,
           "do": [{"command": "deleteWordRight"}],
           "expect": {"lines": {"8": "-  Ship the fork"}}
         },
         {
-          "caption": "Ctrl + Z: back again",
-          "hold": 2.5,
+          "caption": "Ctrl + Z",
+          "hold": 1.5,
           "do": [{"command": "undo"}],
           "expect": {"lines": {"8": "- #done Ship the fork"}}
         },
         {
-          "caption": "Put the caret at the right of the chip",
-          "hold": 1.6,
+          "caption": "",
+          "hold": 0.8,
           "do": [{"caret": [9, 7]}],
           "expect": {"caret": [9, 7]}
         },
         {
-          "caption": "Backspace deletes the whole chip in one press",
-          "hold": 2.5,
+          "caption": "Backspace",
+          "hold": 1.5,
           "do": [{"command": "deleteLeft"}],
           "expect": {"lines": {"9": "-  Fix the gutter"}, "caret": [9, 3]}
         },
         {
-          "caption": "Concealment OFF: #bug is gone from the file",
-          "hold": 2.5,
+          "caption": "Concealment OFF",
+          "hold": 1.7,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"9": "-  Fix the gutter"}}
         },
         {
-          "caption": "Ctrl + Z: Undo brings #bug back in one step",
-          "hold": 2.5,
+          "caption": "Ctrl + Z",
+          "hold": 1.5,
           "do": [{"command": "undo"}],
           "expect": {"lines": {"9": "- #bug Fix the gutter"}}
         },
         {
-          "caption": "Concealment ON: the chip is back",
-          "hold": 2.2,
+          "caption": "Concealment ON",
+          "hold": 1.0,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"press": ["cursorRight", [9, 3], [9, 7]]}
         },
         {
-          "caption": "Ctrl + Backspace: takes the chip as one word",
-          "hold": 2.5,
+          "caption": "Ctrl + Backspace",
+          "hold": 1.5,
           "do": [{"command": "deleteWordLeft"}],
           "expect": {"lines": {"9": "-  Fix the gutter"}}
         },
         {
-          "caption": "Ctrl + Z: back again",
-          "hold": 2.5,
+          "caption": "Ctrl + Z",
+          "hold": 1.5,
           "do": [{"command": "undo"}],
           "expect": {"lines": {"9": "- #bug Fix the gutter"}}
         },
         {
-          "caption": "←: to the left of the chip",
-          "hold": 2.2,
+          "caption": "←",
+          "hold": 1.0,
           "do": [{"command": "cursorLeft"}],
           "expect": {"caret": [9, 3]}
         },
         {
-          "caption": "Ctrl + Delete: takes the chip as one word, forward",
-          "hold": 2.5,
+          "caption": "Ctrl + Delete",
+          "hold": 1.5,
           "do": [{"command": "deleteWordRight"}],
           "expect": {"lines": {"9": "-  Fix the gutter"}}
         },
         {
-          "caption": "Ctrl + Z: back again",
-          "hold": 2.5,
+          "caption": "Ctrl + Z",
+          "hold": 1.5,
           "do": [{"command": "undo"}],
           "expect": {"lines": {"9": "- #bug Fix the gutter"}}
         }
@@ -456,59 +456,59 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Put the caret at the start of the #done line",
-          "hold": 1.6,
+          "caption": "",
+          "hold": 0.8,
           "do": [{"caret": [8, 1]}],
           "expect": {"caret": [8, 1]}
         },
         {
-          "caption": "Ctrl + Alt + ↓: a second caret on the #bug line",
-          "hold": 2.0,
+          "caption": "Ctrl + Alt + ↓",
+          "hold": 1.5,
           "do": [{"command": "editor.action.insertCursorBelow"}],
           "expect": {"caret": [[8, 1], [9, 1]]}
         },
         {
-          "caption": "Move both carets to the glyphs",
-          "hold": 2.2,
+          "caption": "→ →",
+          "hold": 1.0,
           "live": 0.27,
           "do": [{"command": "cursorRight", "times": 2}],
           "expect": {"caret": [[8, 3], [9, 3]]}
         },
         {
-          "caption": "Delete removes both glyphs in one press",
-          "hold": 2.7,
+          "caption": "Delete",
+          "hold": 1.5,
           "do": [{"command": "deleteRight"}],
           "expect": {"lines": {"8": "-  Ship the fork", "9": "-  Fix the gutter"}}
         },
         {
-          "caption": "Ctrl + Z: Undo brings both back",
-          "hold": 2.2,
+          "caption": "Ctrl + Z",
+          "hold": 1.5,
           "do": [{"command": "undo"}],
           "expect": {"lines": {"8": "- #done Ship the fork", "9": "- #bug Fix the gutter"}, "caret": [[8, 3], [9, 3]]}
         },
         {
-          "caption": "Type before both glyphs",
-          "hold": 2.2,
+          "caption": "{",
+          "hold": 1.5,
           "live": 0.27,
           "do": [{"type": "{"}],
           "expect": {"lines": {"8": "- {#done Ship the fork", "9": "- {#bug Fix the gutter"}, "caret": [[8, 4], [9, 4]]}
         },
         {
-          "caption": "→: crosses both glyphs",
-          "hold": 2.2,
+          "caption": "→",
+          "hold": 1.0,
           "do": [{"command": "cursorRight"}],
           "expect": {"caret": [[8, 9], [9, 8]]}
         },
         {
-          "caption": "Type after both glyphs",
-          "hold": 2.2,
+          "caption": "}",
+          "hold": 1.5,
           "live": 0.27,
           "do": [{"type": "}"}],
           "expect": {"lines": {"8": "- {#done} Ship the fork", "9": "- {#bug} Fix the gutter"}}
         },
         {
-          "caption": "Concealment OFF: {#done} and {#bug}, tags untouched",
-          "hold": 3.0,
+          "caption": "Concealment OFF",
+          "hold": 1.7,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"8": "- {#done} Ship the fork", "9": "- {#bug} Fix the gutter"}}
         }
@@ -521,50 +521,50 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Put the caret after Shi, level with the chip's end",
-          "hold": 1.28,
+          "caption": "Start: level with the chip's end",
+          "hold": 1.0,
           "do": [{"caret": [8, 12]}],
           "expect": {"caret": [8, 12]}
         },
         {
-          "caption": "↓ ↑: the column is matched",
-          "hold": 1.2,
-          "live": 0.72,
+          "caption": "↓ ↑",
+          "hold": 0.72,
+          "live": 0.43,
           "do": [{"command": "cursorDown"}, {"command": "cursorUp"}],
           "expect": [{"caret": [9, 7]}, {"caret": [8, 12]}]
         },
         {
-          "caption": "← ↓ ↑: jumps to the closest end of the glyph",
+          "caption": "← ↓ ↑: cursor snaps to the closest end of the chip",
           "hold": 0.72,
-          "live": 0.56,
+          "live": 0.34,
           "do": [{"command": "cursorLeft"}, {"command": "cursorDown"}, {"command": "cursorUp"}],
           "expect": [{"caret": [8, 11]}, {"caret": [9, 7]}, {"caret": [8, 11]}]
         },
         {
-          "caption": "← ↓ ↑: jumps to the closest end of the glyph",
+          "caption": "← ↓ ↑: cursor snaps to the closest end of the chip",
           "hold": 0.72,
-          "live": 0.56,
+          "live": 0.34,
           "do": [{"command": "cursorLeft"}, {"command": "cursorDown"}, {"command": "cursorUp"}],
           "expect": [{"caret": [8, 10]}, {"caret": [9, 7]}, {"caret": [8, 10]}]
         },
         {
-          "caption": "← ↓ ↑: jumps to the closest end of the glyph",
+          "caption": "← ↓ ↑: cursor snaps to the closest end of the chip",
           "hold": 0.72,
-          "live": 0.56,
+          "live": 0.34,
           "do": [{"command": "cursorLeft"}, {"command": "cursorDown"}, {"command": "cursorUp"}],
           "expect": [{"caret": [8, 9]}, {"caret": [9, 3]}, {"caret": [8, 9]}]
         },
         {
-          "caption": "← ↓ ↑: jumps to the closest end of the glyph",
+          "caption": "← ↓ ↑: cursor snaps to the closest end of the chip",
           "hold": 0.72,
-          "live": 0.56,
+          "live": 0.34,
           "do": [{"command": "cursorLeft"}, {"command": "cursorDown"}, {"command": "cursorUp"}],
           "expect": [{"caret": [8, 8]}, {"caret": [9, 3]}, {"caret": [8, 8]}]
         },
         {
-          "caption": "← ↓ ↑: before the glyph, the columns are matched again",
-          "hold": 2.0,
-          "live": 0.72,
+          "caption": "← ↓ ↑",
+          "hold": 1.7,
+          "live": 0.43,
           "do": [{"command": "cursorLeft"}, {"command": "cursorDown"}, {"command": "cursorUp"}],
           "expect": [{"caret": [8, 3]}, {"caret": [9, 3]}, {"caret": [8, 3]}]
         }
@@ -577,34 +577,34 @@
       "window": [1280, 500],
       "steps": [
         {
-          "caption": "Put the caret after #todo",
-          "hold": 1.6,
+          "caption": "",
+          "hold": 0.8,
           "do": [{"caret": [4, 8]}],
           "expect": {"caret": [4, 8]}
         },
         {
-          "caption": "Delete todo letter by letter: painted text is ordinary text",
+          "caption": "Delete letter by letter",
           "hold": 1.5,
           "live": 0.27,
           "do": [{"command": "deleteLeft", "times": 4}],
           "expect": {"lines": {"4": "- # Draft the proposal"}, "caret": [4, 4], "press": ["cursorRight", [4, 3], [4, 4]]}
         },
         {
-          "caption": "Type done: the glyph appears on its last letter",
-          "hold": 2.5,
+          "caption": "done",
+          "hold": 1.5,
           "live": 0.27,
           "do": [{"type": "done"}],
           "expect": {"lines": {"4": "- #done Draft the proposal"}, "caret": [4, 8], "press": ["cursorRight", [4, 3], [4, 8]]}
         },
         {
-          "caption": "One letter more: doesn't match, back as text",
-          "hold": 2.5,
+          "caption": "x",
+          "hold": 1.5,
           "do": [{"type": "x"}],
           "expect": {"lines": {"4": "- #donex Draft the proposal"}, "caret": [4, 9], "press": ["cursorRight", [4, 3], [4, 4]]}
         },
         {
-          "caption": "Backspace deletes the letter, the glyph is back",
-          "hold": 2.5,
+          "caption": "Backspace",
+          "hold": 1.5,
           "do": [{"command": "deleteLeft"}],
           "expect": {"lines": {"4": "- #done Draft the proposal"}, "caret": [4, 8], "press": ["cursorRight", [4, 3], [4, 8]]}
         }
@@ -618,13 +618,13 @@
       "steps": [
         {
           "caption": "Concealment OFF: real code",
-          "hold": 1.7,
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}],
           "expect": {"press": ["cursorRight", [7, 18], [7, 19]]}
         },
         {
           "caption": "Concealment ON: replaced with calculated value",
-          "hold": 1.7,
+          "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"unchanged": true, "press": ["cursorRight", [7, 18], [7, 39]]}
         }
@@ -638,13 +638,13 @@
       "steps": [
         {
           "caption": "Concealment OFF: three rows",
-          "hold": 1.7,
+          "hold": 1.2,
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}, {"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}],
           "expect": {"press": ["cursorDown", [1, 1], [1, 66]]}
         },
         {
           "caption": "Concealment ON: one raw",
-          "hold": 1.7,
+          "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"unchanged": true, "press": ["cursorDown", [1, 1], [2, 1]]}
         }
@@ -682,7 +682,7 @@
         },
         {
           "caption": "→ →: replaced again",
-          "hold": 2.7,
+          "hold": 1.7,
           "live": 0.45,
           "do": [{"command": "cursorRight", "times": 2}],
           "expect": [{"caret": [7, 40]}, {"caret": [7, 41], "press": ["cursorRight", [7, 18], [7, 39]]}]
@@ -709,20 +709,20 @@
         },
         {
           "caption": "← ←",
-          "hold": 1.6,
+          "hold": 0.8,
           "live": 0.35,
           "do": [{"command": "cursorLeft", "times": 2}],
           "expect": {"caret": [8, 45]}
         },
         {
           "caption": "Ctrl + Backspace",
-          "hold": 1.6,
+          "hold": 0.8,
           "live": 0.3,
           "do": [{"command": "deleteWordLeft"}],
           "expect": {"lines": {"8": "  lines.push(itemCount === 0 ? t(\"cart.\") : t(\"cart.checkout\"));"}, "caret": [8, 40]}
         },
         {
-          "caption": "Type new key",
+          "caption": "new key",
           "hold": 2.5,
           "live": 0.1,
           "do": [{"type": "checkout"}],
@@ -837,7 +837,7 @@
           "expect": {"caret": [4, 56]}
         },
         {
-          "caption": "Type a word: it lands in front of the id",
+          "caption": "a word: it lands in front of the id",
           "hold": 1.8,
           "live": 0.15,
           "do": [{"type": " Sadly."}],
@@ -968,13 +968,13 @@
       "steps": [
         {
           "caption": "Concealment OFF: the markers are real text",
-          "hold": 1.7,
+          "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": false}, {"caret": [1, 1]}],
           "expect": {"press": ["cursorRight", [3, 4], [3, 5]]}
         },
         {
           "caption": "Concealment ON: the markers are gone, the link is its text",
-          "hold": 1.7,
+          "hold": 1.2,
           "do": [{"setting": "editor.conceal.enabled", "value": true}],
           "expect": {"unchanged": true, "press": [["cursorRight", [3, 4], [3, 7]], ["cursorRight", [5, 30], [5, 72]]]}
         }
@@ -1027,7 +1027,7 @@
           "expect": {"caret": [3, 7]}
         },
         {
-          "caption": "Type at the start: the word grows, still bold",
+          "caption": "at the start: the word grows, still bold",
           "hold": 1.5,
           "live": 0.15,
           "do": [{"type": "semi"}],
@@ -1040,7 +1040,7 @@
           "expect": {"caret": [4, 47]}
         },
         {
-          "caption": "Type at the end: the same",
+          "caption": "at the end: the same",
           "hold": 1.5,
           "live": 0.15,
           "do": [{"type": "face"}],
@@ -1337,7 +1337,7 @@
           "expect": {"lines": {"3": "$\\gamma \\leq \\p$"}, "caret": [3, 16]}
         },
         {
-          "caption": "Type the letter back",
+          "caption": "the letter back",
           "hold": 1.5,
           "live": 0.3,
           "do": [{"type": "i"}],

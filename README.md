@@ -1,4 +1,4 @@
-# Conceal Demo
+# VS Code Conceal Demo
 
 A showcase of the VS Code **conceal decoration options**.
 
@@ -6,8 +6,6 @@ A showcase of the VS Code **conceal decoration options**.
 
 1. Proposal: [Concealed text — a proposed VS Code API (v4) · GitHub](https://gist.github.com/heyzling/6235fd30bda7605199963e15f12142f5)
 1. Implementation: [VS Code Fork conceal-1.135 branch](https://github.com/heyzling/vscode/tree/concealed-text-1.135)
-1. Demo: [VS Code Conceal Demo extension](https://github.com/heyzling/vscode-conceal-demo)
-   > Its README has GIFs demonstrating the implemented behavior.
 1. 2023, motivating request, still open, Backlog, 60 👍: [#171074 Feature request: prettify symbols mode](https://github.com/microsoft/vscode/issues/171074)
 
 
@@ -32,7 +30,7 @@ ON/OFF concealment via command: `Conceal Demo: Toggle Concealment`.
 - Example: [examples/01-tags/tags.md](examples/01-tags/tags.md)
 
 **What it does:**
-Replaces `#done` with one-symbol and `#bug` with multicharacter glyphs. "Tags to emoji" case is chosen as the most recognizable one. So specific LateX, or F# lamda syntax won't scare people. Replacement are really could be anything. See below to "Other Examples" section.
+Replaces `#done` with a one-symbol glyph and `#bug` with a multi-character one. The "tags to emoji" case was chosen as the most recognizable one, so LaTeX- or F#-specific syntax won't scare people off. The replacement could really be anything: see the "Gallery" section below.
 
 **Conceal decoration shape for this example**
 ```ts
@@ -60,7 +58,7 @@ editor.setDecorations(doneDecoration, findRanges(editor.document, /#done\b/g));
 
 ![Concealment off with the four tags as text, then on with #done and #bug drawn as glyphs](examples/01-tags/0101-toggle.gif)
 
-**Write tag**
+**Writing a tag**
 
 ![todo deleted letter by letter, done typed until the glyph appears, broken by one more letter and back](examples/01-tags/0109-typing.gif)
 
@@ -375,6 +373,8 @@ export const examples: Example[] = [
 ![Three folded class lists, Backspace at one showing the value and deleting nothing, a word typed into it, the cursor leaving and the value folded again](examples/05-gallery/0506-fold.gif)
 
 ## Recording
+
+> **DISCLAIMER**: created for my esoteric environment (WSLg). Won't work anywhere else.
 
 The GIFs are played by the extension's own recorder and photographed by
 [scripts/record.sh](scripts/record.sh) on WSLg; its header lists the requirements.
