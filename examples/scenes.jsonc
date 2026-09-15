@@ -1476,15 +1476,15 @@
       "steps": [
         {
           "manual": true,
-          "timeout": 5,
-          "caption": "click the chip: the value unfolds",
+          "timeout": 10,
+          "caption": "",
           "do": [{"setting": "editor.wordWrapColumn", "value": 70}]
         },
-        {
-          "manual": true,
-          "timeout": 5,
-          "caption": "click the value: folded again"
-        }
+        // {
+        //   "manual": true,
+        //   "timeout": 5,
+        //   "caption": "click the chip at its start: folded again"
+        // }
       ]
     }
   ]

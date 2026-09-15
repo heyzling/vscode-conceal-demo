@@ -45,5 +45,6 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.workspace.onDidChangeTextDocument(refreshAll),
   );
   tagRotation.activate(context);
+  fold.activate(context);
   refreshAll();
 }

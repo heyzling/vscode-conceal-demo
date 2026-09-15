@@ -11,6 +11,8 @@ export interface Example {
   decoration: vscode.TextEditorDecorationType;
   /** What a match draws. Nothing is drawn when absent. */
   replacement?: (match: RegExpExecArray) => string;
+  /** Whether a match is left undecorated; none is when absent. */
+  skip?: (document: vscode.TextDocument, range: vscode.Range) => boolean;
 }
 
 /** Every match of the example's pattern in `document`, line by line, as the decoration's ranges. */
@@ -22,6 +24,9 @@ export function decorations(document: vscode.TextDocument, example: Example): vs
     let match: RegExpExecArray | null;
     while ((match = example.pattern.exec(text)) !== null) {
       const range = new vscode.Range(line, match.index, line, match.index + match[0].length);
+      if (example.skip?.(document, range)) {
+        continue;
+      }
       found.push(
         example.replacement
           ? { range, renderOptions: { conceal: { replacement: { contentText: example.replacement(match) } } } }

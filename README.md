@@ -330,7 +330,7 @@ editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text,
 - TS arrow: `=>` as one ⇒
 - LaTeX macros: `\alpha` as α, from a table — `deletionPolicy: reveal`
 - Tag rotation: `#todo` as ⬜, `#done` as ✅, a click on the glyph rewrites the tag
-- Inline fold: a long `class` value as a `•••` chip, a click folds and unfolds it — `deletionPolicy: reveal`
+- Inline fold: a long `class` value as a `•••` chip, a click unfolds it and a chip at its start folds it again — `deletionPolicy: reveal`
 
 **Paths:**
 - Logic: [src/cases/05-gallery](src/cases/05-gallery) — [jsonKeys.ts](src/cases/05-gallery/jsonKeys.ts) · [fsharpLambda.ts](src/cases/05-gallery/fsharpLambda.ts) · [tsArrow.ts](src/cases/05-gallery/tsArrow.ts) · [latexMacros.ts](src/cases/05-gallery/latexMacros.ts) · [tagRotation.ts](src/cases/05-gallery/tagRotation.ts) · [fold.ts](src/cases/05-gallery/fold.ts)
@@ -352,8 +352,10 @@ work.
 - **Inline fold** — a `class` value longer than 30 characters folded to a chip. The chip predicts
   nothing about the value, so this is `reveal` again: Backspace beside it shows the value and takes
   nothing, the next keys edit it, and the cursor leaving folds it again. A click on the chip unfolds
-  the value and a click on the value folds it, the extension's own bookkeeping like the tag rewrite.
-  A folded row is as short as it looks and the cursor cannot fall into the fold.
+  the value, which then starts with a chip of its own — a plain `before` attachment, since
+  concealment draws over text only — and a click on that folds it again; both are the extension's
+  own bookkeeping, like the tag rewrite. A folded row is as short as it looks and the cursor cannot
+  fall into the fold.
 
 **Conceal decoration shape for this example**
 ```ts
