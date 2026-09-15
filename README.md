@@ -43,7 +43,7 @@ const bugDecoration = vscode.window.createTextEditorDecorationType({
       contentText: "🐞 bug",
       color: new vscode.ThemeColor("charts.red"),
       backgroundColor: new vscode.ThemeColor("editorInlayHint.background"),
-      borderRadius: "3px",
+      textDecoration: "none; border-radius: 3px",
     },
   },
 });
@@ -112,7 +112,7 @@ Here is where `deletionPolicy: reveal` works great. Often you don't want to dele
 // One type for every string drawn: only the replacement varies, and it travels with the range.
 const translationDecoration = vscode.window.createTextEditorDecorationType({
   rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
-  conceal: { deletionPolicy: "reveal" },
+  conceal: { deletionPolicy: vscode.ConcealDeletionPolicy.Reveal },
 });
 
 editor.setDecorations(translationDecoration, matches.map((match) => ({
@@ -160,7 +160,7 @@ Hides machine metadata: note IDs in this example.
 **Conceal decoration shape for this example**
 ```ts
 const idDecoration = vscode.window.createTextEditorDecorationType({
-  conceal: { anchor: "lineEnd", deletionPolicy: "protect" },
+  conceal: { anchor: vscode.ConcealAnchor.LineEnd, deletionPolicy: vscode.ConcealDeletionPolicy.Protect },
 });
 ```
 
@@ -223,18 +223,18 @@ Related to the VS Code feature request: [#286296 Support decorations that hide c
 **Conceal decoration shape for this example**
 ```ts
 const openingDecoration = vscode.window.createTextEditorDecorationType({
-  conceal: { anchor: "after", deletionPolicy: "protect" },
+  conceal: { anchor: vscode.ConcealAnchor.After, deletionPolicy: vscode.ConcealDeletionPolicy.Protect },
 });
 
 const closingDecoration = vscode.window.createTextEditorDecorationType({
-  conceal: { anchor: "before", deletionPolicy: "protect" },
+  conceal: { anchor: vscode.ConcealAnchor.Before, deletionPolicy: vscode.ConcealDeletionPolicy.Protect },
 });
 
 const boldDecoration = vscode.window.createTextEditorDecorationType({ fontWeight: "bold" });
 
 // A link is one range drawing its own text
 const linkDecoration = vscode.window.createTextEditorDecorationType({
-  conceal: { deletionPolicy: "reveal" },
+  conceal: { deletionPolicy: vscode.ConcealDeletionPolicy.Reveal },
 });
 
 // Every pair as its opener, text and closer, from one expression per kind: /\*\*([^*]+)\*\*/g
@@ -346,8 +346,7 @@ npm install
 CONCEAL_DEMO_FORK=/path/to/vscode-fork ./scripts/dev.sh   # opens examples/ in the fork
 ```
 
-ON/OFF concealment via command: `Conceal Demo: Toggle Concealment`.
-<!-- grammar: no verb, missing article: "Toggle concealment on/off via the command: …" -->
+Toggle concealment on/off via the command: `Conceal Demo: Toggle Concealment`.
 
 
 ## Links

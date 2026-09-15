@@ -8,8 +8,9 @@
  * A link is one unit: the whole `[text](url)` is concealed and its text drawn in its place, so a
  * delete key shows the link before it takes anything, and it hides again once the caret leaves.
  *
- * Conceal options used: `anchor: "after"` and `anchor: "before"`, `deletionPolicy: "protect"`,
- * with no `replacement`; for links a per-range `replacement` with `deletionPolicy: "reveal"`.
+ * Conceal options used: `anchor: ConcealAnchor.After` and `anchor: ConcealAnchor.Before`,
+ * `deletionPolicy: ConcealDeletionPolicy.Protect`, with no `replacement`; for links a per-range
+ * `replacement` with `deletionPolicy: ConcealDeletionPolicy.Reveal`.
  */
 
 import * as vscode from "vscode";
@@ -17,12 +18,12 @@ import * as vscode from "vscode";
 /** An opening marker belongs to the word behind it: the caret stops behind the marker, text typed
  * there is emphasised, and Enter or a space there goes in front of the pair. */
 const openingDecoration = vscode.window.createTextEditorDecorationType({
-  conceal: { anchor: "after", deletionPolicy: "protect" },
+  conceal: { anchor: vscode.ConcealAnchor.After, deletionPolicy: vscode.ConcealDeletionPolicy.Protect },
 });
 
 /** A closing marker belongs to the word in front of it: the mirror image. */
 const closingDecoration = vscode.window.createTextEditorDecorationType({
-  conceal: { anchor: "before", deletionPolicy: "protect" },
+  conceal: { anchor: vscode.ConcealAnchor.Before, deletionPolicy: vscode.ConcealDeletionPolicy.Protect },
 });
 
 /** The markers carry the styling, so the text between them gets it from an ordinary decoration. */
@@ -55,7 +56,7 @@ const KINDS = [
 /** A link reads as its text, drawn over the whole `[text](url)`. The drawn text predicts nothing
  * about the url, so a delete key shows the link before it takes. */
 const linkDecoration = vscode.window.createTextEditorDecorationType({
-  conceal: { deletionPolicy: "reveal" },
+  conceal: { deletionPolicy: vscode.ConcealDeletionPolicy.Reveal },
 });
 
 const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;

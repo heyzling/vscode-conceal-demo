@@ -4,7 +4,7 @@
  * so every range brings its own replacement and one decoration type serves all of them. Editing
  * the catalogue redraws the source.
  *
- * Conceal options used: per-range `replacement`, `deletionPolicy: "reveal"`.
+ * Conceal options used: per-range `replacement`, `deletionPolicy: ConcealDeletionPolicy.Reveal`.
  */
 
 import * as fs from "node:fs";
@@ -14,7 +14,7 @@ import * as vscode from "vscode";
 const translationDecoration = vscode.window.createTextEditorDecorationType({
   rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
   // The drawn string predicts nothing about the text, so a delete key shows it before it takes.
-  conceal: { deletionPolicy: "reveal" },
+  conceal: { deletionPolicy: vscode.ConcealDeletionPolicy.Reveal },
 });
 
 /** Each example file, the catalogue its strings come from, and what is looked up in it. */

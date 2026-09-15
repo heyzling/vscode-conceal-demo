@@ -19,7 +19,7 @@ const GLYPH: Record<string, string> = {
 };
 
 const macro = vscode.window.createTextEditorDecorationType({
-  conceal: { deletionPolicy: "reveal" },
+  conceal: { deletionPolicy: vscode.ConcealDeletionPolicy.Reveal },
 });
 
 export const examples: Example[] = [

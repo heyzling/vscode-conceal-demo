@@ -12,15 +12,15 @@ import * as vscode from "vscode";
  * in front of it, Enter there leaves it on its line, and a delete steps over it. */
 const idDecoration = vscode.window.createTextEditorDecorationType({
   conceal: {
-    anchor: "lineEnd",
-    deletionPolicy: "protect",
+    anchor: vscode.ConcealAnchor.LineEnd,
+    deletionPolicy: vscode.ConcealDeletionPolicy.Protect,
   },
 });
 
 /** A block reference inside a link is not line metadata: no anchor, only protection. */
 const refDecoration = vscode.window.createTextEditorDecorationType({
   conceal: {
-    deletionPolicy: "protect",
+    deletionPolicy: vscode.ConcealDeletionPolicy.Protect,
   },
 });
 

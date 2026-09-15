@@ -8,11 +8,11 @@ import * as vscode from "vscode";
 import type { Example } from "./example";
 
 const openingQuote = vscode.window.createTextEditorDecorationType({
-  conceal: { anchor: "after", deletionPolicy: "protect" },
+  conceal: { anchor: vscode.ConcealAnchor.After, deletionPolicy: vscode.ConcealDeletionPolicy.Protect },
 });
 
 const closingQuote = vscode.window.createTextEditorDecorationType({
-  conceal: { anchor: "before", deletionPolicy: "protect" },
+  conceal: { anchor: vscode.ConcealAnchor.Before, deletionPolicy: vscode.ConcealDeletionPolicy.Protect },
 });
 
 export const examples: Example[] = [

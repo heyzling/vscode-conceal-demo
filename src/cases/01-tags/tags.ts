@@ -40,7 +40,7 @@ const bugDecoration = vscode.window.createTextEditorDecorationType({
       contentText: "🐞 bug",
       color: new vscode.ThemeColor("charts.red"),
       backgroundColor: new vscode.ThemeColor("editorInlayHint.background"),
-      borderRadius: "3px",
+      textDecoration: "none; border-radius: 3px",
     },
   },
 });

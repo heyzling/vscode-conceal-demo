@@ -20,11 +20,10 @@ const CHIP: vscode.ThemableDecorationAttachmentRenderOptions = {
   fontWeight: "bold",
   color: new vscode.ThemeColor("editor.foreground"),
   backgroundColor: new vscode.ThemeColor("editorInlayHint.background"),
-  borderRadius: "3px",
-  padding: "0 3px",
+  textDecoration: "none; border-radius: 3px; padding: 0 3px",
 };
 
-const fold = vscode.window.createTextEditorDecorationType({ conceal: { deletionPolicy: "reveal", replacement: CHIP } });
+const fold = vscode.window.createTextEditorDecorationType({ conceal: { deletionPolicy: vscode.ConcealDeletionPolicy.Reveal, replacement: CHIP } });
 const unfolded = vscode.window.createTextEditorDecorationType({ before: CHIP });
 
 /** Folds standing open, as `uri#line:column` of where the value starts. */
