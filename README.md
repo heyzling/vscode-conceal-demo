@@ -2,27 +2,16 @@
 
 A showcase of the VS Code **conceal decoration options**.
 
-## Links
+- [VS Code Conceal Demo](#vs-code-conceal-demo)
+   - [1 — Tags](#1--tags)
+   - [2 — Dynamic replacement](#2--dynamic-replacement)
+   - [3 — Invisible metadata](#3--invisible-metadata)
+   - [4 — Hide Markdown markup](#4--hide-markdown-markup)
+   - [5 — Gallery](#5--gallery)
+   - [Implementation](#implementation)
+   - [Run](#run)
+   - [Links](#links)
 
-1. Proposal: [Concealed text — a proposed VS Code API (v4) · GitHub](https://gist.github.com/heyzling/6235fd30bda7605199963e15f12142f5)
-1. Implementation: [VS Code Fork concealed-text-1.135 branch](https://github.com/heyzling/vscode/tree/concealed-text-1.135)
-1. 2023, motivating request, still open, Backlog, 60 👍: [#171074 Feature request: prettify symbols mode](https://github.com/microsoft/vscode/issues/171074)
-
-## Implementation
-
-Each case lives in its own folder, `src/cases/<NN-name>/`. It only works on files in the matching `examples/<NN-name>` dir.
-
-All parsing is done with regexp. Real extensions should use specialized parsers instead.
-
-
-## Run
-
-```bash
-npm install
-CONCEAL_DEMO_FORK=/path/to/vscode-fork ./scripts/dev.sh   # opens examples/ in the fork
-```
-
-ON/OFF concealment via command: `Conceal Demo: Toggle Concealment`.
 
 
 
@@ -112,11 +101,11 @@ editor.setDecorations(doneDecoration, findRanges(editor.document, /#done\b/g));
 **What it does:**
 Replaces one text with another:
 - TS code with static values underneath replaced with said values.
-- Comments in Spanish replaced with English translation
+- Comments in Spanish replaced with an English translation
 
-Imitated with hardcoded JSON-config, but in real extension values can arrive from anywhere: a translation service, a language server, a bibliography, etc.
+Imitated with a hardcoded JSON config, but in a real extension values can arrive from anywhere: a translation service, a language server, a bibliography, etc.
 
-Here is where `deletionPolicy: reveal` works great. Often you don't want to delete the whole replacement at once like in tags example. You want to edit real text underneath. This policy automatically reveals real text on Backspace/Delete against concealed range.
+Here is where `deletionPolicy: reveal` works great. Often you don't want to delete the whole replacement at once as in the tags example. You want to edit the real text underneath. This policy automatically reveals the real text on Backspace/Delete against a concealed range.
 
 **Conceal decoration shape for this example**
 ```ts
@@ -143,7 +132,7 @@ editor.setDecorations(translationDecoration, matches.map((match) => ({
 
 **3 — A delete key reveals the text**
 
-First `Backspace` only reveals the real text. Second actually deletes it.
+The first `Backspace` only reveals the real text. The second actually deletes it.
 
 ![Backspace beside a drawn string showing the key and deleting nothing, a second Backspace taking a character, undo, then the cursor moving on and the string drawn again](examples/02-i18n/0203-delete.gif)
 
@@ -163,7 +152,7 @@ First `Backspace` only reveals the real text. Second actually deletes it.
 - Example: [examples/03-invisible-metadata/notes.md](examples/03-invisible-metadata/notes.md)
 
 **What it does:**
-Hides machine metadata: notes IDs in this example.
+Hides machine metadata: note IDs in this example.
 
 - `my note ^a3f9c1` -> `my note`
 - `this is my link [[Note#^id]]` -> `this is my link [[Note]]`
@@ -202,7 +191,7 @@ const idDecoration = vscode.window.createTextEditorDecorationType({
 
 **7 — What the clipboard carries**
 
-ID is copied only if the next line is also selected.
+The ID is copied only if the next line is also selected.
 
 ![A paragraph, then a selection to the line end, each pasted into a tab beside: the id comes with whole lines and not with the text before it](examples/03-invisible-metadata/0307-copy.gif)
 
@@ -213,7 +202,7 @@ ID is copied only if the next line is also selected.
 ## 4 — Hide Markdown markup
 
 **Shows:**
-- conceal markup
+- concealed markup
 - `anchor: after` on the opening marker, `anchor: before` on the closing one
 - `deletionPolicy: protect` behavior
 - a link drawn as its text: per-range `replacement`, `deletionPolicy: reveal`
@@ -226,9 +215,9 @@ ID is copied only if the next line is also selected.
 - Hides Markdown emphasis: `**bold**`, `_italic_` and `` `code` `` read as the styled word alone.
 - `[My link example](https://example.com)` -> [My link example](https://example.com)
 
-Opens gate to live Markdown editing like in [Obsidian Live Preview](https://obsidian.md/help/edit-and-read).
+Opens the gate to live Markdown editing as in [Obsidian Live Preview](https://obsidian.md/help/edit-and-read).
 
-Related to VS Code feature-request: [#286296 Support decorations that hide characters](https://github.com/microsoft/vscode/issues/286296).
+Related to the VS Code feature request: [#286296 Support decorations that hide characters](https://github.com/microsoft/vscode/issues/286296).
 
 
 **Conceal decoration shape for this example**
@@ -294,13 +283,13 @@ editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text,
 
 ![Backspace after a link showing the whole link and deleting nothing, the url edited in place, the cursor leaving and the link drawn again, concealment off showing the new url](examples/04-markup/0408-link.gif)
 
-**9 — A selection is deleted as covered**
+**9 — Delete takes exactly what the selection covers**
 
 ![Two word selections reaching over bold and its hidden markers, Delete taking the pair whole, a word selection back to the start of another bold covering its opening marker, Backspace taking it and leaving the closing marker in view, concealment off showing both lines](examples/04-markup/0409-selection.gif)
 
 ## 5 — Gallery
 
-Small examples inspired by other extensions, editors and VS Code opened issues.
+Small examples inspired by other extensions, editors and open VS Code issues.
 
 **Shows:**
 - JSON keys: `"name":` as `name:` — `anchor: after` / `anchor: before` on the quotes, `deletionPolicy: protect`.
@@ -341,3 +330,28 @@ Small examples inspired by other extensions, editors and VS Code opened issues.
 **7 — Inline fold, by click**
 
 ![A click on the folded chip unfolding the value, a chip appearing at its start, a click on that chip folding it again](examples/05-gallery/0507-fold-click.gif)
+
+
+## Implementation
+
+Each case lives in its own folder, `src/cases/<NN-name>/`. It only works on files in the matching `examples/<NN-name>` dir.
+
+All parsing is done with regexp. Real extensions should use specialized parsers instead.
+
+
+## Run
+
+```bash
+npm install
+CONCEAL_DEMO_FORK=/path/to/vscode-fork ./scripts/dev.sh   # opens examples/ in the fork
+```
+
+ON/OFF concealment via command: `Conceal Demo: Toggle Concealment`.
+<!-- grammar: no verb, missing article: "Toggle concealment on/off via the command: …" -->
+
+
+## Links
+
+1. Proposal: [Concealed text — a proposed VS Code API (v4) · GitHub](https://gist.github.com/heyzling/6235fd30bda7605199963e15f12142f5)
+1. Implementation: [VS Code Fork concealed-text-1.135 branch](https://github.com/heyzling/vscode/tree/concealed-text-1.135)
+1. 2023, motivating request, still open, Backlog, 60 👍: [#171074 Feature request: prettify symbols mode](https://github.com/microsoft/vscode/issues/171074)
