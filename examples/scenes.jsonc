@@ -782,13 +782,13 @@
           "hold": 1.5,
           "live": 0.3,
           "do": [{"command": "cursorLeft", "times": 4}],
-          "expect": [{"caret": [8, 58]}, {"caret": [8, 49]}]
+          "expect": [{"caret": [8, 58]}, {"caret": [8, 49]}, {"caret": [8, 48]}, {"caret": [8, 47]}]
         },
         {
           "caption": "Concealment OFF",
           "hold": 1.5,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
-          "expect": {"caret": [8, 49]}
+          "expect": {"caret": [8, 47]}
         }
       ]
     },
@@ -1054,14 +1054,14 @@
           "hold": 1.0,
           "live": 0.2,
           "do": [{"command": "cursorRight", "times": 3}],
-          "expect": [{"caret": [3, 7]}, {"caret": [3, 8]}]
+          "expect": [{"caret": [3, 7]}, {"caret": [3, 8]}, {"caret": [3, 9]}]
         },
         {
           "caption": "← ← ←",
           "hold": 1.0,
           "live": 0.2,
           "do": [{"command": "cursorLeft", "times": 3}],
-          "expect": [{"caret": [3, 7]}, {"caret": [3, 4]}]
+          "expect": [{"caret": [3, 8]}, {"caret": [3, 7]}, {"caret": [3, 4]}]
         },
         {
           "caption": "Concealment OFF",
