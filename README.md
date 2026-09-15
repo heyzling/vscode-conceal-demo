@@ -351,6 +351,7 @@ Toggle concealment on/off via the command: `Conceal Demo: Toggle Concealment`.
 
 ## Links
 
-1. Proposal: [Concealed text — a proposed VS Code API (v4) · GitHub](https://gist.github.com/heyzling/6235fd30bda7605199963e15f12142f5)
+1. Proposal: [Decorations that hide or replace text — a `conceal` render option (proposed API) · GitHub](https://gist.github.com/heyzling/6235fd30bda7605199963e15f12142f5)
 1. Implementation: [VS Code Fork concealed-text-1.135 branch](https://github.com/heyzling/vscode/tree/concealed-text-1.135)
 1. 2023, motivating request, still open, Backlog, 60 👍: [#171074 Feature request: prettify symbols mode](https://github.com/microsoft/vscode/issues/171074)
+1. 2026, open, Backlog, by a VS Code team member, assigned to hediet and aiday-mar: [#286296 Support decorations that hide characters](https://github.com/microsoft/vscode/issues/286296).
