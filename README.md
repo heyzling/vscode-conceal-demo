@@ -1,61 +1,38 @@
 # Conceal Demo
 
-A showcase of the VS Code **conceal decoration options**: the proposed `concealedText` decoration option that
-takes a run of text out of what the editor draws while the file keeps every character. It answers
-[microsoft/vscode#171074](https://github.com/microsoft/vscode/issues/171074) and lives in a fork,
-branch `concealed-text-1.135`; on a stock build the extension conceals nothing.
+A showcase of the VS Code **conceal decoration options**.
 
-One folder per case under [src/cases](src/cases), each hardcoded and readable top to bottom, with
-its example file under [examples](examples) and the recordings beside it. Ranges are found with
-regular expressions because this is a demo; a real extension asks its language's parser.
+## Links
 
-**Out of scope: hiding whole lines.** Every case here conceals ranges inside one line. Leaving a
-whole row out of the view is a separate question — what a deletion does where hidden and visible
-rows meet, what the line-wise commands operate on — and it is kept apart, on the fork's
-`conceal-1.135-lines` branch and this repository's `feature/lines`.
+1. Proposal: [Concealed text — a proposed VS Code API (v4) · GitHub](https://gist.github.com/heyzling/6235fd30bda7605199963e15f12142f5)
+1. Implementation: [VS Code Fork conceal-1.135 branch](https://github.com/heyzling/vscode/tree/concealed-text-1.135)
+1. Demo: [VS Code Conceal Demo extension](https://github.com/heyzling/vscode-conceal-demo)
+   > Its README has GIFs demonstrating the implemented behavior.
+1. 2023, motivating request, still open, Backlog, 60 👍: [#171074 Feature request: prettify symbols mode](https://github.com/microsoft/vscode/issues/171074)
+
+
+## Run
 
 ```bash
 npm install
 CONCEAL_DEMO_FORK=/path/to/vscode-fork ./scripts/dev.sh   # opens examples/ in the fork
 ```
 
-`Conceal Demo: Toggle Concealment` flips `editor.conceal.enabled`, the editor's own switch, which
-is how every recording shows what is really in the file.
+ON/OFF concealment via command: `Conceal Demo: Toggle Concealment`.
 
 ## 1 — Tags
 
-Shows:
+**Shows:**
 - text -> glyph replacement
-- caret movement
+- cursor movement
 - `deletionPolicy: atomic` behavior
 
-Shows basic replacement capabilities. Core functionality of proposal.
+**Paths:**
+- Logic: [src/cases/01-tags/tags.ts](src/cases/01-tags/tags.ts)
+- Example: [examples/01-tags/tags.md](examples/01-tags/tags.md)
 
-[src/cases/01-tags/tags.ts](src/cases/01-tags/tags.ts) · [examples/01-tags/tags.md](examples/01-tags/tags.md)
-
+**What it does:**
 Replaces `#done` with one-symbol and `#bug` with multicharacter glyphs. "Tags to emoji" case is chosen as the most recognizable one. So specific LateX, or F# lamda syntax won't scare people. Replacement are really could be anything. See below to "Other Examples" section.
-
-**Elsewhere:**:
-- Vim's `conceal` with `cchar` (`:help conceal`)
-- Emacs `prettify-symbols-mode`
-- Obsidian Live Preview drawing tags as pills.
-
-| The editor does | The extension does |
-| --- | --- |
-| hides the range and draws the replacement in its place | finds the ranges and picks the glyph |
-| a caret stop on each side: one press or one word jump crosses it, ↑ and ↓ land on its nearest end | styles the replacement: colour, background, radius |
-| Backspace, Delete and word delete take the whole tag, in one undo step | re-applies on every edit, so a tag that stops matching stops being concealed |
-| selection, copy and Ctrl + F see the real text | - |
-
-**Prior art.** Two extensions do this with a decoration and a setting named `adjustCursorMovement`,
-which re-implements caret motion inside the extension. Their trackers show what that costs:
-
-- [Prettify Symbols Mode](https://marketplace.visualstudio.com/items?itemName=siegebell.prettify-symbols-mode),
-  23k installs, abandoned: [siegebell/vsc-prettify-symbols-mode#29](https://github.com/siegebell/vsc-prettify-symbols-mode/issues/29),
-  the caret adjustment breaks on two-byte characters.
-- [vsc-conceal](https://marketplace.visualstudio.com/items?itemName=BRBoer.vsc-conceal), its fork,
-  abandoned: [rocq-community/vsc-conceal#4](https://github.com/rocq-community/vsc-conceal/issues/4),
-  the caret drawn on the wrong side of the symbol, open since 2020.
 
 **Conceal decoration shape for this example**
 ```ts
@@ -96,23 +73,23 @@ editor.setDecorations(doneDecoration, findRanges(editor.document, /#done\b/g));
 
 ![Two lines, then the glyph alone, then the chip alone pasted into a tab beside: the tags, not the glyphs](examples/01-tags/0103-copy.gif)
 
-**The caret around a glyph**
+**The cursor around a glyph**
 
-![The caret crossing the glyph and the chip in one press, word jumps landing past them, and the same keys on the raw text with concealment off](examples/01-tags/0104-caret.gif)
+![The cursor crossing the glyph and the chip in one press, word jumps landing past them, and the same keys on the raw text with concealment off](examples/01-tags/0104-cursor.gif)
 
-**A caret inside the range when concealment returns**
+**A cursor inside the range when concealment returns**
 
-![The caret parked inside #done and then inside #bug with concealment off, pushed out when concealment comes back](examples/01-tags/0105-inside.gif)
+![The cursor parked inside #done and then inside #bug with concealment off, pushed out when concealment comes back](examples/01-tags/0105-inside.gif)
 
 **Deleting a glyph**
 
 ![Backspace, Ctrl+Backspace and Ctrl+Delete taking the whole tag, for the glyph and for the chip, concealment off proving it, undo bringing it back](examples/01-tags/0106-delete.gif)
 
-**Two carets, two glyphs**
+**Two cursors, two glyphs**
 
-![Two carets deleting, restoring and typing braces around two glyphs at once](examples/01-tags/0107-multicursor.gif)
+![Two cursors deleting, restoring and typing braces around two glyphs at once](examples/01-tags/0107-multicursor.gif)
 
-**The caret up and down through glyph lines**
+**The cursor up and down through glyph lines**
 
 ![Up and down landing on the nearest end of a glyph, never inside it](examples/01-tags/0108-vertical.gif)
 
@@ -144,7 +121,7 @@ undefined lines](https://github.com/lokalise/i18n-ally/issues/1215).
 | The editor does | The extension does |
 | --- | --- |
 | hides the range and draws the string given for that one range | reads the catalogue and maps what is written → what is drawn |
-| keeps the caret out: one press crosses it, one delete takes it whole, so no projection has to be dropped near the caret | re-applies when a catalogue changes, saved or not |
+| keeps the cursor out: one press crosses it, one delete takes it whole, so no projection has to be dropped near the cursor | re-applies when a catalogue changes, saved or not |
 | keeps copy, search and diff on what is really written | leaves an unanswered string visible, and hovers the original under a translation |
 
 ```ts
@@ -174,11 +151,11 @@ Machine data written into a file by something other than the person reading it: 
 ids — `^a3f9c1` closing a block, `[[Note#^id]]` inside a link. Written when you copy a link to a
 block, never typed by hand.
 
-Nothing is drawn in their place, so a concealed range takes no room and holds no caret position:
-one press carries the caret past it and on to the next character it can see, and a line is as long
+Nothing is drawn in their place, so a concealed range takes no room and holds no cursor position:
+one press carries the cursor past it and on to the next character it can see, and a line is as long
 as it looks.
 
-An id is anchored to the end of its line. Its one caret stop is at the visible end of the line,
+An id is anchored to the end of its line. Its one cursor stop is at the visible end of the line,
 so text typed there goes in front of the id, and Enter there opens the next line while the id stays
 on the line it closes. Without the anchor one of the two goes wrong whichever side the stop is on:
 typed text lands behind the id, or Enter carries the id down onto the new line.
@@ -187,14 +164,14 @@ An id is also `protect`: a delete steps over it, so a Backspace at the end of a 
 sentence, not the id it cannot see.
 
 **Elsewhere:** Obsidian's Live Preview draws block ids as dimmed labels and hides them only in
-Reading view; users who hide them with CSS report the caret walking the invisible characters and
+Reading view; users who hide them with CSS report the cursor walking the invisible characters and
 typing landing behind the id. Logseq keeps its `id::` on a line of its own, which is the whole-line
 case this repository leaves out.
 
 | The editor does | The extension does |
 | --- | --- |
 | hides the range and draws nothing, so the line is as short as it looks | finds the ids |
-| collapses it to one caret position, crossed in one press, never landed inside | marks them anchored and protected |
+| collapses it to one cursor position, crossed in one press, never landed inside | marks them anchored and protected |
 | keeps a line break typed at the line end behind the id, and typed text in front of it | re-applies on every edit |
 | keeps save, copy, search and diff on the real text | |
 
@@ -208,9 +185,9 @@ const idDecoration = vscode.window.createTextEditorDecorationType({
 
 ![Concealment off with the block ids as text, then on with nothing in their place](examples/03-invisible-metadata/0301-toggle.gif)
 
-**The caret crosses an id**
+**The cursor crosses an id**
 
-![Two presses right crossing a hidden id and a bracket, two back, then concealment off showing the eight characters crossed in one press](examples/03-invisible-metadata/0302-caret.gif)
+![Two presses right crossing a hidden id and a bracket, two back, then concealment off showing the eight characters crossed in one press](examples/03-invisible-metadata/0302-cursor.gif)
 
 **A delete skips an id**
 
@@ -243,11 +220,11 @@ oldest conceal case there is, and the one where the editor's part matters most, 
 text wraps text that is being edited.
 
 Each marker belongs to the text it wraps. The opening `**` belongs to the word behind it, so its one
-caret stop is behind the marker: a letter typed at the visible start of `bold` is bold. The closing
+cursor stop is behind the marker: a letter typed at the visible start of `bold` is bold. The closing
 `**` belongs to the word in front, so its stop is in front of the marker: a letter typed at the
 visible end of `bold` is bold too. Enter or a space typed at either stop lands *outside* the pair,
 so the emphasis closes before the line breaks and `**bold **` is never written. Without the anchors
-the caret would collapse to the arrival side of each marker, and one of the two edges would put
+the cursor would collapse to the arrival side of each marker, and one of the two edges would put
 typed text outside the pair.
 
 `protect` keeps the delete keys off the markers: Backspace at the visible end takes the letter,
@@ -264,7 +241,7 @@ A link is the other kind of thing. `[CommonMark spec](https://commonmark.org/)` 
 concealed whole with its text drawn in its place, blue and underlined the way a browser draws it.
 The drawn text predicts nothing about the url, so this is `reveal`, as in case 2: a delete key
 beside the link shows all of it and takes nothing, the next press edits what it showed, and once
-the caret leaves, the link is drawn again over whatever it now says. The url stays reachable on
+the cursor leaves, the link is drawn again over whatever it now says. The url stays reachable on
 hover.
 
 **Elsewhere:** Vim's markdown conceal, Org mode's `org-hide-emphasis-markers`, Obsidian's Live
@@ -273,10 +250,10 @@ Preview, Typora.
 | The editor does | The extension does |
 | --- | --- |
 | hides both markers and draws nothing, so `**bold**` reads as `bold` | finds the pairs — a parse, one regular expression per kind here |
-| one caret stop per marker, on the inside of the pair: typing at either visible edge stays inside | styles the text between them: bold, italic, code |
+| one cursor stop per marker, on the inside of the pair: typing at either visible edge stays inside | styles the text between them: bold, italic, code |
 | Enter or a space at either edge lands outside the pair, so the emphasis closes first | re-applies on every edit, so an orphan marker shows itself |
 | Backspace and Delete take the visible neighbours and step over a marker | removes a pair as a command, since only it knows what the pair spans |
-| draws a link's text over the whole link, shows the link on a delete key beside it and hides it again when the caret leaves | picks what a link draws: its text, blue, underlined, with the url on hover |
+| draws a link's text over the whole link, shows the link on a delete key beside it and hides it again when the cursor leaves | picks what a link draws: its text, blue, underlined, with the url on hover |
 
 ```ts
 const openingDecoration = vscode.window.createTextEditorDecorationType({
@@ -314,7 +291,7 @@ editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text,
 
 **A hidden marker costs no keypress**
 
-![One press carrying the caret over a space and the hidden opening marker, back the same way, then concealment off showing four characters at one press each](examples/04-markup/0402-caret.gif)
+![One press carrying the cursor over a space and the hidden opening marker, back the same way, then concealment off showing four characters at one press each](examples/04-markup/0402-cursor.gif)
 
 **Typing at either visible edge stays inside the pair**
 
@@ -338,7 +315,7 @@ editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text,
 
 **A link shows itself on Backspace and hides again**
 
-![Backspace after a link showing the whole link and deleting nothing, the url edited in place, the caret leaving and the link drawn again, concealment off showing the new url](examples/04-markup/0408-link.gif)
+![Backspace after a link showing the whole link and deleting nothing, the url edited in place, the cursor leaving and the link drawn again, concealment off showing the new url](examples/04-markup/0408-link.gif)
 
 ## 5 — Gallery
 
@@ -351,7 +328,7 @@ you work.
 each is anchored to its key: typing at the visible end of a key stays inside the quotes.
 [jsonKeys.ts](src/cases/05-gallery/jsonKeys.ts) · [config.json](examples/05-gallery/config.json)
 
-![A new key typed into a JSON file, its quotes vanishing at the colon, the caret crossing the hidden quote in one press and the key growing inside its quotes](examples/05-gallery/0501-json.gif)
+![A new key typed into a JSON file, its quotes vanishing at the colon, the cursor crossing the hidden quote in one press and the key growing inside its quotes](examples/05-gallery/0501-json.gif)
 
 **F# lambda** — `fun` as λ, `->` as →, drawn the moment they are typed.
 [fsharpLambda.ts](src/cases/05-gallery/fsharpLambda.ts) · [lambda.fs](examples/05-gallery/lambda.fs)
@@ -370,8 +347,8 @@ takes nothing; the next press edits the macro one character at a time.
 ![A formula typed with each macro drawn as it completes, Backspace on π showing the macro, a second Backspace taking its last letter, the letter typed back and π drawn again](examples/05-gallery/0504-latex.gif)
 
 **Tag rotation** — `#todo` as ⬜, `#done` as ✅. A click on the glyph rewrites the tag to the
-other one, as does `Conceal Demo: Rotate Tag` at the caret; the rewrite is the extension's edit,
-since a click on drawn text only puts the caret at its edge. The recording uses the command —
+other one, as does `Conceal Demo: Rotate Tag` at the cursor; the rewrite is the extension's edit,
+since a click on drawn text only puts the cursor at its edge. The recording uses the command —
 nothing in the pipeline can move the mouse.
 [tagRotation.ts](src/cases/05-gallery/tagRotation.ts) · [todo.md](examples/05-gallery/todo.md)
 
@@ -379,8 +356,8 @@ nothing in the pipeline can move the mouse.
 
 **Inline fold** — a `class` value longer than 30 characters folded to a `•••` chip. The chip
 predicts nothing about the value, so this is `reveal` again: Backspace beside it shows the value
-and takes nothing, the next keys edit it, and the caret leaving folds it again. A folded row is as
-short as it looks and the caret cannot fall into the fold, the two things the CSS trick cannot do:
+and takes nothing, the next keys edit it, and the cursor leaving folds it again. A folded row is as
+short as it looks and the cursor cannot fall into the fold, the two things the CSS trick cannot do:
 [Inline Fold](https://marketplace.visualstudio.com/items?itemName=moalamri.inline-fold), 305k
 installs, and [Tailwind Fold](https://marketplace.visualstudio.com/items?itemName=stivo.tailwind-fold),
 337k, hide the characters and draw `…` — the hidden characters keep their room under word wrap
@@ -391,7 +368,7 @@ VS Code folds whole lines only: [microsoft/vscode#50840](https://github.com/micr
 171 👍, open since 2018, answered three times with "needs the editor core".
 [fold.ts](src/cases/05-gallery/fold.ts) · [card.html](examples/05-gallery/card.html)
 
-![Three folded class lists, Backspace at one showing the value and deleting nothing, a word typed into it, the caret leaving and the value folded again](examples/05-gallery/0506-fold.gif)
+![Three folded class lists, Backspace at one showing the value and deleting nothing, a word typed into it, the cursor leaving and the value folded again](examples/05-gallery/0506-fold.gif)
 
 ## Recording
 
@@ -413,5 +390,5 @@ A scene that shows another extension beside the API needs it installed: the pinn
 `CONCEAL_DEMO_NO_COMPARE=1` is set, and every scene states with a setting whether that extension is on.
 
 Every scene is also an end-to-end test. `npm run test:fork` plays each one in the fork with nothing
-photographed and checks every step's `expect` — caret, selection, lines, the text pasted beside —
+photographed and checks every step's `expect` — cursor, selection, lines, the text pasted beside —
 against what its GIF shows; see [docs/setup.md](docs/setup.md).
