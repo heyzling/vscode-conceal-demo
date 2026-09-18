@@ -8,11 +8,11 @@
 
 import * as vscode from "vscode";
 
-/** An id nobody types by hand, leaning to the end of its line: text typed at the line end goes
- * in front of it, Enter there leaves it on its line, and a delete steps over it. */
+/** An id nobody types by hand, belonging to the text in front of it: text and spaces typed at
+ * the line end go in front of it, Enter there leaves it on its line, and a delete steps over it. */
 const idDecoration = vscode.window.createTextEditorDecorationType({
   conceal: {
-    anchor: vscode.ConcealAnchor.LineEnd,
+    anchor: vscode.ConcealAnchor.Before,
     deletionPolicy: vscode.ConcealDeletionPolicy.Protect,
   },
 });

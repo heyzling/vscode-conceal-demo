@@ -144,7 +144,7 @@ The first `Backspace` only reveals the real text. The second actually deletes it
 
 **Shows:**
 - concealment with nothing drawn in its place
-- `anchor: lineEnd`
+- `anchor: before` on a trailing id
 - `deletionPolicy: protect` behavior
 
 **Paths:**
@@ -160,7 +160,7 @@ Hides machine metadata: note IDs in this example.
 **Conceal decoration shape for this example**
 ```ts
 const idDecoration = vscode.window.createTextEditorDecorationType({
-  conceal: { anchor: vscode.ConcealAnchor.LineEnd, deletionPolicy: vscode.ConcealDeletionPolicy.Protect },
+  conceal: { anchor: vscode.ConcealAnchor.Before, deletionPolicy: vscode.ConcealDeletionPolicy.Protect },
 });
 ```
 
@@ -205,7 +205,7 @@ The ID is copied only if the next line is also selected.
 - concealed markup
 - `anchor: after` on the opening marker, `anchor: before` on the closing one
 - `deletionPolicy: protect` behavior
-- one caret stop per hidden marker: no place right behind a closing one, so a space is the way out of a pair that ends its line
+- one caret stop per hidden marker: no place right behind a closing one; the extension's own Space keybinding puts a typed space outside the pair, and Ctrl+B closes a pair in front of a selection
 - a link drawn as its text: per-range `replacement`, `deletionPolicy: reveal`
 
 **Paths:**
@@ -299,6 +299,10 @@ editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text,
 **12 — Enter at the visible start moves the pair down whole**
 
 ![Enter at the visible start of bold moving the word and the rest of the line down with the cursor still at the word's start, concealment off showing both markers on the new line](examples/04-markup/0412-enter-opener.gif)
+
+**13 — Ctrl+B on a selection inside bold closes the pair in front of it**
+
+Scene `0413-toggle`, not recorded yet: `**new and more**` typed, ` and more` selected, Ctrl+B leaving `**new** and more` with the caret behind the selection, plain text typed on.
 
 ## 5 — Gallery
 

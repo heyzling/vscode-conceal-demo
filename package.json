@@ -48,6 +48,29 @@
         "command": "conceal-demo.rotateTag",
         "title": "Rotate Tag",
         "category": "Conceal Demo"
+      },
+      {
+        "command": "conceal-demo.markup.space",
+        "title": "Markup: Space Outside the Pair",
+        "category": "Conceal Demo"
+      },
+      {
+        "command": "conceal-demo.markup.toggleBold",
+        "title": "Markup: Toggle Bold",
+        "category": "Conceal Demo"
+      }
+    ],
+    "keybindings": [
+      {
+        "key": "space",
+        "command": "conceal-demo.markup.space",
+        "when": "editorTextFocus && !editorReadonly && concealDemo.markup.atMarker"
+      },
+      {
+        "key": "ctrl+b",
+        "mac": "cmd+b",
+        "command": "conceal-demo.markup.toggleBold",
+        "when": "editorTextFocus && !editorReadonly && editorHasSelection && resourcePath =~ /04-markup/"
       }
     ]
   },

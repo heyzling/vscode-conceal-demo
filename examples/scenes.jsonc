@@ -1127,7 +1127,7 @@
           "caption": "",
           "hold": 1.8,
           "live": 0.15,
-          "do": [{"type": " text"}],
+          "do": [{"command": "conceal-demo.markup.space"}, {"type": "text"}],
           "expect": {"lines": {"3": "Use **bold** text for a term being defined and _italic_ for a title."}, "caret": [3, 18], "press": ["cursorRight", [3, 11], [3, 14]]}
         },
         {
@@ -1349,7 +1349,7 @@
           "caption": "",
           "hold": 1.8,
           "live": 0.15,
-          "do": [{"type": " word"}],
+          "do": [{"command": "conceal-demo.markup.space"}, {"type": "word"}],
           "expect": {"lines": {"2": "**new** word"}, "caret": [2, 13], "press": ["cursorRight", [2, 6], [2, 9]]}
         },
         {
@@ -1375,7 +1375,7 @@
         {
           "caption": "",
           "hold": 1.8,
-          "do": [{"type": " "}],
+          "do": [{"command": "conceal-demo.markup.space"}],
           "expect": {"lines": {"3": "Use  **bold** for a term being defined and _italic_ for a title."}, "caret": [3, 8], "press": ["cursorLeft", [3, 8], [3, 5]]}
         },
         {
@@ -1409,6 +1409,52 @@
           "hold": 1.5,
           "do": [{"setting": "editor.conceal.enabled", "value": false}],
           "expect": {"lines": {"3": "Use ", "4": "**bold** for a term being defined and _italic_ for a title."}}
+        }
+      ]
+    },
+    {
+      "id": "0413-toggle",
+      "title": "Markup — Ctrl+B on a selection inside bold closes the pair in front of it",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 440],
+      "steps": [
+        {
+          "caption": "Start",
+          "hold": 1.2,
+          "do": [{"caret": [2, 1]}],
+          "expect": {"caret": [2, 1]}
+        },
+        {
+          "caption": "**new and more**",
+          "hold": 1.5,
+          "live": 0.15,
+          "do": [{"type": "**new and more**"}],
+          "expect": {"lines": {"2": "**new and more**"}, "caret": [2, 15]}
+        },
+        {
+          "caption": "Select and more",
+          "hold": 1.5,
+          "do": [{"select": [2, 15, 2, 6]}],
+          "expect": {"selection": [2, 15, 2, 6]}
+        },
+        {
+          "caption": "Ctrl + B: the pair closes in front of the selection",
+          "hold": 1.8,
+          "do": [{"command": "conceal-demo.markup.toggleBold"}],
+          "expect": {"lines": {"2": "**new** and more"}, "caret": [2, 17], "press": ["cursorRight", [2, 6], [2, 9]]}
+        },
+        {
+          "caption": "",
+          "hold": 1.5,
+          "live": 0.15,
+          "do": [{"type": " again"}],
+          "expect": {"lines": {"2": "**new** and more again"}, "caret": [2, 23]}
+        },
+        {
+          "caption": "Concealment OFF",
+          "hold": 1.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}],
+          "expect": {"lines": {"2": "**new** and more again"}}
         }
       ]
     },
