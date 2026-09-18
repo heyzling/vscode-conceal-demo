@@ -205,6 +205,7 @@ The ID is copied only if the next line is also selected.
 - concealed markup
 - `anchor: after` on the opening marker, `anchor: before` on the closing one
 - `deletionPolicy: protect` behavior
+- one caret stop per hidden marker: no place right behind a closing one, so a space is the way out of a pair that ends its line
 - a link drawn as its text: per-range `replacement`, `deletionPolicy: reveal`
 
 **Paths:**
@@ -286,6 +287,18 @@ editor.setDecorations(linkDecoration, links(editor.document).map(({ range, text,
 **9 — Delete takes exactly what the selection covers**
 
 ![Two word selections reaching over bold and its hidden markers, Delete taking the pair whole, a word selection back to the start of another bold covering its opening marker, Backspace taking it and leaving the closing marker in view, concealment off showing both lines](examples/04-markup/0409-selection.gif)
+
+**10 — A pair typed from scratch closes with the caret inside; a space is the way out**
+
+![Two asterisks, a word and two more typed on an empty line, the markers vanishing as the pair closes with the cursor still at the word's end, End and → moving nothing, a space and a word typed landing plain behind the pair, concealment off showing the space behind the closing marker](examples/04-markup/0410-newpair.gif)
+
+**11 — A space at the visible start lands in front of the pair**
+
+![A space typed at the visible start of bold, the word still bold and the cursor still at its start, concealment off showing the space in front of the opening marker](examples/04-markup/0411-space-opener.gif)
+
+**12 — Enter at the visible start moves the pair down whole**
+
+![Enter at the visible start of bold moving the word and the rest of the line down with the cursor still at the word's start, concealment off showing both markers on the new line](examples/04-markup/0412-enter-opener.gif)
 
 ## 5 — Gallery
 

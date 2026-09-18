@@ -1320,6 +1320,99 @@
       ]
     },
     {
+      "id": "0410-newpair",
+      "title": "Markup — a pair typed from scratch closes with the caret inside; a space is the way out",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 440],
+      "steps": [
+        {
+          "caption": "Start",
+          "hold": 1.2,
+          "do": [{"caret": [2, 1]}],
+          "expect": {"caret": [2, 1]}
+        },
+        {
+          "caption": "**new**",
+          "hold": 1.5,
+          "live": 0.15,
+          "do": [{"type": "**new**"}],
+          "expect": {"lines": {"2": "**new**"}, "caret": [2, 6], "press": [["cursorEnd", [2, 6], [2, 6]], ["cursorRight", [2, 6], [3, 1]]]}
+        },
+        {
+          "caption": "End, → ←: no place behind the hidden closer",
+          "hold": 1.5,
+          "live": 0.5,
+          "do": [{"command": "cursorEnd"}, {"command": "cursorRight"}, {"command": "cursorLeft"}],
+          "expect": [{"caret": [2, 6]}, {"caret": [3, 1]}, {"caret": [2, 6]}]
+        },
+        {
+          "caption": "",
+          "hold": 1.8,
+          "live": 0.15,
+          "do": [{"type": " word"}],
+          "expect": {"lines": {"2": "**new** word"}, "caret": [2, 13], "press": ["cursorRight", [2, 6], [2, 9]]}
+        },
+        {
+          "caption": "Concealment OFF",
+          "hold": 1.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}],
+          "expect": {"lines": {"2": "**new** word"}}
+        }
+      ]
+    },
+    {
+      "id": "0411-space-opener",
+      "title": "Markup — a space at the visible start lands in front of the pair",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 440],
+      "steps": [
+        {
+          "caption": "Start",
+          "hold": 1.2,
+          "do": [{"caret": [3, 7]}],
+          "expect": {"caret": [3, 7]}
+        },
+        {
+          "caption": "",
+          "hold": 1.8,
+          "do": [{"type": " "}],
+          "expect": {"lines": {"3": "Use  **bold** for a term being defined and _italic_ for a title."}, "caret": [3, 8], "press": ["cursorLeft", [3, 8], [3, 5]]}
+        },
+        {
+          "caption": "Concealment OFF",
+          "hold": 1.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}],
+          "expect": {"lines": {"3": "Use  **bold** for a term being defined and _italic_ for a title."}}
+        }
+      ]
+    },
+    {
+      "id": "0412-enter-opener",
+      "title": "Markup — Enter at the visible start moves the pair down whole",
+      "example": "04-markup/emphasis.md",
+      "window": [1280, 480],
+      "steps": [
+        {
+          "caption": "Start",
+          "hold": 1.2,
+          "do": [{"caret": [3, 7]}],
+          "expect": {"caret": [3, 7]}
+        },
+        {
+          "caption": "Enter",
+          "hold": 1.2,
+          "do": [{"type": "\n"}],
+          "expect": {"lines": {"3": "Use ", "4": "**bold** for a term being defined and _italic_ for a title."}, "caret": [4, 3], "press": ["cursorLeft", [4, 3], [3, 5]]}
+        },
+        {
+          "caption": "Concealment OFF",
+          "hold": 1.5,
+          "do": [{"setting": "editor.conceal.enabled", "value": false}],
+          "expect": {"lines": {"3": "Use ", "4": "**bold** for a term being defined and _italic_ for a title."}}
+        }
+      ]
+    },
+    {
       "id": "0501-json",
       "title": "Gallery — JSON keys without their quotes",
       "example": "05-gallery/config.json",
